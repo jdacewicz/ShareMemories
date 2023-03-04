@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script th:src="@{/webjars/jquery/3.6.3/jquery.min.js}"></script>
+    <script th:src="@{/js/jquery.reaction.js}"></script>
+    <title>ShareMemories</title>
+</head>
+<body>
+    <form th:action="@{/api/reactions}" method="POST" id="reactionForm">
+        <input type="text" name="name">
+        <input type="text" name="image">
+        <button type="submit">
+            Create
+        </button>
+    </form>
+</body>
+</html>
