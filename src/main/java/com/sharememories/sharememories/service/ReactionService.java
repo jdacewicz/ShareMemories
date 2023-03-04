@@ -18,10 +18,6 @@ public class ReactionService {
         this.repository = repository;
     }
 
-    public Reaction saveReaction(Reaction newReaction) {
-        return repository.save(newReaction);
-    }
-
     public Optional<Reaction> getReaction(Integer id) {
         return repository.findById(id);
     }
@@ -33,5 +29,17 @@ public class ReactionService {
     public void deleteReaction(Integer id) {
         repository.deleteById(id);
         repository.flush();
+    }
+
+    public Reaction replaceReaction(Integer id, Reaction newReaction) {
+        return repository.findById(id).map(reaction -> {
+            reaction.setName(newReaction.getName());
+            reaction.setImage(newReaction.getImage());
+            return repository.save(reaction);
+        }).orElseGet(() -> repository.save(newReaction));
+    }
+
+    public Reaction createReaction(Reaction newReaction) {
+        return repository.save(newReaction);
     }
 }
