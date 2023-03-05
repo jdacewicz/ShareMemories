@@ -2,6 +2,11 @@ package com.sharememories.sharememories.domain;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class Post {
 
@@ -11,6 +16,11 @@ public class Post {
     private long id;
     private String content;
     private String image;
+    private LocalTime creationTime = LocalTime.now();
+    private LocalDate creationDate = LocalDate.now();
+    @OneToMany
+    @OrderBy("id ASC")
+    private List<ReactionCounter> reactionsCounters = new ArrayList<>();
 
     public Post() {
     }
@@ -37,5 +47,29 @@ public class Post {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public LocalTime getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(LocalTime creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public List<ReactionCounter> getReactionsCounters() {
+        return reactionsCounters;
+    }
+
+    public void setReactionsCounters(List<ReactionCounter> reactionsCounters) {
+        this.reactionsCounters = reactionsCounters;
     }
 }

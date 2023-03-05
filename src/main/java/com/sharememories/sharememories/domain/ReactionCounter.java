@@ -16,6 +16,10 @@ public class ReactionCounter {
     public ReactionCounter() {
     }
 
+    public ReactionCounter(Reaction reaction) {
+        this.reaction = reaction;
+    }
+
     public long getId() {
         return id;
     }
