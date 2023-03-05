@@ -1,13 +1,11 @@
 package com.sharememories.sharememories.controller;
 
-import com.sharememories.sharememories.domain.Reaction;
 import com.sharememories.sharememories.domain.ReactionCounter;
 import com.sharememories.sharememories.service.ReactionCounterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController

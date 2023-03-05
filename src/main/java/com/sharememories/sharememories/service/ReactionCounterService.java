@@ -1,12 +1,10 @@
 package com.sharememories.sharememories.service;
 
-import com.sharememories.sharememories.domain.Reaction;
 import com.sharememories.sharememories.domain.ReactionCounter;
 import com.sharememories.sharememories.repository.ReactionCounterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
