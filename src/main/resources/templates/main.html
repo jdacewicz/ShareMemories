@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script th:src="@{/webjars/jquery/3.6.3/jquery.min.js}"></script>
-    <script th:src="@{/js/jquery.reaction.js}"></script>
+    <script th:src="@{/js/jquery.save.js}"></script>
     <title>ShareMemories</title>
 </head>
 <body>
@@ -12,6 +12,14 @@
         <input type="text" name="image">
         <button type="submit">
             Create
+        </button>
+    </form>
+
+    <form th:action="@{/api/reactions/52}" method="PUT" id="reactionReplaceForm">
+        <input type="text" name="name">
+        <input type="text" name="image">
+        <button type="submit">
+            Update
         </button>
     </form>
 </body>
