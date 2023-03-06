@@ -18,7 +18,7 @@ public class Post {
     private String image;
     private LocalTime creationTime = LocalTime.now();
     private LocalDate creationDate = LocalDate.now();
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.ALL})
     @OrderBy("id ASC")
     private List<ReactionCounter> reactionsCounters = new ArrayList<>();
 
