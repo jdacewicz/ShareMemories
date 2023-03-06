@@ -1,7 +1,7 @@
 $(function () {
-    $("#reactionForm").submit(function (e) {
+    $("#create-post-form").submit(function (e) {
         e.preventDefault();
-        var frm = $("#reactionForm");
+        var frm = $("#create-post-form");
         var data = {};
         $.each(this, function (i, v) {
             var input = $(v);
@@ -10,18 +10,6 @@ $(function () {
         });
         saveRequestedData(frm, data);
     });
-
-    $("#reactionReplaceForm").submit(function (e) {
-        e.preventDefault();
-        var frm = $("#reactionReplaceForm");
-        var data = {};
-        $.each(this, function (i, v) {
-            var input = $(v);
-            data[input.attr("name")] = input.val();
-            delete data["undefined"];
-        });
-        saveRequestedData(frm, data);
-    })
 });
 
 function saveRequestedData(frm, data) {
@@ -32,7 +20,7 @@ function saveRequestedData(frm, data) {
         dataType: "json",
         data: JSON.stringify(data),
         success: function () {
-            alert("Success");
+            location.reload();
         }
     });
 }
