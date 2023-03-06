@@ -7,6 +7,7 @@ import com.sharememories.sharememories.repository.ReactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,5 +37,9 @@ public class PostService {
                 .map(r -> new ReactionCounter(r))
                 .toList());
         return postRepository.save(newPost);
+    }
+
+    public List<Post> getRandomPosts() {
+        return postRepository.getRandomPosts();
     }
 }

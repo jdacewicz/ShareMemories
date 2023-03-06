@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,6 +23,11 @@ public class PostController {
     @GetMapping("/{id}")
     public Optional<Post> get(@PathVariable Long id) {
         return service.getPost(id);
+    }
+
+    @GetMapping("/random")
+    public List<Post> getRandom() {
+        return service.getRandomPosts();
     }
 
     @PostMapping()
