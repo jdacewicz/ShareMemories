@@ -2,25 +2,31 @@
 <html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/webjars/tailwindcss/2.1.2/dist/tailwind.min.css}">
     <script th:src="@{/webjars/jquery/3.6.3/jquery.min.js}"></script>
     <script th:src="@{/js/jquery.save.js}"></script>
+    <script th:src="@{/js/jquery.load.js}"></script>
     <title>ShareMemories</title>
 </head>
-<body>
-    <form th:action="@{/api/reactions}" method="POST" id="reactionForm">
-        <input type="text" name="name">
-        <input type="text" name="image">
-        <button type="submit">
-            Create
-        </button>
-    </form>
-
-    <form th:action="@{/api/reactions/52}" method="PUT" id="reactionReplaceForm">
-        <input type="text" name="name">
-        <input type="text" name="image">
-        <button type="submit">
-            Update
-        </button>
-    </form>
+<body class="bg-gray-100">
+    <div class="fixed max-w-md w-1/5 mb-5 bg-white p-5 shadow h-screen grid grid-flow-row gap-4 rounded-xl">
+        <div class="flex justify-center">
+            <span class="m-auto">ShareMemories</span>
+        </div>
+        <div>
+            <span>User</span>
+        </div>
+        <div>
+            <span>Admin panel</span>
+        </div>
+        <div>
+            <span>Support</span>
+        </div>
+        <div class="flex justify-center p-4">
+            <span class="m-auto">FOOTER - PRIVACY - ADS - COOKIE - MORE - Jakub Dacewicz 2023</span>
+        </div>
+    </div>
+    <div id="posts" class="pt-4 hidden">
+    </div>
 </body>
 </html>
