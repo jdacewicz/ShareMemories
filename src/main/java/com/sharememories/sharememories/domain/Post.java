@@ -1,8 +1,10 @@
 package com.sharememories.sharememories.domain;
 
+import com.sharememories.sharememories.util.TimeUtils;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,12 @@ public class Post {
     private List<ReactionCounter> reactionsCounters = new ArrayList<>();
 
     public Post() {
+    }
+
+    public String getElapsedCreationTimeMessage() {
+        LocalDateTime creationDateTime = LocalDateTime.of(creationDate, creationTime);
+
+        return TimeUtils.getElapsedTimeMessage(creationDateTime, LocalDateTime.now());
     }
 
     public long getId() {
