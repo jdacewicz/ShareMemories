@@ -1,10 +1,4 @@
 $(function () {
-    $("#show-reaction-panel").click(function () {
-        $("#main-content").hide();
-        $("#reaction-panel").show();
-        $("#panels").fadeIn("slow");
-    });
-
     $("#create-post-form").submit(function (e) {
         e.preventDefault();
         var frm = $("#create-post-form");

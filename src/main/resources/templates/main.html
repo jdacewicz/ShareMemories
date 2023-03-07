@@ -58,9 +58,33 @@
             <div id="posts" class="hidden">
             </div>
         </div>
-        <div id="panels" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow hidden">
-            <div id="reaction-panel" class="hidden">
-                <div>
+        <div id="panels" class="hidden">
+            <div id="reactions" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow hidden">
+                <div class="relative overflow-x-auto border-l border-r border-t rounded-lg">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                Image
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Name
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Action
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="reactions-create" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow hidden">
+                <div class="border p-4 rounded-lg">
+                    <span class="block mb-2 text-sm uppercase font-medium text-gray-900 dark:text-white text-center">
+                        Create reaction
+                    </span>
                     <form action="/api/reactions" method="POST" id="create-reaction-form">
                         <div class="mb-6">
                             <label for="reaction-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
