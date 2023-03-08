@@ -9,6 +9,11 @@ $(document).ready(function () {
         $("#reactions-create").show();
         $("#panels").fadeIn("slow");
     });
+
+    $("#reactions").on("click", "button[name='reaction-delete']", function () {
+        var id = $(this).val();
+        deleteReaction(id);
+    });
 });
 
 function loadPosts() {
@@ -33,6 +38,16 @@ function loadReactions() {
            data.forEach(function (reaction) {
                showReaction(reaction);
            });
+       }
+    });
+}
+
+function deleteReaction(id) {
+    $.ajax({
+       type: "DELETE",
+       url: "/api/reactions/" + id,
+       success: function () {
+           alert("Success");
        }
     });
 }
