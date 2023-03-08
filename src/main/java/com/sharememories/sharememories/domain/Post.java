@@ -1,5 +1,6 @@
 package com.sharememories.sharememories.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sharememories.sharememories.util.TimeUtils;
 import jakarta.persistence.*;
 
@@ -20,9 +21,10 @@ public class Post {
     private String image;
     private LocalTime creationTime = LocalTime.now();
     private LocalDate creationDate = LocalDate.now();
-    @OneToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(mappedBy = "posts")
+    @JsonIgnore
     @OrderBy("id ASC")
-    private List<ReactionCounter> reactionsCounters = new ArrayList<>();
+    private List<Reaction> reactions = new ArrayList<>();
 
     public Post() {
     }
@@ -73,11 +75,11 @@ public class Post {
         this.creationDate = creationDate;
     }
 
-    public List<ReactionCounter> getReactionsCounters() {
-        return reactionsCounters;
+    public List<Reaction> getReactions() {
+        return reactions;
     }
 
-    public void setReactionsCounters(List<ReactionCounter> reactionsCounters) {
-        this.reactionsCounters = reactionsCounters;
+    public void setReactions(List<Reaction> reactions) {
+        this.reactions = reactions;
     }
 }

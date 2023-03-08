@@ -1,6 +1,10 @@
 package com.sharememories.sharememories.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "reactions")
@@ -12,8 +16,26 @@ public class Reaction {
     private int id;
     private String name;
     private String image;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @JoinTable(
+            name = "posts_reactions",
+            joinColumns = @JoinColumn(name = "reaction_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
+    private Set<Post> posts = new HashSet<>();
 
     public Reaction() {
+    }
+
+    public void addPost(Post post) {
+        this.posts.add(post);
+        post.getReactions().add(this);
+    }
+
+    public void removePost(Post post) {
+        this.posts.remove(post);
+        post.getReactions().remove(this);
     }
 
     public int getId() {
@@ -38,5 +60,13 @@ public class Reaction {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
     }
 }

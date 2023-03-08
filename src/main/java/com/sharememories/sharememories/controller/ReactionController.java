@@ -1,5 +1,6 @@
 package com.sharememories.sharememories.controller;
 
+import com.sharememories.sharememories.domain.Post;
 import com.sharememories.sharememories.domain.Reaction;
 import com.sharememories.sharememories.service.ReactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +44,10 @@ public class ReactionController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         service.deleteReaction(id);
+    }
+
+    @PutMapping("/{reactionId}/post/{postId}")
+    public void updateReactions(@PathVariable Integer reactionId, @PathVariable Long postId) {
+        service.reactToPost(reactionId, postId);
     }
 }
