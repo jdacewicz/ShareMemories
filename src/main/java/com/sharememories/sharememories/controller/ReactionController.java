@@ -46,7 +46,7 @@ public class ReactionController {
         service.deleteReaction(id);
     }
 
-    @PutMapping("/{reactionId}/post/{postId}")
+    @PutMapping("/{reactionId}/posts/{postId}")
     public void updateReactions(@PathVariable Integer reactionId, @PathVariable Long postId) {
         service.reactToPost(reactionId, postId);
     }

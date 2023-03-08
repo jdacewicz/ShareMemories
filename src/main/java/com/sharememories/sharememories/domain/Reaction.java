@@ -16,7 +16,7 @@ public class Reaction {
     private int id;
     private String name;
     private String image;
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JsonIgnore
     @JoinTable(
             name = "posts_reactions",
