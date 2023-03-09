@@ -2,6 +2,19 @@ $(document).ready(function () {
     loadPosts();
     $("#posts").fadeIn("slow");
 
+    $("input[name='image']").on("change", function () {
+        let file = $("input[name='image']").get(0).files[0];
+
+        if (file) {
+            let reader = new FileReader();
+
+            reader.onload = function () {
+                $("#create-post-image").attr("src", reader.result);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
     $("#show-reaction-panel").click(function () {
         loadReactionPanelData();
         $("#main-content").hide();
@@ -73,7 +86,7 @@ function appendPost(post) {
             '<div class="mt-2">' +
                 '<span>' + post.content + '</span>' +
             '</div>' +
-            '<div name="reactions">' +
+            '<div name="reactions" class="grid grid-flow-col grid-cols-6 mt-2">' +
             '</div>' +
         '</div>'
     );
