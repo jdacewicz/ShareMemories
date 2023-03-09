@@ -7,8 +7,8 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Post {
@@ -27,6 +27,15 @@ public class Post {
     private List<Reaction> reactions = new ArrayList<>();
 
     public Post() {
+    }
+
+    public Post(List<Reaction> reactions) {
+        this.reactions = reactions;
+    }
+
+    public Map<Integer, Long> getReactionsCounts() {
+        return reactions.stream()
+                .collect(Collectors.groupingBy(e -> e.getId(), Collectors.counting()));
     }
 
     public String getElapsedCreationTimeMessage() {

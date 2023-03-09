@@ -28,6 +28,10 @@ public class Reaction {
     public Reaction() {
     }
 
+    public Reaction(int id) {
+        this.id = id;
+    }
+
     public void addPost(Post post) {
         this.posts.add(post);
         post.getReactions().add(this);
