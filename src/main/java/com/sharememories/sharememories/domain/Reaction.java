@@ -3,8 +3,8 @@ package com.sharememories.sharememories.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "reactions")
@@ -23,7 +23,7 @@ public class Reaction {
             joinColumns = @JoinColumn(name = "reaction_id"),
             inverseJoinColumns = @JoinColumn(name = "post_id")
     )
-    private Set<Post> posts = new HashSet<>();
+    private List<Post> posts = new ArrayList<>();
 
     public Reaction() {
     }
@@ -62,11 +62,11 @@ public class Reaction {
         this.image = image;
     }
 
-    public Set<Post> getPosts() {
+    public List<Post> getPosts() {
         return posts;
     }
 
-    public void setPosts(Set<Post> posts) {
+    public void setPosts(List<Post> posts) {
         this.posts = posts;
     }
 }
