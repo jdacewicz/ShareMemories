@@ -32,4 +32,13 @@ public class FileUtils {
         Path filePath = uploadPath.resolve(fileName);
         Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
     }
+
+    public static void deleteFile(String deleteDir, String fileName) throws IOException{
+        Path deletePath = Paths.get(deleteDir);
+
+        if (Files.exists(deletePath)) {
+            Path filePath = deletePath.resolve(fileName);
+            Files.delete(filePath);
+        }
+    }
 }

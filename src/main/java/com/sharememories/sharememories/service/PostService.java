@@ -14,6 +14,7 @@ import java.util.Optional;
 @Service
 public class PostService {
 
+    private static final String UPLOAD_DIR = "uploads/pictures";
     private PostRepository postRepository;
 
     @Autowired
@@ -26,8 +27,18 @@ public class PostService {
     }
 
     public void deletePost(Long id) {
-        postRepository.deleteById(id);
-        postRepository.flush();
+        Optional<Post> foundPost = postRepository.findById(id);
+
+        if (foundPost.isPresent()) {
+            Post post = foundPost.get();
+            try {
+                FileUtils.deleteFile(UPLOAD_DIR, post.getImage());
+                postRepository.delete(post);
+                postRepository.flush();
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
     }
 
     public List<Post> getRandomPosts() {
@@ -36,17 +47,20 @@ public class PostService {
 
     public Post createPost(String content, MultipartFile file) {
         Post postJson = new Post();
-
-        String fileName = FileUtils.generateUniqueName(file.getOriginalFilename());
-        String uploadDir = "uploads/pictures";
-        try {
-            FileUtils.saveFile(uploadDir, fileName, file);
-            postJson.setImage(fileName);
-        } catch (IOException e) {
-            System.out.println(e);
-        }
+        postJson.setImage(uploadImage(file));
         postJson.setContent(content);
 
         return postRepository.save(postJson);
+    }
+
+    public String uploadImage(MultipartFile file) {
+        String fileName = FileUtils.generateUniqueName(file.getOriginalFilename());
+        try {
+            FileUtils.saveFile(UPLOAD_DIR, fileName, file);
+            return fileName;
+        } catch (IOException e) {
+            System.out.println(e);
+            return "";
+        }
     }
 }
