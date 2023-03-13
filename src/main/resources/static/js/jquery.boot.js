@@ -15,6 +15,14 @@ $(document).ready(function () {
         }
     });
 
+    $("#posts").on("click", "button[name='post-delete']", function () {
+        console.log(1);
+        let id = $(this).val();
+        if (confirm('Post ' + id + ' will be removed.')) {
+            deletePost(id);
+        }
+    });
+
     $("#show-reaction-panel").click(function () {
         loadReactionPanelData();
         $("#main-content").hide();
@@ -68,12 +76,22 @@ function loadReactionPanelData() {
     });
 }
 
+function deletePost(id) {
+    $.ajax({
+        type: "DELETE",
+        url: "/api/posts/" + id,
+        success: function () {
+            location.reload();
+        }
+    });
+}
+
 function deleteReaction(id) {
     $.ajax({
        type: "DELETE",
        url: "/api/reactions/" + id,
        success: function () {
-           alert("Success");
+           location.reload();
        }
     });
 }
@@ -82,7 +100,10 @@ function appendPost(post) {
     let index = post.id;
     $("#posts").append(
         '<div name="post[' + index + ']" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
-            '<div class="float-right"><span>' + post.elapsedCreationTimeMessage + '</span></div>' +
+            '<div class="float-right">' +
+                '<span>' + post.elapsedCreationTimeMessage + '</span>' +
+                '<button name="post-delete" value="' +  index + '">Delete</button>' +
+            '</div>' +
             '<div class="mt-2">' +
                 '<span>' + post.content + '</span>' +
             '</div>' +
