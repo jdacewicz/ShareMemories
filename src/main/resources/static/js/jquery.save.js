@@ -1,14 +1,10 @@
 $(function () {
     $("#create-post-form").submit(function (e) {
         e.preventDefault();
-        var frm = $("#create-post-form");
-        var data = {};
-        $.each(this, function (i, v) {
-            var input = $(v);
-            data[input.attr("name")] = input.val();
-            delete data["undefined"];
-        });
-        saveRequestedData(frm, data);
+        let frm = $('#create-post-form');
+        let data = new FormData($('#create-post-form')[0]);
+
+        saveMultipartRequestedData(frm, data)
     });
 
     $("#create-reaction-form").submit(function (e) {
@@ -32,6 +28,20 @@ function saveRequestedData(frm, data) {
         dataType: "json",
         data: JSON.stringify(data),
         success: function () {
+            location.reload();
+        }
+    });
+}
+
+function saveMultipartRequestedData(frm, data) {
+    $.ajax({
+        enctype : 'multipart/form-data',
+        url: frm.attr("action"),
+        type: frm.attr("method"),
+        data : data,
+        processData : false,
+        contentType : false,
+        success : function() {
             location.reload();
         }
     });

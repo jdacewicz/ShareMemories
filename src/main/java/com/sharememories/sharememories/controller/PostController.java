@@ -5,6 +5,7 @@ import com.sharememories.sharememories.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,8 +32,8 @@ public class PostController {
     }
 
     @PostMapping()
-    public Post create(@RequestBody Post newPost) {
-        return service.createPost(newPost);
+    public Post create(@RequestPart("content") String content, @RequestPart("image") MultipartFile file) {
+        return service.createPost(content, file);
     }
 
     @DeleteMapping("/{id}")
