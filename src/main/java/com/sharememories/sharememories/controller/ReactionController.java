@@ -6,6 +6,7 @@ import com.sharememories.sharememories.service.ReactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,13 +33,13 @@ public class ReactionController {
     }
 
     @PostMapping()
-    public Reaction create(@RequestBody Reaction newReaction) {
-        return service.createReaction(newReaction);
+    public Reaction create(@RequestPart("name") String name, @RequestPart("image") MultipartFile file) {
+        return service.createReaction(name, file);
     }
 
     @PutMapping("/{id}")
-    public Reaction replace(@RequestBody Reaction newReaction, @PathVariable Integer id) {
-        return service.replaceReaction(id, newReaction);
+    public Reaction replace(@RequestPart("name") String name, @RequestPart("image") MultipartFile file, @PathVariable Integer id) {
+        return service.replaceReaction(name, file, id);
     }
 
     @DeleteMapping("/{id}")

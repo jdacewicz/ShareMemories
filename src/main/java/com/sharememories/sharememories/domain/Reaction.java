@@ -10,6 +10,8 @@ import java.util.List;
 @Table(name = "reactions")
 public class Reaction {
 
+    @Transient
+    public static final String IMAGES_DIRECTORY_PATH = "uploads/reactions";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "reactionId")
@@ -30,6 +32,12 @@ public class Reaction {
 
     public Reaction(int id) {
         this.id = id;
+    }
+
+    public String getImagePath() {
+        if (image == null) return null;
+
+        return "/" + IMAGES_DIRECTORY_PATH + "/" + image;
     }
 
     public void addPost(Post post) {
