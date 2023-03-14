@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 
 @Entity
 public class Post {
-
+    @Transient
+    public static final String IMAGES_DIRECTORY_PATH = "uploads/pictures";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "postId")
@@ -42,6 +43,12 @@ public class Post {
         LocalDateTime creationDateTime = LocalDateTime.of(creationDate, creationTime);
 
         return TimeUtils.getElapsedTimeMessage(creationDateTime, LocalDateTime.now());
+    }
+
+    public String getImagePath() {
+        if (image == null) return null;
+
+        return "/" + IMAGES_DIRECTORY_PATH + "/" + image;
     }
 
     public long getId() {

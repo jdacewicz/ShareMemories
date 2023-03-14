@@ -13,8 +13,6 @@ import java.util.Optional;
 
 @Service
 public class PostService {
-
-    private static final String UPLOAD_DIR = "uploads/pictures";
     private PostRepository postRepository;
 
     @Autowired
@@ -32,7 +30,7 @@ public class PostService {
         if (foundPost.isPresent()) {
             Post post = foundPost.get();
             try {
-                FileUtils.deleteFile(UPLOAD_DIR, post.getImage());
+                FileUtils.deleteFile(Post.IMAGES_DIRECTORY_PATH,post.getImage());
                 postRepository.delete(post);
                 postRepository.flush();
             } catch (IOException e) {
@@ -56,7 +54,7 @@ public class PostService {
     public String uploadImage(MultipartFile file) {
         String fileName = FileUtils.generateUniqueName(file.getOriginalFilename());
         try {
-            FileUtils.saveFile(UPLOAD_DIR, fileName, file);
+            FileUtils.saveFile(Post.IMAGES_DIRECTORY_PATH, fileName, file);
             return fileName;
         } catch (IOException e) {
             System.out.println(e);
