@@ -26,6 +26,8 @@ public class Post {
     @JsonIgnore
     @OrderBy("id ASC")
     private List<Reaction> reactions = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 
     public Post() {
     }
@@ -97,5 +99,13 @@ public class Post {
 
     public void setReactions(List<Reaction> reactions) {
         this.reactions = reactions;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

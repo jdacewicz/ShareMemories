@@ -40,4 +40,14 @@ public class PostController {
     public void delete(@PathVariable Long id) {
         service.deletePost(id);
     }
+
+    @PutMapping("/{id}/comment")
+    public Optional<Post> createComment(@PathVariable Long id, @RequestPart("content") String content, @RequestPart("image") MultipartFile file) {
+        return service.commentPost(id, content, file);
+    }
+
+    @DeleteMapping("/{postId}/comment/{commentId}")
+    public void deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
+        service.deletePostComment(postId, commentId);
+    }
 }
