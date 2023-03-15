@@ -2,14 +2,27 @@ $(document).ready(function () {
     loadPosts();
     $("#posts").fadeIn("slow");
 
-    $("input[name='image']").on("change", function () {
-        let file = $("input[name='image']").get(0).files[0];
+    $("#create-post-image").on("change", function () {
+        let file = $("#create-post-image").get(0).files[0];
 
         if (file) {
             let reader = new FileReader();
 
             reader.onload = function () {
-                $("#create-post-image").attr("src", reader.result);
+                $("#create-post-image-preview").attr("src", reader.result);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    $("#create-reaction-image").on("change", function () {
+        let file = $("#create-reaction-image").get(0).files[0];
+
+        if (file) {
+            let reader = new FileReader();
+
+            reader.onload = function () {
+                $("#create-reaction-image-preview").attr("src", reader.result);
             }
             reader.readAsDataURL(file);
         }
