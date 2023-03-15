@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 @Table(name = "comments")
 public class Comment {
 
+    @Transient
+    public static final String IMAGES_DIRECTORY_PATH = "uploads/pictures/comments";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "commentId")
