@@ -33,70 +33,54 @@ public class ReactionService {
         return reactionRepository.findAll();
     }
 
-    public void deleteReaction(Integer id) {
-        Optional<Reaction> foundReaction = reactionRepository.findById(id);
+    public Reaction createReaction(String name, MultipartFile file) {
+        Reaction reactionJson = new Reaction();
+        reactionJson.setName(name);
+        try {
+            String fileName = FileUtils.generateUniqueName(file.getOriginalFilename());
+            FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, fileName, file);
+            reactionJson.setImage(fileName);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return reactionRepository.save(reactionJson);
+    }
 
-        if (foundReaction.isPresent()) {
-            Reaction reaction = foundReaction.get();
+    public Reaction replaceReaction(Reaction reaction) {
+        return reactionRepository.findById(reaction.getId())
+                .map(r -> {
+                    r.setName(reaction.getName());
+                    return reactionRepository.save(r);
+                }).orElse(reactionRepository.save(reaction));
+    }
+
+    public Optional<Reaction> replaceReaction(Reaction reaction, MultipartFile file) {
+        return reactionRepository.findById(reaction.getId())
+                .map(r -> {
+                    try {
+                        r.setName(reaction.getName());
+                        String imagePath = (r.getImage().isEmpty()) ? FileUtils.generateUniqueName(file.getOriginalFilename()) : r.getImage();
+
+                        FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, imagePath, file);
+                        return reactionRepository.save(r);
+                    } catch (IOException e) {
+                        return null;
+                    }
+                });
+    }
+
+    public boolean deleteReaction(Integer id) {
+        Optional<Reaction> reaction = reactionRepository.findById(id);
+        if (reaction.isPresent()) {
             try {
-                FileUtils.deleteFile(Reaction.IMAGES_DIRECTORY_PATH, reaction.getImage());
-                reactionRepository.delete(reaction);
-                reactionRepository.flush();
+                if (reaction.get().getImage() != null)
+                    FileUtils.deleteFile(Reaction.IMAGES_DIRECTORY_PATH, reaction.get().getImage());
+                reactionRepository.delete(reaction.get());
+                return true;
             } catch (IOException e) {
                 System.out.println(e);
             }
         }
-    }
-
-    public Reaction replaceReaction(String name, MultipartFile file, Integer id) {
-        return reactionRepository.findById(id).map(reaction -> {
-            reaction.setName(name);
-            replaceFile(reaction.getImage(), file);
-
-            return reactionRepository.save(reaction);
-        }).orElseGet(() -> {
-            Reaction newReaction = new Reaction();
-            newReaction.setName(name);
-            newReaction.setImage(uploadImage(file));
-
-            return reactionRepository.save(newReaction);
-        });
-    }
-
-    public Reaction createReaction(String name, MultipartFile file) {
-        Reaction reactionJson = new Reaction();
-        reactionJson.setName(name);
-        reactionJson.setImage(uploadImage(file));
-
-        return reactionRepository.save(reactionJson);
-    }
-
-    public void reactToPost(Integer reactionId, Long postId) {
-        reactionRepository.findById(reactionId).map(reaction -> {
-            Optional<Post> post = postRepository.findById(postId);
-            if (post.isPresent()) {
-                reaction.addPost(post.get());
-            }
-            return reactionRepository.save(reaction);
-        });
-    }
-
-    public String uploadImage(MultipartFile file) {
-        String fileName = FileUtils.generateUniqueName(file.getOriginalFilename());
-        try {
-            FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, fileName, file);
-            return fileName;
-        } catch (IOException e) {
-            System.out.println(e);
-            return "";
-        }
-    }
-
-    public void replaceFile(String fileName, MultipartFile file) {
-        try {
-            FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, fileName,file);
-        } catch (IOException e) {
-            System.out.println(e);
-        }
+        return false;
     }
 }
