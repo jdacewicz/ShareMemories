@@ -7,7 +7,7 @@ $(function () {
         saveMultipartRequestedData(frm, data)
     });
 
-    $("#create-reaction-form").submit(function (e) {
+    $("#panels").on("submit", "#create-reaction-form", function (e) {
         e.preventDefault();
         let frm = $("#create-reaction-form");
         // var data = {};
@@ -18,6 +18,14 @@ $(function () {
         // });
         // saveRequestedData(frm, data);
         let data = new FormData($('#create-reaction-form')[0]);
+
+        saveMultipartRequestedData(frm, data)
+    });
+
+    $("#panels").on("submit", "#update-reaction-form", function (e) {
+        e.preventDefault();
+        let frm = $("#update-reaction-form");
+        let data = new FormData($('#update-reaction-form')[0]);
 
         saveMultipartRequestedData(frm, data)
     });

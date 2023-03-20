@@ -1,8 +1,6 @@
 package com.sharememories.sharememories.service;
 
-import com.sharememories.sharememories.domain.Post;
 import com.sharememories.sharememories.domain.Reaction;
-import com.sharememories.sharememories.repository.PostRepository;
 import com.sharememories.sharememories.repository.ReactionRepository;
 import com.sharememories.sharememories.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +15,10 @@ import java.util.Optional;
 public class ReactionService {
 
     private ReactionRepository reactionRepository;
-    private PostRepository postRepository;
 
     @Autowired
-    public ReactionService(ReactionRepository reactionRepository, PostRepository postRepository) {
+    public ReactionService(ReactionRepository reactionRepository) {
         this.reactionRepository = reactionRepository;
-        this.postRepository = postRepository;
     }
 
     public Optional<Reaction> getReaction(Integer id) {
