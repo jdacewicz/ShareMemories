@@ -51,7 +51,7 @@ public class ReactionService {
                 .map(r -> {
                     r.setName(reaction.getName());
                     return reactionRepository.save(r);
-                }).orElse(reactionRepository.save(reaction));
+                }).orElseGet(() -> reactionRepository.save(reaction));
     }
 
     public Optional<Reaction> replaceReaction(Reaction reaction, MultipartFile file) {
@@ -59,9 +59,10 @@ public class ReactionService {
                 .map(r -> {
                     try {
                         r.setName(reaction.getName());
-                        String imagePath = (r.getImage().isEmpty()) ? FileUtils.generateUniqueName(file.getOriginalFilename()) : r.getImage();
+                        String imageName = (r.getImage() == null) ? FileUtils.generateUniqueName(file.getOriginalFilename()) : r.getImage();
 
-                        FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, imagePath, file);
+                        FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, imageName, file);
+                        r.setImage(imageName);
                         return reactionRepository.save(r);
                     } catch (IOException e) {
                         return null;
