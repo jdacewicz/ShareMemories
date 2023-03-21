@@ -15,7 +15,7 @@ $(document).ready(function () {
         }
     });
 
-    $("#create-reaction-image").on("change", function () {
+    $("#panels").on("change", "#create-reaction-image",function () {
         let file = $("#create-reaction-image").get(0).files[0];
 
         if (file) {
@@ -154,6 +154,9 @@ function appendPost(post) {
             '<div class="mt-2">' +
                 '<span>' + post.content + '</span>' +
             '</div>' +
+            '<div class="mt-2">' +
+                '<img src="' + post.imagePath + '">' +
+            '</div>' +
             '<div name="reactions" class="grid grid-flow-col grid-cols-6 mt-2">' +
             '</div>' +
         '</div>'
@@ -166,7 +169,7 @@ function appendReaction(reaction) {
         '<div name="reaction[' + index + ']">' +
             '<button type="button" value="' +  index + '">' +
                 '<span></span>' +
-                '<img src="' + reaction.image + '">' +
+                '<img src="' + reaction.imagePath + '">' +
             '</button>' +
         '</div>'
     );
@@ -204,7 +207,7 @@ function appendReactionEditFormToPanel(reaction) {
                 '<span class="block mb-2 text-sm uppercase font-medium text-gray-900 dark:text-white text-center">' +
                     'Edit reaction: ' + reaction.name +
                 '</span>' +
-                '<form action="/api/reactions" method="PUT" encType="multipart/form-data" id="update-reaction-form">' +
+                '<form action="/api/reactions/' + reaction.id + '" method="PUT" encType="multipart/form-data" id="update-reaction-form">' +
                     '<div class="mb-6">' +
                         '<label for="update-reaction-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>' +
                         '<input type="text" value="' + reaction.name + '" id="update-reaction-name" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>' +
@@ -212,7 +215,7 @@ function appendReactionEditFormToPanel(reaction) {
                     '<div class="mb-6">' +
                         '<img id="update-reaction-image-preview" src="">' +
                         '<label for="update-reaction-image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Image</label>' +
-                        '<input type="file" id="update-reaction-image" name="image" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>' +
+                        '<input type="file" id="update-reaction-image" name="image" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">' +
                     '</div>' +
                     '<button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">' +
                         'Edit' +
@@ -230,7 +233,7 @@ function appendReactionCreateFormToPanel() {
                     '<span class="block mb-2 text-sm uppercase font-medium text-gray-900 dark:text-white text-center">' +
                         'Create reaction' +
                     '</span>' +
-                '<form action="/api/reactions" method="POST" encType="multipart/form-data" id="create-reaction-form">' +
+                '<form action="/api/reactions" method="POST" enctype="multipart/form-data" id="create-reaction-form">' +
                     '<div class="mb-6">' +
                         '<label for="reaction-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>' +
                         '<input type="text" id="reaction-name" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="e.g. Love" required>' +
