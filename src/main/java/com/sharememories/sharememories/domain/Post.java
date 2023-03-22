@@ -22,11 +22,22 @@ public class Post {
     private String image;
     private LocalTime creationTime = LocalTime.now();
     private LocalDate creationDate = LocalDate.now();
-    @ManyToMany(mappedBy = "posts")
+    @ManyToMany
     @JsonIgnore
+    @JoinTable(
+            name = "reactions_posts",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "reaction_id")
+    )
     @OrderBy("id ASC")
     private List<Reaction> reactions = new ArrayList<>();
+
     @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "comments_posts",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "comment_id")
+    )
     private List<Comment> comments = new ArrayList<>();
 
     public Post() {
@@ -34,6 +45,26 @@ public class Post {
 
     public Post(List<Reaction> reactions) {
         this.reactions = reactions;
+    }
+
+    public void addReaction(Reaction reaction) {
+        this.reactions.add(reaction);
+        reaction.getPosts().add(this);
+    }
+
+    public void removeReaction(Reaction reaction) {
+        this.reactions.remove(reaction);
+        reaction.getPosts().remove(this);
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        comment.getPosts().add(this);
+    }
+
+    public void removeComment(Comment comment) {
+        this.comments.remove(comment);
+        comment.getPosts().remove(this);
     }
 
     public Map<Integer, Long> getReactionsCounts() {

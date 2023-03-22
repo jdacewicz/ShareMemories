@@ -18,22 +18,12 @@ public class Reaction {
     private int id;
     private String name;
     private String image;
-    @ManyToMany
+    @ManyToMany(mappedBy = "reactions")
     @JsonIgnore
-    @JoinTable(
-            name = "posts_reactions",
-            joinColumns = @JoinColumn(name = "reaction_id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id")
-    )
     private List<Post> posts = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "reactions")
     @JsonIgnore
-    @JoinTable(
-            name = "comments_reactions",
-            joinColumns = @JoinColumn(name = "reaction_id"),
-            inverseJoinColumns = @JoinColumn(name = "comment_id")
-    )
     private List<Comment> comments = new ArrayList<>();
 
     public Reaction() {
@@ -52,26 +42,6 @@ public class Reaction {
         if (image == null) return null;
 
         return "/" + IMAGES_DIRECTORY_PATH + "/" + image;
-    }
-
-    public void addPost(Post post) {
-        this.posts.add(post);
-        post.getReactions().add(this);
-    }
-
-    public void removePost(Post post) {
-        this.posts.remove(post);
-        post.getReactions().remove(this);
-    }
-
-    public void addComment(Comment comment) {
-        this.comments.add(comment);
-        comment.getReactions().add(this);
-    }
-
-    public void removeComment(Comment comment) {
-        this.comments.remove(comment);
-        comment.getReactions().remove(this);
     }
 
     public int getId() {
@@ -104,5 +74,13 @@ public class Reaction {
 
     public void setPosts(List<Post> posts) {
         this.posts = posts;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }
