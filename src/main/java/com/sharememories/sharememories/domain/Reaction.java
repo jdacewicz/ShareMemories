@@ -26,6 +26,12 @@ public class Reaction {
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
 
+    @PreRemove
+    private void removeReactionFromRelatedEntities() {
+        posts.remove(this);
+        comments.remove(this);
+    }
+
     public Reaction() {
     }
 
@@ -33,10 +39,16 @@ public class Reaction {
         this.id = id;
     }
 
-    public Reaction(int id, String name) {
-        this.id = id;
+    public Reaction(String name) {
         this.name = name;
     }
+
+
+    public Reaction(String name, String image) {
+        this.name = name;
+        this.image = image;
+    }
+
 
     public String getImagePath() {
         if (image == null) return null;
