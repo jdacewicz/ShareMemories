@@ -145,6 +145,7 @@ function deleteReaction(id) {
 
 function appendPost(post) {
     let index = post.id;
+    let imagePath = (post.imagePath == null) ? "" : post.imagePath;
     $("#posts").append(
         '<div name="post[' + index + ']" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
             '<div class="float-right">' +
@@ -155,7 +156,7 @@ function appendPost(post) {
                 '<span>' + post.content + '</span>' +
             '</div>' +
             '<div class="mt-2">' +
-                '<img src="' + post.imagePath + '">' +
+                '<img src="' + imagePath + '">' +
             '</div>' +
             '<div name="reactions" class="grid grid-flow-col grid-cols-6 mt-2">' +
             '</div>' +
