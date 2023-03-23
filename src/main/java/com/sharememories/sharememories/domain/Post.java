@@ -47,6 +47,15 @@ public class Post {
         this.reactions = reactions;
     }
 
+    public Post(String content) {
+        this.content = content;
+    }
+
+    public Post(String content, String image) {
+        this.content = content;
+        this.image = image;
+    }
+
     public void addReaction(Reaction reaction) {
         this.reactions.add(reaction);
         reaction.getPosts().add(this);
