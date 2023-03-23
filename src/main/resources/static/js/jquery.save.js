@@ -29,20 +29,29 @@ $(function () {
 
         saveMultipartRequestedData(frm, data)
     });
+
+    $("#posts").on("click", "div[name='reactions'] button", function (e) {
+        e.preventDefault();
+        let postDiv = $(this).closest("div[name^='post']").attr("name");
+        let postId = postDiv.substring(postDiv.indexOf("[") + 1, postDiv.indexOf("]"));
+        let reactionId = $(this).val();
+
+        let url = "/api/posts/" + postId + "/react/" + reactionId;
+        saveRequestedData(url, "PUT");
+    })
 });
 
-// function saveRequestedData(frm, data) {
-//     $.ajax({
-//         contentType: "application/json; charset=utf-8",
-//         url: frm.attr("action"),
-//         type: frm.attr("method"),
-//         dataType: "json",
-//         data: JSON.stringify(data),
-//         success: function () {
-//             location.reload();
-//         }
-//     });
-// }
+function saveRequestedData(action, method) {
+    $.ajax({
+        contentType: "application/json; charset=utf-8",
+        url: action,
+        type: method,
+        dataType: "json",
+        success: function () {
+            location.reload();
+        }
+    });
+}
 
 function saveMultipartRequestedData(frm, data) {
     $.ajax({
