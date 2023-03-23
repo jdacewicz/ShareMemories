@@ -68,14 +68,14 @@ public class ReactionController {
     @PutMapping("/{id}")
     public ResponseEntity<?> replaceReaction(@PathVariable(value = "id") int id,
                                              @RequestPart(value = "name") String name,
-                                             @RequestPart(value = "imageName", required = false) String imageName,
                                              @RequestPart(value = "image", required = false) MultipartFile file) {
         Reaction reaction;
         if (!file.isEmpty()) {
-            String fileName = (!imageName.isEmpty()) ?
-                    imageName : FileUtils.generateUniqueName(file.getOriginalFilename());
+            Optional<String> reactionImageName = service.getReactionImageName(id);
+            String fileName = (reactionImageName.isPresent()) ?
+                    reactionImageName.get() : FileUtils.generateUniqueName(file.getOriginalFilename());
             try {
-                FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, fileName, file);
+                    FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, fileName, file);
             } catch (IOException e) {
                 Map<String, Object> map = new LinkedHashMap<>();
                 map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -91,15 +91,18 @@ public class ReactionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteReaction(@PathVariable("id") Integer id) {
-//        Optional<Reaction> reaction = service.deleteReaction(id);
-//        if (!reaction.isPresent()) {
-//            return ResponseEntity.ok().build();
-//        } else {
-//            Map<String, Object> map = new LinkedHashMap<>();
-//            map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-//            map.put("message", "Error while deleting Reaction.");
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
-//        }
+        Optional<String> reactionImageName = service.getReactionImageName(id);
+        if (reactionImageName.isPresent()) {
+            try {
+                FileUtils.deleteFile(Reaction.IMAGES_DIRECTORY_PATH, reactionImageName.get());
+            } catch (IOException e) {
+                Map<String, Object> map = new LinkedHashMap<>();
+                map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+                map.put("message", "Error while deleting Reaction image.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+            }
+        }
+        service.deleteReaction(id);
         return ResponseEntity.ok().build();
     }
 }
