@@ -36,6 +36,15 @@ public class Comment {
     public Comment() {
     }
 
+    public Comment(String content) {
+        this.content = content;
+    }
+
+    public Comment(String content, String image) {
+        this.content = content;
+        this.image = image;
+    }
+
     public void addReaction(Reaction reaction) {
         this.reactions.add(reaction);
         reaction.getComments().add(this);
