@@ -70,7 +70,15 @@ $(document).ready(function () {
 
         let id = $(this).val();
         loadReactionDetails(id);
-    })
+    });
+
+    $("#posts").on("mouseover", "div[name^='comment[']", function () {
+        $(this).children("div[name='comment-reactions']").fadeIn("fast");
+    });
+
+    $("#posts").on("mouseleave", "div[name^='comment[']", function () {
+        $(this).children("div[name='comment-reactions']").fadeOut("fast");
+    });
 });
 
 function loadPosts() {
@@ -178,7 +186,7 @@ function appendReaction(reaction) {
     $("div[name$='reactions']").append(
         '<div name="reaction[' + index + ']">' +
             '<button type="button" value="' +  index + '">' +
-                '<img src="' + reaction.imagePath + '">' +
+                '<img class="w-12" src="' + reaction.imagePath + '">' +
                 '<span></span>' +
             '</button>' +
         '</div>'
@@ -205,7 +213,7 @@ function appendComment(postId, comment) {
         '<div class="mt-2" name="comment[' + index + ']">' +
             '<span>' + comment.content + '</span>' +
             image +
-            '<div name="comment-reactions" class="grid grid-flow-col grid-cols-10 mt-2">' +
+            '<div name="comment-reactions" class="grid grid-flow-col grid-cols-10 mt-2 hidden">' +
             '</div>' +
         '</div>'
     );
