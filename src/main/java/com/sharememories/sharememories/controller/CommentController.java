@@ -1,7 +1,6 @@
 package com.sharememories.sharememories.controller;
 
 import com.sharememories.sharememories.domain.Comment;
-import com.sharememories.sharememories.domain.Post;
 import com.sharememories.sharememories.service.CommentService;
 import com.sharememories.sharememories.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,5 +54,18 @@ public class CommentController {
         }
         service.deletePostComment(postId, commentId);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{commentId}/react/{reactionId}")
+    public ResponseEntity<?> reactToComment(@PathVariable int reactionId,
+                                         @PathVariable long commentId) {
+        Optional<Comment> comment = service.reactToComment(reactionId, commentId);
+        if (!comment.isPresent()) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("status", HttpStatus.NOT_FOUND.value());
+            map.put("message", "Could not find referenced Comment or Reaction.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+        }
+        return ResponseEntity.ok(comment);
     }
 }
