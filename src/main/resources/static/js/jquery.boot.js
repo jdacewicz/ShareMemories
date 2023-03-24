@@ -148,7 +148,11 @@ function deleteReaction(id) {
 
 function appendPost(post) {
     let index = post.id;
-    let imagePath = (post.imagePath == null) ? "" : post.imagePath;
+    let image = (post.imagePath == null) ? "":
+        '<div class="mt-2">' +
+            '<img src="' + post.imagePath + '">' +
+        '</div>';
+
     $("#posts").append(
         '<div name="post[' + index + ']" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
             '<div class="float-right">' +
@@ -158,12 +162,10 @@ function appendPost(post) {
             '<div class="mt-2">' +
                 '<span>' + post.content + '</span>' +
             '</div>' +
-            '<div class="mt-2">' +
-                '<img src="' + imagePath + '">' +
+            image +
+            '<div name="reactions" class="grid grid-flow-col grid-cols-10 mt-2">' +
             '</div>' +
-            '<div name="reactions" class="grid grid-flow-col grid-cols-6 mt-2">' +
-            '</div>' +
-            '<div name="comments" class="mt-2">' +
+            '<div name="comments" class="border-t-2 mt-2">' +
             '</div>' +
         '</div>'
     );
@@ -190,11 +192,11 @@ function setPostReactionCount(post) {
 
 function appendComment(postId, comment) {
     let index = comment.id;
-    let imagePath = (comment.imagePath == null) ? "" : comment.imagePath;
+    let image = (comment.imagePath == null) ? "" : '<img class="h-1/5 w-1/5" src="' + comment.imagePath + '">';
     $("div[name='post[" + postId + "]'] div[name='comments']").append(
         '<div name="comment[' + index + ']">' +
             '<span>' + comment.content + '</span>' +
-            '<img src="' + imagePath + '"' +
+            image +
         '</div>'
     );
 }

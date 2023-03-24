@@ -60,6 +60,12 @@ public class Comment {
                 .collect(Collectors.groupingBy(e -> e.getId(), Collectors.counting()));
     }
 
+    public String getImagePath() {
+        if (image == null) return null;
+
+        return "/" + IMAGES_DIRECTORY_PATH + "/" + image;
+    }
+
     public long getId() {
         return id;
     }
