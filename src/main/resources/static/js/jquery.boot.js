@@ -165,7 +165,7 @@ function appendPost(post) {
                 '<span>' + post.content + '</span>' +
             '</div>' +
             image +
-            '<div name="reactions" class="grid grid-flow-col grid-cols-10 mt-2">' +
+            '<div name="post-reactions" class="grid grid-flow-col grid-cols-10 mt-2">' +
             '</div>' +
             '<div name="comments" class="border-t-2 mt-2">' +
             '</div>' +
@@ -175,7 +175,7 @@ function appendPost(post) {
 
 function appendReaction(reaction) {
     let index = reaction.id;
-    $("div[name='reactions']").append(
+    $("div[name$='reactions']").append(
         '<div name="reaction[' + index + ']">' +
             '<button type="button" value="' +  index + '">' +
                 '<img src="' + reaction.imagePath + '">' +
@@ -187,18 +187,26 @@ function appendReaction(reaction) {
 
 function setPostReactionCount(post) {
     let index = post.id;
-    $.each(post.reactionsCounts ,function (key, value) {
-        $("div[name='post[" + index + "]'] div[name='reactions'] div[name='reaction[" + key + "]'] span").text(value);
+    $.each(post.reactionsCounts, function (key, value) {
+        $("div[name='post[" + index + "]'] div[name='post-reactions'] div[name='reaction[" + key + "]'] span").text(value);
     });
+    post.comments.forEach(function (comment) {
+        $.each(comment.reactionsCounts, function (key, value) {
+            $("div[name='post[" + index + "]'] div[name='comment[" + comment.id + "]'] div[name='reaction[" + key + "]'] span").text(value);
+        });
+    });
+
 }
 
 function appendComment(postId, comment) {
     let index = comment.id;
     let image = (comment.imagePath == null) ? "" : '<img class="h-1/5 w-1/5" src="' + comment.imagePath + '">';
     $("div[name='post[" + postId + "]'] div[name='comments']").append(
-        '<div name="comment[' + index + ']">' +
+        '<div class="mt-2" name="comment[' + index + ']">' +
             '<span>' + comment.content + '</span>' +
             image +
+            '<div name="comment-reactions" class="grid grid-flow-col grid-cols-10 mt-2">' +
+            '</div>' +
         '</div>'
     );
 }
@@ -213,7 +221,6 @@ function appendReactionDataToPanel(reaction) {
                 '<button type="button" value="' + index + '" name="reaction-edit">' +
                     '<img class="w-12" src="/icons/edit-icon.svg">' +
                 '</button>' +
-                ' ' +
                 '<button type="button" value="' + index + '" name="reaction-delete">' +
                     '<img class="w-12" src="/icons/delete-icon.svg">' +
                 '</button>' +
