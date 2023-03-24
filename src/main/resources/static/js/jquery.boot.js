@@ -176,8 +176,8 @@ function appendReaction(reaction) {
     $("div[name='reactions']").append(
         '<div name="reaction[' + index + ']">' +
             '<button type="button" value="' +  index + '">' +
-                '<span></span>' +
                 '<img src="' + reaction.imagePath + '">' +
+                '<span></span>' +
             '</button>' +
         '</div>'
     );
@@ -205,9 +205,9 @@ function appendReactionDataToPanel(reaction) {
     let index = reaction.id;
     $("#reactions tbody").append(
         '<tr name="reaction[' + index + ']" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">' +
-            '<th scope="row" class="px-6 py-4">' + reaction.image + '</th>' +
-            '<td class="px-6 py-4">' + reaction.name + '</td>' +
-            '<td class="px-6 py-4">' +
+            '<th scope="row" class="px-8 py-4"><img src="' + reaction.imagePath + '"></th>' +
+            '<td class="px-4 py-4">' + reaction.name + '</td>' +
+            '<td class="px-4 py-4">' +
                 '<button type="button" value="' + index + '" name="reaction-edit">EDIT</button>' +
                 ' ' +
                 '<button type="button" value="' + index + '" name="reaction-delete">DELETE</button>' +
