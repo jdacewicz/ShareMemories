@@ -157,7 +157,9 @@ function appendPost(post) {
         '<div name="post[' + index + ']" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
             '<div class="float-right">' +
                 '<span>' + post.elapsedCreationTimeMessage + '</span>' +
-                '<button name="post-delete" value="' +  index + '">Delete</button>' +
+                '<button name="post-delete" value="' +  index + '">' +
+                    '<img class="w-8" src="/icons/delete-icon.svg">' +
+                '</button>' +
             '</div>' +
             '<div class="mt-2">' +
                 '<span>' + post.content + '</span>' +
@@ -205,12 +207,16 @@ function appendReactionDataToPanel(reaction) {
     let index = reaction.id;
     $("#reactions tbody").append(
         '<tr name="reaction[' + index + ']" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">' +
-            '<th scope="row" class="px-8 py-4"><img src="' + reaction.imagePath + '"></th>' +
+            '<th scope="row" class="px-4 py-4"><img class="w-14" src="' + reaction.imagePath + '"></th>' +
             '<td class="px-4 py-4">' + reaction.name + '</td>' +
             '<td class="px-4 py-4">' +
-                '<button type="button" value="' + index + '" name="reaction-edit">EDIT</button>' +
+                '<button type="button" value="' + index + '" name="reaction-edit">' +
+                    '<img class="w-12" src="/icons/edit-icon.svg">' +
+                '</button>' +
                 ' ' +
-                '<button type="button" value="' + index + '" name="reaction-delete">DELETE</button>' +
+                '<button type="button" value="' + index + '" name="reaction-delete">' +
+                    '<img class="w-12" src="/icons/delete-icon.svg">' +
+                '</button>' +
             '</td>' +
         '</tr>'
     )
