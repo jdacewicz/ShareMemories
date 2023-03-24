@@ -30,13 +30,23 @@ $(function () {
         saveMultipartRequestedData(frm, data)
     });
 
-    $("#posts").on("click", "div[name='reactions'] button", function (e) {
+    $("#posts").on("click", "div[name='post-reactions'] button", function (e) {
         e.preventDefault();
-        let postDiv = $(this).closest("div[name^='post']").attr("name");
+        let postDiv = $(this).closest("div[name^='post[']").attr("name");
         let postId = postDiv.substring(postDiv.indexOf("[") + 1, postDiv.indexOf("]"));
         let reactionId = $(this).val();
 
         let url = "/api/posts/" + postId + "/react/" + reactionId;
+        saveRequestedData(url, "PUT");
+    })
+
+    $("#posts").on("click", "div[name='comment-reactions'] button", function (e) {
+        e.preventDefault();
+        let commentDiv = $(this).closest("div[name^='comment[']").attr("name");
+        let commentId = commentDiv.substring(commentDiv.indexOf("[") + 1, commentDiv.indexOf("]"));
+        let reactionId = $(this).val();
+
+        let url = "/api/comments/" + commentId + "/react/" + reactionId;
         saveRequestedData(url, "PUT");
     })
 });
