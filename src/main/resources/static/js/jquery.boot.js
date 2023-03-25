@@ -73,11 +73,12 @@ $(document).ready(function () {
     });
 
     $("#posts").on("mouseover", "div[name^='comment[']", function () {
-        $(this).children("div[name='comment-reactions']").fadeIn("fast");
+        $(this).children().children().fadeIn("fast");
     });
 
     $("#posts").on("mouseleave", "div[name^='comment[']", function () {
-        $(this).children("div[name='comment-reactions']").fadeOut("fast");
+        //$(this).children().children().children("span:empty").fadeOut("fast");
+        $(this).find("div[name^='reaction'] span:empty").parent().fadeOut("fast");
     });
 });
 
@@ -104,6 +105,8 @@ function loadPosts() {
                    posts.forEach(function (post) {
                        setPostReactionCount(post);
                    });
+
+                   $("div[name='post-reactions']").children().show();
                }
            });
        }
@@ -184,10 +187,10 @@ function appendPost(post) {
 function appendReaction(reaction) {
     let index = reaction.id;
     $("div[name$='reactions']").append(
-        '<div name="reaction[' + index + ']">' +
+        '<div class="inline-block hidden" name="reaction[' + index + ']">' +
+            '<span class="float-left"></span>' +
             '<button type="button" value="' +  index + '">' +
-                '<img class="w-12" src="' + reaction.imagePath + '">' +
-                '<span></span>' +
+                '<img class="float-right w-12" src="' + reaction.imagePath + '">' +
             '</button>' +
         '</div>'
     );
@@ -201,6 +204,7 @@ function setPostReactionCount(post) {
     post.comments.forEach(function (comment) {
         $.each(comment.reactionsCounts, function (key, value) {
             $("div[name='post[" + index + "]'] div[name='comment[" + comment.id + "]'] div[name='reaction[" + key + "]'] span").text(value);
+            $("div[name='post[" + index + "]'] div[name='comment[" + comment.id + "]'] div[name='reaction[" + key + "]']").show();
         });
     });
 
@@ -213,7 +217,7 @@ function appendComment(postId, comment) {
         '<div class="mt-2" name="comment[' + index + ']">' +
             '<span>' + comment.content + '</span>' +
             image +
-            '<div name="comment-reactions" class="grid grid-flow-col grid-cols-10 mt-2 hidden">' +
+            '<div name="comment-reactions" class="grid grid-flow-col grid-cols-10 mt-2">' +
             '</div>' +
         '</div>'
     );
@@ -291,4 +295,3 @@ function appendReactionEditFormToPanel(reaction) {
         '</div>'
     );
 }
-
