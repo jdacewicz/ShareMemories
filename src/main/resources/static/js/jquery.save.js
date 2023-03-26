@@ -7,16 +7,17 @@ $(function () {
         saveMultipartRequestedData(frm, data)
     });
 
+    $("#posts").on("submit", "form[name='create-comment-form']", function (e) {
+        e.preventDefault();
+        let frm = $("form[name='create-comment-form']");
+        let data = new FormData($("form[name='create-comment-form']")[0]);
+
+        saveMultipartRequestedData(frm, data);
+    })
+
     $("#panels").on("submit", "#create-reaction-form", function (e) {
         e.preventDefault();
         let frm = $("#create-reaction-form");
-        // var data = {};
-        // $.each(this, function (i, v) {
-        //     var input = $(v);
-        //     data[input.attr("name")] = input.val();
-        //     delete data["undefined"];
-        // });
-        // saveRequestedData(frm, data);
         let data = new FormData($('#create-reaction-form')[0]);
 
         saveMultipartRequestedData(frm, data)

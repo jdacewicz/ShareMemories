@@ -180,6 +180,25 @@ function appendPost(post) {
             '</div>' +
             '<div name="comments" class="border-t-2 mt-2">' +
             '</div>' +
+            '<div class="mt-2">' +
+                '<form action="/api/posts/' + index +'/comment" method="PUT" enctype="multipart/form-data" name="create-comment-form">' +
+                        '<div class="w-full border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">' +
+                            '<div class="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">' +
+                                '<textarea name="content" rows="2" class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Write something..." required></textarea>' +
+                                '<img src="">' +
+                            '</div>' +
+                            '<div class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">' +
+                                '<div class="flex pl-0 space-x-1 sm:pl-2">' +
+                                    '<input name="image" type="file" class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">' +
+                                '</div>' +
+                                '<button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">' +
+                                    'Public' +
+                                '</button>' +
+                            '</div>' +
+                        '</div>' +
+                    '</button>' +
+                '</form>' +
+             '</div>' +
         '</div>'
     );
 }
@@ -214,7 +233,7 @@ function appendComment(postId, comment) {
     let index = comment.id;
     let image = (comment.imagePath == null) ? "" : '<img class="h-1/5 w-1/5" src="' + comment.imagePath + '">';
     $("div[name='post[" + postId + "]'] div[name='comments']").append(
-        '<div class="mt-2" name="comment[' + index + ']">' +
+        '<div class="border rounded-md mt-2" name="comment[' + index + ']">' +
             '<span>' + comment.content + '</span>' +
             image +
             '<div name="comment-reactions" class="grid grid-flow-col grid-cols-10 mt-2">' +
