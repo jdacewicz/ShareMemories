@@ -49,6 +49,11 @@ public class Reaction {
         this.image = image;
     }
 
+    public Reaction(int id, String name, String image) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+    }
 
     public String getImagePath() {
         if (image == null) return null;
