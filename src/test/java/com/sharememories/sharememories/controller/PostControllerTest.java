@@ -216,7 +216,7 @@ class PostControllerTest {
     }
 
     @Test
-    void Given_Id_When_DeletingPostWithNoImageByIdByAPI_Then_ReturnedResponseOk() {
+    void Given_Id_When_DeletingPostWithoutImageByIdByAPI_Then_ReturnedResponseOk() {
         //Given
         long id = 1;
         //When

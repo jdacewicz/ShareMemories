@@ -177,7 +177,7 @@ class ReactionControllerTest {
     }
 
     @Test
-    void Given_Id_When_DeletingReactionWithNoImageByAPI_Then_ReturnedResponseOk() {
+    void Given_Id_When_DeletingReactionWithoutImageByAPI_Then_ReturnedResponseOk() {
         //Given
         int id = 1;
         //When

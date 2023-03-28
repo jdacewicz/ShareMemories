@@ -26,7 +26,7 @@ public class CommentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> get(@PathVariable Long id) {
+    public ResponseEntity<?> getComment(@PathVariable Long id) {
         Optional<Comment> comment = service.getComment(id);
         if (comment.isPresent()) {
             return ResponseEntity.ok(comment.get());
