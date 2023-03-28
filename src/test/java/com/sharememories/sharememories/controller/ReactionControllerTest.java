@@ -68,7 +68,7 @@ class ReactionControllerTest {
     }
 
     @Test
-    void Given_ReactionWithId1_When_GettingReactionById1ByAPI_Then_ReturnedResponseOkWithReaction() {
+    void Given_Reaction_When_GettingReactionByExistingIdByAPI_Then_ReturnedResponseOkWithReaction() {
         //Given
         Reaction reaction = new Reaction(1);
         //When
@@ -80,10 +80,11 @@ class ReactionControllerTest {
     }
 
     @Test
-    void Given_NoReactions_When_GettingReactionById1ByAPI_Then_ReturnedResponseNotFound() {
+    void Given_Id_When_GettingReactionByNonExistingIdByAPI_Then_ReturnedResponseNotFound() {
         //Given
+        int id = 1;
         //When
-        ResponseEntity response = controller.getReaction(1);
+        ResponseEntity response = controller.getReaction(id);
         //Then
         assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build().getStatusCode(), response.getStatusCode());
     }
@@ -108,7 +109,6 @@ class ReactionControllerTest {
         //Given
         String name = "name";
         MockMultipartFile file = new MockMultipartFile("image.png", "test".getBytes());
-        Reaction reaction = new Reaction(name, file.getOriginalFilename());
         //When
         fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
         fileUtils.when(() -> FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, file.getOriginalFilename(), file)).thenThrow(IOException.class);
@@ -119,18 +119,85 @@ class ReactionControllerTest {
     }
 
     @Test
-    void Given_NameAndId_When_ReplacingReactionByIdByAPI_Then_ReturnedResponseOkWithReaction() {
+    void Given_NameAndId_When_ReplacingReactionByAPI_Then_ReturnedResponseOkWithReaction() {
         //Given
+        int id = 1;
         String name = "name";
         MockMultipartFile file = new MockMultipartFile("name", null, null, new byte[0]);
-        Reaction reaction = new Reaction(1, name, "image.png");
+
+        Reaction reaction = new Reaction(id, name, "image.png");
         //When
         Mockito.when(service.replaceReaction(any(Integer.class), any(Reaction.class))).thenReturn(reaction);
 
-        ResponseEntity response = controller.replaceReaction(1, name, file);
+        ResponseEntity response = controller.replaceReaction(id, name, file);
         //Then
         assertEquals(ResponseEntity.ok(reaction), response);
     }
 
+    @Test
+    void Given_NameAndFileAndId_When_ReplacingReactionByAPI_Then_ReturnedResponseOkWithReaction() {
+        //Given
+        int id = 1;
+        String name = "name";
+        MockMultipartFile file = new MockMultipartFile("image2.png", "content".getBytes());
 
+        Reaction reaction = new Reaction(id, name, file.getOriginalFilename());
+        //When
+        fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
+        Mockito.when(service.replaceReaction(any(Integer.class), any(Reaction.class))).thenReturn(reaction);
+
+        ResponseEntity response = controller.replaceReaction(id, name, file);
+        //Then
+        assertEquals(ResponseEntity.ok(reaction), response);
+    }
+
+    @Test
+    void Given_NameAndFileAndId_When_ErrorWhileReplacingReactionByAPI_Then_ReturnedResponseInternalServerError() {
+        //Given
+        int id = 1;
+        String name = "name";
+        MockMultipartFile file = new MockMultipartFile("image2.png", "content".getBytes());
+        //When
+        fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
+        fileUtils.when(() -> FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, file.getOriginalFilename(), file)).thenThrow(IOException.class);
+
+        ResponseEntity response = controller.replaceReaction(id, name, file);
+        //Then
+        assertEquals(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().getStatusCode(), response.getStatusCode());
+    }
+
+    @Test
+    void Given_Id_When_DeletingReactionWithExistingImageByAPI_Then_ReturnedResponseOk() {
+        //Given
+        int id = 1;
+        //When
+        Mockito.when(service.getReactionImageName(id)).thenReturn(Optional.of("image.png"));
+
+        ResponseEntity response = controller.deleteReaction(id);
+        //Then
+        assertEquals(ResponseEntity.ok().build(), response);
+    }
+
+    @Test
+    void Given_Id_When_DeletingReactionWithNonExistingImageByAPI_Then_ReturnedResponseOk() {
+        //Given
+        int id = 1;
+        //When
+        ResponseEntity response = controller.deleteReaction(id);
+        //Then
+        assertEquals(ResponseEntity.ok().build(), response);
+    }
+
+    @Test
+    void Given_Id_When_ErrorWhileDeletingReactionWithExistingImageByAPI_Then_ReturnedResponseInternalServerError() {
+        //Given
+        int id = 1;
+        //When
+        Mockito.when(service.getReactionImageName(id)).thenReturn(Optional.of("image.png"));
+        fileUtils.when(() -> FileUtils.deleteFile(any(String.class), any(String.class))).thenThrow(IOException.class);
+
+        ResponseEntity response = controller.deleteReaction(id);
+        //Then
+        assertEquals(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().getStatusCode(), response.getStatusCode());
+    }
 }
