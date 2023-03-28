@@ -2,7 +2,6 @@ package com.sharememories.sharememories.controller;
 
 import com.sharememories.sharememories.domain.Comment;
 import com.sharememories.sharememories.domain.Post;
-import com.sharememories.sharememories.service.CommentService;
 import com.sharememories.sharememories.service.PostService;
 import com.sharememories.sharememories.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
