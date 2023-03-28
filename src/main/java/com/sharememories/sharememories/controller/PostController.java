@@ -97,7 +97,7 @@ public class PostController {
             map.put("message", "Could not find referenced Post.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
         }
-        return ResponseEntity.ok(post);
+        return ResponseEntity.ok(post.get());
     }
 
     @PutMapping("/{postId}/react/{reactionId}")
@@ -110,7 +110,7 @@ public class PostController {
             map.put("message", "Could not find referenced Post or Reaction.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
         }
-        return ResponseEntity.ok(post);
+        return ResponseEntity.ok(post.get());
     }
 
     @DeleteMapping("/{id}")
