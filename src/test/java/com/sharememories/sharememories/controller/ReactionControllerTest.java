@@ -43,12 +43,11 @@ class ReactionControllerTest {
     }
 
     @Test
-    void Given_ReactionsList_When_GettingAllReactionsByAPI_Then_ReturnedResponseOKWithReactionsList() {
+    void Given__When_GettingAllReactionsByAPIReturnsReactions_Then_ReturnedResponseOKWithReactionsList() {
         //Given
-        Reaction reaction1 = new Reaction(1);
-        Reaction reaction2 = new Reaction(2);
-        List<Reaction> reactions = List.of(reaction1, reaction2);
         //When
+        Reaction reaction = new Reaction();
+        List<Reaction> reactions = List.of(reaction);
         Mockito.when(service.getAllReactions()).thenReturn(reactions);
 
         ResponseEntity response = controller.getAllReactions();
@@ -57,7 +56,7 @@ class ReactionControllerTest {
     }
 
     @Test
-    void Given_NoReactions_When_GettingAllReactionsByAPI_Then_ReturnedResponseNoContent(){
+    void Given__When_GettingAllReactionsByAPIReturnsNoReactions_Then_ReturnedResponseNoContent(){
         //Given
         //When
         Mockito.when(service.getAllReactions()).thenReturn(List.of());
@@ -68,19 +67,20 @@ class ReactionControllerTest {
     }
 
     @Test
-    void Given_Reaction_When_GettingReactionByExistingIdByAPI_Then_ReturnedResponseOkWithReaction() {
+    void Given_Id_When_GettingReactionByIdByAPI_Then_ReturnedResponseOkWithReaction() {
         //Given
-        Reaction reaction = new Reaction(1);
+        int id = 1;
         //When
-        Mockito.when(service.getReaction(1)).thenReturn(Optional.of(reaction));
+        Reaction reaction = new Reaction();
+        Mockito.when(service.getReaction(id)).thenReturn(Optional.of(reaction));
 
-        ResponseEntity response = controller.getReaction(1);
+        ResponseEntity response = controller.getReaction(id);
         //Then
         assertEquals(ResponseEntity.ok(reaction), response);
     }
 
     @Test
-    void Given_Id_When_GettingReactionByNonExistingIdByAPI_Then_ReturnedResponseNotFound() {
+    void Given_Id_When_GettingReactionByWrongIdByAPI_Then_ReturnedResponseNotFound() {
         //Given
         int id = 1;
         //When
@@ -94,8 +94,8 @@ class ReactionControllerTest {
         //Given
         String name = "name";
         MockMultipartFile file = new MockMultipartFile("image.png", "test".getBytes());
-        Reaction reaction = new Reaction(name, file.getOriginalFilename());
         //When
+        Reaction reaction = new Reaction(name, file.getOriginalFilename());
         fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
         Mockito.when(service.createReaction(any(Reaction.class))).thenReturn(reaction);
 
@@ -119,14 +119,13 @@ class ReactionControllerTest {
     }
 
     @Test
-    void Given_NameAndId_When_ReplacingReactionByAPI_Then_ReturnedResponseOkWithReaction() {
+    void Given_NameAndId_When_ReplacingReactionByIdByAPI_Then_ReturnedResponseOkWithReaction() {
         //Given
         int id = 1;
         String name = "name";
         MockMultipartFile file = new MockMultipartFile("name", null, null, new byte[0]);
-
-        Reaction reaction = new Reaction(id, name, "image.png");
         //When
+        Reaction reaction = new Reaction(id, name, "image.png");
         Mockito.when(service.replaceReaction(any(Integer.class), any(Reaction.class))).thenReturn(reaction);
 
         ResponseEntity response = controller.replaceReaction(id, name, file);
@@ -135,14 +134,13 @@ class ReactionControllerTest {
     }
 
     @Test
-    void Given_NameAndFileAndId_When_ReplacingReactionByAPI_Then_ReturnedResponseOkWithReaction() {
+    void Given_NameAndFileAndId_When_ReplacingReactionByIdByAPI_Then_ReturnedResponseOkWithReaction() {
         //Given
         int id = 1;
         String name = "name";
         MockMultipartFile file = new MockMultipartFile("image2.png", "content".getBytes());
-
-        Reaction reaction = new Reaction(id, name, file.getOriginalFilename());
         //When
+        Reaction reaction = new Reaction(id, name, file.getOriginalFilename());
         fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
         Mockito.when(service.replaceReaction(any(Integer.class), any(Reaction.class))).thenReturn(reaction);
 
@@ -167,7 +165,7 @@ class ReactionControllerTest {
     }
 
     @Test
-    void Given_Id_When_DeletingReactionWithExistingImageByAPI_Then_ReturnedResponseOk() {
+    void Given_Id_When_DeletingReactionWithImageByAPI_Then_ReturnedResponseOk() {
         //Given
         int id = 1;
         //When
@@ -179,7 +177,7 @@ class ReactionControllerTest {
     }
 
     @Test
-    void Given_Id_When_DeletingReactionWithNonExistingImageByAPI_Then_ReturnedResponseOk() {
+    void Given_Id_When_DeletingReactionWithNoImageByAPI_Then_ReturnedResponseOk() {
         //Given
         int id = 1;
         //When
@@ -189,7 +187,7 @@ class ReactionControllerTest {
     }
 
     @Test
-    void Given_Id_When_ErrorWhileDeletingReactionWithExistingImageByAPI_Then_ReturnedResponseInternalServerError() {
+    void Given_Id_When_ErrorWhileDeletingReactionWithImageByAPI_Then_ReturnedResponseInternalServerError() {
         //Given
         int id = 1;
         //When
