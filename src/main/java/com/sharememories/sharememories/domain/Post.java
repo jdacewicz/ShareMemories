@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
+@Table(name = "posts")
 public class Post {
     @Transient
     public static final String IMAGES_DIRECTORY_PATH = "uploads/pictures";
