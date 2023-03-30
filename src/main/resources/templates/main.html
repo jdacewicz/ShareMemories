@@ -16,7 +16,8 @@
             </span>
         </div>
         <div>
-            <span>User</span>
+            <img class="rounded-full w-8 h-8 inline mr-2" th:src="${user.getImagePath()}">
+            <span class="font-bold" th:text="${user.getFirstname()} + ' ' + ${user.getLastname()}"/>
         </div>
         <div>
             <span>Admin panels</span>

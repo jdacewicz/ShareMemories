@@ -163,15 +163,12 @@ function appendPost(post) {
         '<div class="mt-2">' +
             '<img src="' + post.imagePath + '">' +
         '</div>';
-    let postCreatorImage = (post.creator.imagePath == null) ?
-        '<img class="rounded-full w-8 h-8 inline mr-2" src="/images/default-avatar.png">' :
-        '<img class="rounded-full w-8 h-8 inline mr-2" src="' + post.creator.imagePath + '">';
 
     $("#posts").append(
         '<div name="post[' + index + ']" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
             '<div class="block">' +
                 '<div class="float-left">' +
-                    postCreatorImage +
+                    '<img class="rounded-full w-8 h-8 inline mr-2" src="' + post.creator.imagePath + '">' +
                     '<span class="font-bold">' + post.creator.firstname + ' ' + post.creator.lastname + '</span>' +
                 '</div>' +
                 '<div class="float-right">' +

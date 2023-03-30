@@ -38,7 +38,7 @@ public class User implements UserDetails {
     }
 
     public String getImagePath() {
-        if (profileImage == null) return null;
+        if (profileImage == null) return "/images/default-avatar.png";
 
         return "/" + IMAGES_DIRECTORY_PATH + "/" + profileImage;
     }
