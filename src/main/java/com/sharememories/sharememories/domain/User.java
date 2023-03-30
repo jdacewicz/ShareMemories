@@ -13,6 +13,9 @@ import java.util.Set;
 @Table(name = "users")
 public class User implements UserDetails {
 
+    @Transient
+    public static final String IMAGES_DIRECTORY_PATH = "uploads/pictures";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "userId")
@@ -21,6 +24,9 @@ public class User implements UserDetails {
     private String username;
     @JsonIgnore
     private String password;
+    private String firstname;
+    private String lastname;
+    private String profileImage;
     private boolean accountNonLocked = true;
     @JsonIgnore
     private String role = "ROLE_USER";
@@ -29,6 +35,12 @@ public class User implements UserDetails {
     private Set<Post> posts;
 
     public User() {
+    }
+
+    public String getImagePath() {
+        if (profileImage == null) return null;
+
+        return "/" + IMAGES_DIRECTORY_PATH + "/" + profileImage;
     }
 
     public Long getId() {
@@ -101,5 +113,29 @@ public class User implements UserDetails {
 
     public void setPosts(Set<Post> posts) {
         this.posts = posts;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }

@@ -2,14 +2,16 @@ package com.sharememories.sharememories.controller;
 
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
+import com.sharememories.sharememories.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
+import java.io.IOException;
 
 @Controller
 public class AppController {
@@ -39,11 +41,26 @@ public class AppController {
     }
 
     @PostMapping("/register")
-    public String createUser(@RequestParam Map<String, String> body ) {
+    public String createUser(@RequestPart String username,
+                             @RequestPart String password,
+                             @RequestPart String firstname,
+                             @RequestPart String lastname,
+                             @RequestPart(value = "image", required = false) MultipartFile file) {
         User user = new User();
-        user.setUsername(body.get("username"));
-        user.setPassword(passwordEncoder.encode(body.get("password")));
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setFirstname(firstname);
+        user.setLastname(lastname);
 
+        if (!file.isEmpty()) {
+            try {
+                String fileName = FileUtils.generateUniqueName(file.getOriginalFilename());
+                FileUtils.saveFile(User.IMAGES_DIRECTORY_PATH, fileName, file);
+                user.setProfileImage(fileName);
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
         userDetailsService.creatUser(user);
         return "redirect:/login";
     }

@@ -159,23 +159,32 @@ function deleteReaction(id) {
 
 function appendPost(post) {
     let index = post.id;
-    let image = (post.imagePath == null) ? "":
+    let postImage = (post.imagePath == null) ? "":
         '<div class="mt-2">' +
             '<img src="' + post.imagePath + '">' +
         '</div>';
+    let postCreatorImage = (post.creator.imagePath == null) ?
+        '<img class="rounded-full w-8 h-8 inline mr-2" src="/images/default-avatar.png">' :
+        '<img class="rounded-full w-8 h-8 inline mr-2" src="' + post.creator.imagePath + '">';
 
     $("#posts").append(
         '<div name="post[' + index + ']" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
-            '<div class="float-right">' +
-                '<span>' + post.elapsedCreationTimeMessage + '</span>' +
-                '<button name="post-delete" value="' +  index + '">' +
-                    '<img class="w-8" src="/icons/delete-icon.svg">' +
-                '</button>' +
+            '<div class="block">' +
+                '<div class="float-left">' +
+                    postCreatorImage +
+                    '<span class="font-bold">' + post.creator.firstname + ' ' + post.creator.lastname + '</span>' +
+                '</div>' +
+                '<div class="float-right">' +
+                    '<span>' + post.elapsedCreationTimeMessage + '</span>' +
+                    '<button name="post-delete" value="' +  index + '">' +
+                        '<img class="w-8" src="/images/icons/delete-icon.svg">' +
+                    '</button>' +
+                '</div>' +
             '</div>' +
             '<div class="mt-2">' +
                 '<span>' + post.content + '</span>' +
             '</div>' +
-            image +
+            postImage +
             '<div name="post-reactions" class="grid grid-flow-col grid-cols-10 mt-2">' +
             '</div>' +
             '<div name="comments" class="border-t-2 mt-2">' +
@@ -250,10 +259,10 @@ function appendReactionDataToPanel(reaction) {
             '<td class="px-4 py-4">' + reaction.name + '</td>' +
             '<td class="px-4 py-4">' +
                 '<button type="button" value="' + index + '" name="reaction-edit">' +
-                    '<img class="w-12" src="/icons/edit-icon.svg">' +
+                    '<img class="w-12" src="/images/icons/edit-icon.svg">' +
                 '</button>' +
                 '<button type="button" value="' + index + '" name="reaction-delete">' +
-                    '<img class="w-12" src="/icons/delete-icon.svg">' +
+                    '<img class="w-12" src="/images/icons/delete-icon.svg">' +
                 '</button>' +
             '</td>' +
         '</tr>'
