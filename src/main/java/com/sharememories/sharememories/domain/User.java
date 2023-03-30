@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -23,6 +24,8 @@ public class User implements UserDetails {
     private boolean accountNonLocked = true;
     @JsonIgnore
     private String role = "ROLE_USER";
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+    private Set<Post> posts;
 
     public User() {
     }
@@ -85,5 +88,13 @@ public class User implements UserDetails {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
     }
 }

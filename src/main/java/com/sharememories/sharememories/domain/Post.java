@@ -23,6 +23,9 @@ public class Post {
     private String image;
     private LocalTime creationTime = LocalTime.now();
     private LocalDate creationDate = LocalDate.now();
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User creator;
     @ManyToMany
     @JsonIgnore
     @JoinTable(
@@ -148,5 +151,13 @@ public class Post {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public User getCreator() {
+        return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 }
