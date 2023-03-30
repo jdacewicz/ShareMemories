@@ -51,13 +51,15 @@ public class Post {
         this.reactions = reactions;
     }
 
-    public Post(String content) {
+    public Post(String content, User creator) {
         this.content = content;
+        this.creator = creator;
     }
 
-    public Post(String content, String image) {
+    public Post(String content, String image, User creator) {
         this.content = content;
         this.image = image;
+        this.creator = creator;
     }
 
     public void addReaction(Reaction reaction) {

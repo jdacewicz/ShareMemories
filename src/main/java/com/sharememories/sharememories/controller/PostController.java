@@ -2,12 +2,15 @@ package com.sharememories.sharememories.controller;
 
 import com.sharememories.sharememories.domain.Comment;
 import com.sharememories.sharememories.domain.Post;
+import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.PostService;
+import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,10 +25,12 @@ import java.util.Optional;
 public class PostController {
 
     private PostService postService;
+    private SecurityUserDetailsService userDetailsService;
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostService postService, SecurityUserDetailsService userDetailsService) {
         this.postService = postService;
+        this.userDetailsService = userDetailsService;
     }
 
     @GetMapping("/{id}")
@@ -53,6 +58,10 @@ public class PostController {
     @PostMapping()
     public ResponseEntity<?> createPost(@RequestPart("content") String content,
                                         @RequestPart(value = "image", required = false) MultipartFile file) {
+        User user = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName())
+                .get();
         Post post;
         if (!file.isEmpty()) {
             String imageName = FileUtils.generateUniqueName(file.getOriginalFilename());
@@ -64,9 +73,9 @@ public class PostController {
                 map.put("message", "Error while uploading Reaction image.");
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
             }
-            post = postService.createPost(new Post(content, imageName));
+            post = postService.createPost(new Post(content, imageName, user));
         } else {
-            post = postService.createPost(new Post(content));
+            post = postService.createPost(new Post(content, user));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
