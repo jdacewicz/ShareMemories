@@ -3,12 +3,14 @@ package com.sharememories.sharememories.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
 import javax.sql.DataSource;
 
@@ -40,11 +42,14 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.authorizeHttpRequests()
-                .requestMatchers("/login", "/register", "/api/**", "/css/**", "/js/**", "/webjars/**").permitAll()
+                .requestMatchers("/login", "/register", "/css/**", "/js/**", "/webjars/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
+                .httpBasic()
+                .and()
                 .formLogin().loginPage("/login");
-        //http.csrf().disable();
+        http.csrf().disable();
         return http.build();
     }
 }
