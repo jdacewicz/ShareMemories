@@ -70,6 +70,17 @@ $(document).ready(function () {
         }
     });
 
+    $("#show-contact-form").click(function () {
+        if ($("#main-content").is(":visible")) {
+            appendContactForm();
+
+            $("#main-content").hide();
+            $("#reactions").hide();
+
+            $("#panels").fadeIn("slow");
+        }
+    });
+
     $("#reactions").on("click", "button[name='reaction-delete']", function () {
         let id = $(this).val();
         if (confirm('Are You sure You want to delete this reaction?')) {
@@ -351,6 +362,47 @@ function appendReactionEditFormToPanel(reaction) {
                     '</div>' +
                     '<button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">' +
                         'Edit' +
+                    '</button>' +
+                '</form>' +
+            '</div>' +
+        '</div>'
+    );
+}
+
+function appendContactForm() {
+    $("#panels").append(
+        '<div id="contact" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
+            '<div class="border p-4 rounded-lg">' +
+                '<span class="block mb-2 text-sm uppercase font-medium text-gray-900 dark:text-white text-center">' +
+                    'Contact Form' +
+                '</span>' +
+                '<form action="/contact" method="POST" enctype="multipart/form-data" id="contact-form">' +
+                    '<div class="mb-6">' +
+                        '<label for="contact-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>' +
+                        '<input type="text" id="contact-name" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John Doe" required>' +
+                    '</div>' +
+                    '<div class="mb-6">' +
+                        '<label for="contact-email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>' +
+                        '<input type="email" id="contact-email" name="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="john@exmaple.com" required>' +
+                    '</div>' +
+                    '<div class="mb-6">' +
+                        '<label for="contact-phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone</label>' +
+                        '<input type="text" id="contact-phone" name="phone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="123-456-789" required>' +
+                    '</div>' +
+                    '<div class="mb-6">' +
+                        '<label for="contact-topic" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Topic</label>' +
+                        '<input type="text" id="contact-topic" name="topic" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>' +
+                    '</div>' +
+                    '<div class="mb-6">' +
+                        '<label for="contact-message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Message</label>' +
+                        '<textarea id="contact-message" name="message" rows="5" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write something..." required></textarea>' +
+                    '</div>' +
+                    '<div class="mb-6">' +
+                        '<label for="contact-file" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Files</label>' +
+                        '<input type="file" id="contact-file" name="file" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="image.png" required>' +
+                    '</div>' +
+                    '<button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">' +
+                        'Send' +
                     '</button>' +
                 '</form>' +
             '</div>' +
