@@ -34,6 +34,10 @@ public class User implements UserDetails {
     @JsonIgnore
     private Set<Post> posts;
 
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Comment> comments;
+
     public User() {
     }
 
@@ -137,5 +141,13 @@ public class User implements UserDetails {
 
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
     }
 }

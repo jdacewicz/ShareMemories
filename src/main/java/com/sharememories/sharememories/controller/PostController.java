@@ -84,6 +84,10 @@ public class PostController {
     public ResponseEntity<?> createComment(@PathVariable long postId,
                                            @RequestPart(value = "content") String commentContent,
                                            @RequestPart(value = "image", required = false) MultipartFile file) {
+        User user = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName())
+                .get();
         Optional<Post> post;
         if (!file.isEmpty()) {
             String imageName = FileUtils.generateUniqueName(file.getOriginalFilename());
@@ -95,9 +99,9 @@ public class PostController {
                 map.put("message", "Error while uploading Reaction image.");
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
             }
-            post = postService.commentPost(postId, new Comment(commentContent, imageName));
+            post = postService.commentPost(postId, new Comment(commentContent, imageName, user));
         } else {
-            post = postService.commentPost(postId, new Comment(commentContent));
+            post = postService.commentPost(postId, new Comment(commentContent, user));
         }
 
         if (!post.isPresent()) {

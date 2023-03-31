@@ -77,7 +77,6 @@ $(document).ready(function () {
     });
 
     $("#posts").on("mouseleave", "div[name^='comment[']", function () {
-        //$(this).children().children().children("span:empty").fadeOut("fast");
         $(this).find("div[name^='reaction'] span:empty").parent().fadeOut("fast");
     });
 });
@@ -237,14 +236,30 @@ function setPostReactionCount(post) {
 
 function appendComment(postId, comment) {
     let index = comment.id;
-    let image = (comment.imagePath == null) ? "" : '<img class="h-1/5 w-1/5" src="' + comment.imagePath + '">';
+    let image = (comment.imagePath == null) ? "" : '<img class="mx-auto h-1/2 w-1/2" src="' + comment.imagePath + '">';
     $("div[name='post[" + postId + "]'] div[name='comments']").append(
-        '<div class="border rounded-md mt-2" name="comment[' + index + ']">' +
-            '<span>' + comment.content + '</span>' +
-            image +
-            '<div name="comment-reactions" class="grid grid-flow-col grid-cols-10 mt-2">' +
-            '</div>' +
-        '</div>'
+            '<div class="grid grid-flow-row auto-rows-max border rounded-md mt-2 pl-2 pr-2" name="comment[' + index + ']">' +
+                '<div class="block mt-2">' +
+                    '<div class="float-left">' +
+                        '<img class="rounded-full w-6 h-6 inline mr-2" src="' + comment.creator.imagePath + '">' +
+                        '<span class="font-bold">' + comment.creator.firstname + ' ' + comment.creator.lastname + '</span>' +
+                    '</div>' +
+                    '<div class="float-right">' +
+                        '<span>' + comment.elapsedCreationTimeMessage + '</span>' +
+                        '<button name="comment-delete" value="' +  index + '">' +
+                            '<img class="w-8" src="/images/icons/delete-icon.svg">' +
+                        '</button>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="block mt-2">' +
+                    '<span>' + comment.content + '</span>' +
+                '</div>' +
+                '<div class="block mt-2">' +
+                    image +
+                '</div>' +
+                '<div name="comment-reactions" class="grid grid-flow-col grid-cols-10">' +
+                '</div>' +
+            '</div>'
     );
 }
 

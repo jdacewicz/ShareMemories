@@ -1,8 +1,12 @@
 package com.sharememories.sharememories.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sharememories.sharememories.util.TimeUtils;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +24,11 @@ public class Comment {
     private long id;
     private String content;
     private String image;
+    private LocalTime creationTime = LocalTime.now();
+    private LocalDate creationDate = LocalDate.now();
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User creator;
     @ManyToMany
     @JsonIgnore
     @JoinTable(
@@ -36,13 +45,15 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(String content) {
+    public Comment(String content, User creator) {
         this.content = content;
+        this.creator = creator;
     }
 
-    public Comment(String content, String image) {
+    public Comment(String content, String image, User creator) {
         this.content = content;
         this.image = image;
+        this.creator = creator;
     }
 
     public void addReaction(Reaction reaction) {
@@ -53,6 +64,12 @@ public class Comment {
     public void removeReaction(Reaction reaction) {
         this.reactions.remove(reaction);
         reaction.getComments().remove(this);
+    }
+
+    public String getElapsedCreationTimeMessage() {
+        LocalDateTime creationDateTime = LocalDateTime.of(creationDate, creationTime);
+
+        return TimeUtils.getElapsedTimeMessage(creationDateTime, LocalDateTime.now());
     }
 
     public Map<Integer, Long> getReactionsCounts() {
@@ -104,5 +121,29 @@ public class Comment {
 
     public void setPosts(List<Post> posts) {
         this.posts = posts;
+    }
+
+    public User getCreator() {
+        return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
+    }
+
+    public LocalTime getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(LocalTime creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 }
