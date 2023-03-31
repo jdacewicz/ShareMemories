@@ -59,13 +59,15 @@ $(document).ready(function () {
     });
 
     $("#show-reaction-panel").click(function () {
-        loadReactionPanelData();
-        appendReactionCreateFormToPanel();
+        if ($("#main-content").is(":visible")) {
+            loadReactionPanelData();
+            appendReactionCreateFormToPanel();
 
-        $("#main-content").hide();
-        $("#reactions").show();
+            $("#main-content").hide();
+            $("#reactions").show();
 
-        $("#panels").fadeIn("slow");
+            $("#panels").fadeIn("slow");
+        }
     });
 
     $("#reactions").on("click", "button[name='reaction-delete']", function () {
