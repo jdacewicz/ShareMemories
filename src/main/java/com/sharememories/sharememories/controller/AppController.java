@@ -71,4 +71,16 @@ public class AppController {
         userDetailsService.creatUser(user);
         return "redirect:/login";
     }
+
+    @PostMapping("/contact")
+    public String sendMail(@RequestPart String name,
+                           @RequestPart String email,
+                           @RequestPart String phone,
+                           @RequestPart String topic,
+                           @RequestPart String message,
+                           @RequestPart(required = false) MultipartFile file) {
+
+
+        return "redirect:/";
+    }
 }
