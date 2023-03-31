@@ -48,6 +48,16 @@ $(document).ready(function () {
         }
     });
 
+    $("#posts").on("click", "button[name='comment-delete']", function () {
+        let postDiv = $(this).closest("div[name^='post[']").attr("name");
+        let postId = postDiv.substring(postDiv.indexOf("[") + 1, postDiv.indexOf("]"));
+        let commentId = $(this).val();
+
+        if (confirm('Comment ' + commentId + ' will be removed.')) {
+            deletePostComment(postId, commentId);
+        }
+    });
+
     $("#show-reaction-panel").click(function () {
         loadReactionPanelData();
         appendReactionCreateFormToPanel();
@@ -140,6 +150,16 @@ function deletePost(id) {
     $.ajax({
         type: "DELETE",
         url: "/api/posts/" + id,
+        success: function () {
+            location.reload();
+        }
+    });
+}
+
+function deletePostComment(postId, commentId) {
+    $.ajax({
+        type: "DELETE",
+        url: "/api/comments/" + commentId + "/post/" + postId,
         success: function () {
             location.reload();
         }
