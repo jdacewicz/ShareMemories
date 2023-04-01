@@ -1,6 +1,7 @@
 package com.sharememories.sharememories.controller;
 
 import com.sharememories.sharememories.domain.User;
+import com.sharememories.sharememories.service.EmailServiceImpl;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,13 @@ public class AppController {
 
     private SecurityUserDetailsService userDetailsService;
     private PasswordEncoder passwordEncoder;
+    private EmailServiceImpl emailService;
 
     @Autowired
-    public AppController(SecurityUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    public AppController(SecurityUserDetailsService userDetailsService, PasswordEncoder passwordEncoder, EmailServiceImpl emailService) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @GetMapping("/")
@@ -80,6 +83,8 @@ public class AppController {
                            @RequestPart String message,
                            @RequestPart(required = false) MultipartFile file) {
 
+        String content = "User: " + name + " Phone: " + phone + "\bMessage: " + message;
+        emailService.sendMessage(email, "jakub.dacewicz99@gmail.com", topic, content);
 
         return "redirect:/";
     }
