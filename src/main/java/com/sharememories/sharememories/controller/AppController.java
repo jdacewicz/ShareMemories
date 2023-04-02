@@ -5,6 +5,7 @@ import com.sharememories.sharememories.service.EmailServiceImpl;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,8 @@ import java.io.IOException;
 @Controller
 public class AppController {
 
+    @Value("${contact.mail.receiver}")
+    private String mailReceiver;
     private SecurityUserDetailsService userDetailsService;
     private PasswordEncoder passwordEncoder;
     private EmailServiceImpl emailService;
@@ -82,9 +85,12 @@ public class AppController {
                            @RequestPart String topic,
                            @RequestPart String message,
                            @RequestPart(required = false) MultipartFile file) {
-
-        String content = "User: " + name + " Phone: " + phone + "\bMessage: " + message;
-        emailService.sendMessage(email, "jakub.dacewicz99@gmail.com", topic, content);
+        User user = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName())
+                .get();
+        String content = "Mail: " + user.getUsername() + " | Name: " + name + " | Phone: " + phone + " | Message: " + message;
+        emailService.sendMessage(email, mailReceiver, topic, content);
 
         return "redirect:/";
     }
