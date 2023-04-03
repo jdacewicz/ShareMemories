@@ -200,8 +200,10 @@ function appendPost(post) {
         '<div name="post[' + index + ']" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
             '<div class="block">' +
                 '<div class="float-left">' +
-                    '<img class="rounded-full w-8 h-8 inline mr-2" src="' + post.creator.imagePath + '">' +
-                    '<span class="font-bold">' + post.creator.firstname + ' ' + post.creator.lastname + '</span>' +
+                    '<a href="/profile/' + post.creator.id + '">' +
+                        '<img class="rounded-full w-8 h-8 inline mr-2" src="' + post.creator.imagePath + '">' +
+                        '<span class="font-bold">' + post.creator.firstname + ' ' + post.creator.lastname + '</span>' +
+                    '</a>' +
                 '</div>' +
                 '<div class="float-right">' +
                     '<span>' + post.elapsedCreationTimeMessage + '</span>' +
