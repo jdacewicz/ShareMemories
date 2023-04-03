@@ -2,7 +2,9 @@ package com.sharememories.sharememories.controller;
 
 import com.sharememories.sharememories.domain.Comment;
 import com.sharememories.sharememories.domain.Post;
+import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.PostService;
+import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,6 +14,9 @@ import org.mockito.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,7 +30,9 @@ class PostControllerTest {
     @InjectMocks
     private PostController controller;
     @Mock
-    private PostService service;
+    private PostService postService;
+    @Mock
+    SecurityUserDetailsService detailsService;
     static MockedStatic<FileUtils> fileUtils;
 
     @BeforeEach
@@ -49,7 +56,7 @@ class PostControllerTest {
         long id = 1;
         //When
         Post post = new Post();
-        Mockito.when(service.getPost(id)).thenReturn(Optional.of(post));
+        Mockito.when(postService.getPost(id)).thenReturn(Optional.of(post));
 
         ResponseEntity response = controller.getPost(id);
         //Then
@@ -70,7 +77,7 @@ class PostControllerTest {
     void Given__When_GettingRandomPostsByAPIReturnsEmptyList_Then_ReturnedResponseNoContent() {
         //Given
         //When
-        Mockito.when(service.getRandomPosts()).thenReturn(List.of());
+        Mockito.when(postService.getRandomPosts()).thenReturn(List.of());
 
         ResponseEntity response = controller.getRandomPosts();
         //Then
@@ -83,7 +90,7 @@ class PostControllerTest {
         //When
         Post post = new Post();
         List<Post> posts = List.of(post);
-        Mockito.when(service.getRandomPosts()).thenReturn(posts);
+        Mockito.when(postService.getRandomPosts()).thenReturn(posts);
 
         ResponseEntity response = controller.getRandomPosts();
         //Then
@@ -96,8 +103,17 @@ class PostControllerTest {
         String content = "content";
         MockMultipartFile file = new MockMultipartFile("image.png", "content".getBytes());
         //When
-        Post post = new Post(content, file.getOriginalFilename());
-        Mockito.when(service.createPost(any(Post.class))).thenReturn(post);
+        User user = new User("user");
+        Post post = new Post(content, file.getOriginalFilename(), user);
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(user));
+        Mockito.when(postService.createPost(any(Post.class))).thenReturn(post);
 
         ResponseEntity response = controller.createPost(content, file);
         //Then
@@ -110,8 +126,17 @@ class PostControllerTest {
         String content = "content";
         MockMultipartFile file = new MockMultipartFile("name", null, null, new byte[0]);
         //When
-        Post post = new Post(content);
-        Mockito.when(service.createPost(any(Post.class))).thenReturn(post);
+        User user = new User("user");
+        Post post = new Post(content, user);
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(user));
+        Mockito.when(postService.createPost(any(Post.class))).thenReturn(post);
 
         ResponseEntity response = controller.createPost(content, file);
         //Then
@@ -124,7 +149,15 @@ class PostControllerTest {
         String content = "content";
         MockMultipartFile file = new MockMultipartFile("image.png", "content".getBytes());
         //When
-        Post post = new Post(content);
+        User user = new User("user");
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(user));
         fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
         fileUtils.when(() -> FileUtils.saveFile(Post.IMAGES_DIRECTORY_PATH, file.getOriginalFilename(), file)).thenThrow(IOException.class);
 
@@ -140,8 +173,17 @@ class PostControllerTest {
         String content = "content";
         MockMultipartFile file = new MockMultipartFile("name", null, null, new byte[0]);
         //When
+        User user = new User("user");
         Post post = new Post();
-        Mockito.when(service.commentPost(any(Long.class), any(Comment.class))).thenReturn(Optional.of(post));
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(user));
+        Mockito.when(postService.commentPost(any(Long.class), any(Comment.class))).thenReturn(Optional.of(post));
 
         ResponseEntity response = controller.createComment(id, content, file);
         //Then
@@ -155,9 +197,18 @@ class PostControllerTest {
         String content = "content";
         MockMultipartFile file = new MockMultipartFile("image.png", "content".getBytes());
         //When
+        User user = new User("user");
         Post post = new Post();
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(user));
         fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
-        Mockito.when(service.commentPost(any(Long.class), any(Comment.class))).thenReturn(Optional.of(post));
+        Mockito.when(postService.commentPost(any(Long.class), any(Comment.class))).thenReturn(Optional.of(post));
 
         ResponseEntity response = controller.createComment(id, content, file);
         //Then
@@ -171,6 +222,14 @@ class PostControllerTest {
         String content = "content";
         MockMultipartFile file = new MockMultipartFile("image.png", "content".getBytes());
         //When
+        User user = new User("user");
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(user));
         fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
         fileUtils.when(() -> FileUtils.saveFile(Comment.IMAGES_DIRECTORY_PATH, file.getOriginalFilename(), file)).thenThrow(IOException.class);
 
@@ -186,6 +245,15 @@ class PostControllerTest {
         String content = "content";
         MockMultipartFile file = new MockMultipartFile("name", null, null, new byte[0]);
         //When
+        User user = new User("user");
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(user));
+
         ResponseEntity response = controller.createComment(id, content, file);
         //Then
         assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build().getStatusCode(), response.getStatusCode());
@@ -197,7 +265,7 @@ class PostControllerTest {
         int reactionId = 1;
         //When
         Post post = new Post();
-        Mockito.when(service.reactToPost(reactionId, postId)).thenReturn(Optional.of(post));
+        Mockito.when(postService.reactToPost(reactionId, postId)).thenReturn(Optional.of(post));
 
         ResponseEntity response = controller.reactToPost(reactionId, postId);
         //Then
@@ -231,7 +299,7 @@ class PostControllerTest {
         long id = 1;
         //When
         String imageName = "name";
-        Mockito.when(service.getPostImageName(id)).thenReturn(Optional.of(imageName));
+        Mockito.when(postService.getPostImageName(id)).thenReturn(Optional.of(imageName));
 
         ResponseEntity response = controller.delete(id);
         //Then
@@ -244,7 +312,7 @@ class PostControllerTest {
         long id = 1;
         //When
         String imageName = "name";
-        Mockito.when(service.getPostImageName(id)).thenReturn(Optional.of(imageName));
+        Mockito.when(postService.getPostImageName(id)).thenReturn(Optional.of(imageName));
         fileUtils.when(() -> FileUtils.deleteFile(Post.IMAGES_DIRECTORY_PATH, imageName)).thenThrow(IOException.class);
 
         ResponseEntity response = controller.delete(id);
