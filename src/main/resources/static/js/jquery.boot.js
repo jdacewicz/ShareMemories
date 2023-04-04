@@ -1,6 +1,6 @@
 $(document).ready(function () {
     loadPosts();
-    $("#posts").fadeIn("slow");
+    $("#posts").fadeIn("fast");
 
     $("#create-post-image").on("change", function () {
         let file = $("#create-post-image").get(0).files[0];
@@ -81,6 +81,18 @@ $(document).ready(function () {
         }
     });
 
+    $("#show-user-panel").click(function () {
+        if ($("#main-content").is(":visible")) {
+            appendUserSearchFormToPanel();
+            appendInfoToPanel("SEARCH RESULTS");
+
+            $("#main-content").hide();
+            $("#reactions").hide();
+
+            $("#panels").fadeIn("slow");
+        }
+    });
+
     $("#reactions").on("click", "button[name='reaction-delete']", function () {
         let id = $(this).val();
         if (confirm('Are You sure You want to delete this reaction?')) {
@@ -101,6 +113,13 @@ $(document).ready(function () {
 
     $("#posts").on("mouseleave", "div[name^='comment[']", function () {
         $(this).find("div[name^='reaction'] span:empty").parent().fadeOut("fast");
+    });
+
+    $("#panels").on("submit", "#search-user-form", function (e) {
+        e.preventDefault();
+        let id = $(this).find("input[name^='id']").val();
+
+        loadUserDetails(id);
     });
 });
 
@@ -161,6 +180,17 @@ function loadReactionDetails(id) {
         dataType: "JSON",
         success: function (reaction) {
             appendReactionEditFormToPanel(reaction);
+        }
+    });
+}
+
+function loadUserDetails(id) {
+    $.ajax({
+        type: "GET",
+        url: "/api/users/" + id,
+        dataType: "JSON",
+        success: function (user) {
+            appendUserDetailsToPanel(user);
         }
     });
 }
@@ -282,8 +312,10 @@ function appendComment(postId, comment) {
             '<div class="grid grid-flow-row auto-rows-max border rounded-md mt-2 pl-2 pr-2" name="comment[' + index + ']">' +
                 '<div class="block mt-2">' +
                     '<div class="float-left">' +
-                        '<img class="rounded-full w-6 h-6 inline mr-2" src="' + comment.creator.imagePath + '">' +
-                        '<span class="font-bold">' + comment.creator.firstname + ' ' + comment.creator.lastname + '</span>' +
+                        '<a href="/profile/' + comment.creator.id  + '">' +
+                            '<img class="rounded-full w-6 h-6 inline mr-2" src="' + comment.creator.imagePath + '">' +
+                            '<span class="font-bold">' + comment.creator.firstname + ' ' + comment.creator.lastname + '</span>' +
+                        '</a>' +
                     '</div>' +
                     '<div class="float-right">' +
                         '<span>' + comment.elapsedCreationTimeMessage + '</span>' +
@@ -413,6 +445,56 @@ function appendContactForm() {
                         'Send' +
                     '</button>' +
                 '</form>' +
+            '</div>' +
+        '</div>'
+    );
+}
+
+function appendUserSearchFormToPanel() {
+    let panels = $("#panels").children();
+    panels.remove();
+
+    $("#panels").append(
+        '<div id="user-search" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
+            '<div class="border p-4 rounded-lg">' +
+                '<span class="block mb-2 text-sm uppercase font-medium text-gray-900 dark:text-white text-center">' +
+                    'Find user' +
+                '</span>' +
+                '<form id="search-user-form">' +
+                    '<div class="mb-6">' +
+                        '<label for="user-id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Id</label>' +
+                        '<input type="number" id="user-id" name="id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>' +
+                    '</div>' +
+                    '<button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">' +
+                        'Search' +
+                    '</button>' +
+                '</form>' +
+            '</div>' +
+        '</div>'
+    );
+}
+
+function appendInfoToPanel(content) {
+    $("#panels").append(
+        '<div id="user-details" class="flex justify-center max-w-md mx-auto rounded-xl mb-4 bg-white p-4 shadow">' +
+            '<span class="mx-auto font-bold">' + content + '</span>' +
+        '</div>'
+    );
+}
+
+function appendUserDetailsToPanel(user) {
+    if ($("#panels").find("div[name='user[" + user.id + "]-details").length) {
+        return false;
+    }
+
+    $("#panels").append(
+        '<div name="user[' + user.id + ']-details" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 shadow">' +
+            '<div class="flex justify-center border rounded-xl">' +
+                '<span class="mx-auto border-r p-2 font-bold">' + user.id + '</span>' +
+                '<span class="mx-auto border-r p-2">' + user.firstname + ' ' + user.lastname + '</span>' +
+                '<button type="button" value="' + user.id + '" name="reaction-delete">' +
+                    '<img class="w-12" src="/images/icons/delete-icon.svg">' +
+                '</button>' +
             '</div>' +
         '</div>'
     );
