@@ -30,6 +30,10 @@ public class PostService {
         return postRepository.getRandomPosts();
     }
 
+    public List<Post> getAllByCreatorId(long creatorId) {
+        return postRepository.findByCreatorId(creatorId);
+    }
+
     public Optional<String> getPostImageName(long id) {
         return postRepository.findById(id)
                 .map(p -> p.getImage());

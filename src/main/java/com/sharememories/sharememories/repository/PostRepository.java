@@ -12,4 +12,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("FROM Post p ORDER BY random() LIMIT 10")
     List<Post> getRandomPosts();
+
+    List<Post> findByCreatorId(long id);
 }

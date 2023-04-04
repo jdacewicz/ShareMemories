@@ -55,6 +55,15 @@ public class PostController {
             return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getPostsByUserId(@PathVariable long userId) {
+        List<Post> posts = postService.getAllByCreatorId(userId);
+        if (!posts.isEmpty())
+            return ResponseEntity.ok(posts);
+        else
+            return ResponseEntity.noContent().build();
+    }
+
     @PostMapping()
     public ResponseEntity<?> createPost(@RequestPart("content") String content,
                                         @RequestPart(value = "image", required = false) MultipartFile file) {
