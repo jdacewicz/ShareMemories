@@ -31,6 +31,10 @@ public class SecurityUserDetailsService implements UserDetailsService {
         return repository.findByUsername(username);
     }
 
+    public Optional<User> getUserById(long id) {
+        return repository.findById(id);
+    }
+
     public void creatUser(UserDetails user) {
         repository.save((User) user);
     }

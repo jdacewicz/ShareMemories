@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Controller
 public class AppController {
@@ -46,7 +47,12 @@ public class AppController {
 
     @GetMapping("/profile/{id}")
     private String showProfilePage(@PathVariable long id, Model model) {
-        return "profile";
+        Optional<User> user = userDetailsService.getUserById(id);
+        if (user.isPresent()) {
+            model.addAttribute("user", user.get());
+            return "profile";
+        }
+        return "error";
     }
 
     @GetMapping("/login")
