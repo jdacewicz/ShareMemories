@@ -105,9 +105,15 @@ $(document).ready(function () {
 });
 
 function loadPosts() {
+    let pathname = window.location.pathname;
+    let url = "/api/posts/random";
+    if (pathname.indexOf("profile") >= 0) {
+        url = "/api/posts/user/" + (pathname.substring(pathname.lastIndexOf("/") + 1, pathname.length));
+    }
+
     $.ajax({
        type: "GET",
-       url: "/api/posts/random",
+       url: url,
        dataType: "JSON",
        success: function (posts) {
            $.ajax({

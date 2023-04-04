@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +29,7 @@ public class User implements UserDetails {
     private String firstname;
     private String lastname;
     private String profileImage;
+    private LocalDate creationDate = LocalDate.now();
     private boolean accountNonLocked = true;
     @JsonIgnore
     private String role = "ROLE_USER";
@@ -153,5 +156,13 @@ public class User implements UserDetails {
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 }
