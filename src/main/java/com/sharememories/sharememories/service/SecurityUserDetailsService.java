@@ -35,7 +35,16 @@ public class SecurityUserDetailsService implements UserDetailsService {
         return repository.findById(id);
     }
 
+    public Optional<String> getUserImageName(long id) {
+        return repository.findById(id)
+                .map(u -> u.getProfileImage());
+    }
+
     public void creatUser(UserDetails user) {
         repository.save((User) user);
+    }
+
+    public void deleteUser(long id) {
+        repository.deleteById(id);
     }
 }
