@@ -1,6 +1,7 @@
 package com.sharememories.sharememories.service;
 
 import com.sharememories.sharememories.domain.Comment;
+import com.sharememories.sharememories.domain.Post;
 import com.sharememories.sharememories.domain.Reaction;
 import com.sharememories.sharememories.repository.CommentRepository;
 import com.sharememories.sharememories.repository.PostRepository;
@@ -37,7 +38,7 @@ public class CommentService {
         postRepository.findById(postId).map(post -> {
             Optional<Comment> comment = commentRepository.findById(commentId);
             if (comment.isPresent()) {
-                post.removeComment(comment.get());
+                post.getComments().remove(comment.get());
             }
             return postRepository.save(post);
         });
@@ -53,5 +54,14 @@ public class CommentService {
             }
             return null;
         });
+    }
+
+    public Optional<Comment> commentPost(long postId, Comment comment) {
+        Optional<Post> post = postRepository.findById(postId);
+        if(post.isPresent()) {
+            comment.setPost(post.get());
+            return Optional.of(commentRepository.save(comment));
+        }
+        return null;
     }
 }

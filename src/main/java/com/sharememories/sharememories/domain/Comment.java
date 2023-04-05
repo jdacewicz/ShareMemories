@@ -38,9 +38,10 @@ public class Comment {
     )
     @OrderBy("id ASC")
     private List<Reaction> reactions = new ArrayList<>();
-    @ManyToMany(mappedBy = "comments")
+    @ManyToOne
+    @JoinColumn(name = "post_id")
     @JsonIgnore
-    private List<Post> posts = new ArrayList<>();
+    private Post post;
 
     public Comment() {
     }
@@ -115,14 +116,6 @@ public class Comment {
         this.reactions = reactions;
     }
 
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
-    }
-
     public User getCreator() {
         return creator;
     }
@@ -145,5 +138,13 @@ public class Comment {
 
     public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 }

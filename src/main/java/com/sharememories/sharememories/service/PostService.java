@@ -43,14 +43,6 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public Optional<Post> commentPost(long postId, Comment comment) {
-        return postRepository.findById(postId)
-                .map(post -> {
-                    post.addComment(comment);
-                    return postRepository.save(post);
-                });
-    }
-
     public void deletePost(long id) {
         postRepository.deleteById(id);
     }

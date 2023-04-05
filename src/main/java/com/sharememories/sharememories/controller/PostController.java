@@ -1,6 +1,5 @@
 package com.sharememories.sharememories.controller;
 
-import com.sharememories.sharememories.domain.Comment;
 import com.sharememories.sharememories.domain.Post;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.PostService;
@@ -89,39 +88,6 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
 
-    @PutMapping("/{postId}/comment")
-    public ResponseEntity<?> createComment(@PathVariable long postId,
-                                           @RequestPart(value = "content") String commentContent,
-                                           @RequestPart(value = "image", required = false) MultipartFile file) {
-        User user = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName())
-                .get();
-        Optional<Post> post;
-        if (!file.isEmpty()) {
-            String imageName = FileUtils.generateUniqueName(file.getOriginalFilename());
-            try {
-                FileUtils.saveFile(Comment.IMAGES_DIRECTORY_PATH, imageName, file);
-            } catch (IOException e) {
-                Map<String, Object> map = new LinkedHashMap<>();
-                map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-                map.put("message", "Error while uploading Reaction image.");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
-            }
-            post = postService.commentPost(postId, new Comment(commentContent, imageName, user));
-        } else {
-            post = postService.commentPost(postId, new Comment(commentContent, user));
-        }
-
-        if (!post.isPresent()) {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("status", HttpStatus.NOT_FOUND.value());
-            map.put("message", "Could not find referenced Post.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
-        }
-        return ResponseEntity.ok(post.get());
-    }
-
     @PutMapping("/{postId}/react/{reactionId}")
     public ResponseEntity<?> reactToPost(@PathVariable int reactionId,
                                          @PathVariable long postId) {
@@ -136,7 +102,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable long id) {
+    public ResponseEntity<?> deletePost(@PathVariable long id) {
         Optional<String> postImageName = postService.getPostImageName(id);
         if (postImageName.isPresent()) {
             try {

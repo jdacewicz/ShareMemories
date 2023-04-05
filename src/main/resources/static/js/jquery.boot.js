@@ -48,6 +48,13 @@ $(document).ready(function () {
         }
     });
 
+    $("#panels").on("click", "button[name='user-delete']", function () {
+        let id = $(this).val();
+        if (confirm('User ' + id + ' will be removed.')) {
+            deleteUser(id);
+        }
+    });
+
     $("#posts").on("click", "button[name='comment-delete']", function () {
         let postDiv = $(this).closest("div[name^='post[']").attr("name");
         let postId = postDiv.substring(postDiv.indexOf("[") + 1, postDiv.indexOf("]"));
@@ -215,6 +222,16 @@ function deletePostComment(postId, commentId) {
     });
 }
 
+function deleteUser(id) {
+    $.ajax({
+        type: "DELETE",
+        url: "/api/users/" + id,
+        success: function () {
+            location.reload();
+        }
+    });
+}
+
 function deleteReaction(id) {
     $.ajax({
        type: "DELETE",
@@ -257,7 +274,7 @@ function appendPost(post) {
             '<div name="comments" class="border-t-2 mt-2">' +
             '</div>' +
             '<div class="mt-2">' +
-                '<form action="/api/posts/' + index +'/comment" method="PUT" enctype="multipart/form-data" name="create-comment-form">' +
+                '<form action="/api/comments/post/' + index + '" method="PUT" enctype="multipart/form-data" name="create-comment-form">' +
                         '<div class="w-full border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">' +
                             '<div class="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">' +
                                 '<textarea name="content" rows="2" class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Write something..." required></textarea>' +
@@ -492,7 +509,7 @@ function appendUserDetailsToPanel(user) {
             '<div class="flex justify-center border rounded-xl">' +
                 '<span class="mx-auto border-r p-2 font-bold">' + user.id + '</span>' +
                 '<span class="mx-auto border-r p-2">' + user.firstname + ' ' + user.lastname + '</span>' +
-                '<button type="button" value="' + user.id + '" name="reaction-delete">' +
+                '<button type="button" value="' + user.id + '" name="user-delete">' +
                     '<img class="w-12" src="/images/icons/delete-icon.svg">' +
                 '</button>' +
             '</div>' +
