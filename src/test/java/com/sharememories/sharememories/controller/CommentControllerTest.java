@@ -1,7 +1,9 @@
 package com.sharememories.sharememories.controller;
 
 import com.sharememories.sharememories.domain.Comment;
+import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.CommentService;
+import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,11 +12,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 class CommentControllerTest {
 
@@ -22,6 +29,8 @@ class CommentControllerTest {
     private CommentController controller;
     @Mock
     private CommentService service;
+    @Mock
+    SecurityUserDetailsService detailsService;
     static MockedStatic<FileUtils> fileUtils;
 
     @BeforeEach
@@ -123,6 +132,99 @@ class CommentControllerTest {
         long commentId = 1;
         //When
         ResponseEntity response = controller.reactToComment(reactionId, commentId);
+        //Then
+        assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build().getStatusCode(), response.getStatusCode());
+    }
+
+    @Test
+    void Given_PostIdAndCommentContent_When_CreatingPostCommentByPostIdByAPI_Then_ReturnedResponseOkWithPost() {
+        //Given
+        long id = 1;
+        String content = "content";
+        MockMultipartFile file = new MockMultipartFile("name", null, null, new byte[0]);
+        //When
+        User user = new User("user");
+        Comment comment = new Comment();
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(user));
+        Mockito.when(service.commentPost(any(Long.class), any(Comment.class))).thenReturn(Optional.of(comment));
+
+        ResponseEntity response = controller.createComment(id, content, file);
+        //Then
+        assertEquals(ResponseEntity.ok(comment), response);
+    }
+
+    @Test
+    void Given_PostIdAndCommentContentAndImage_When_CreatingPostCommentByPostIdByAPI_Then_ReturnedResponseOkWithPost() {
+        //Given
+        long id = 1;
+        String content = "content";
+        MockMultipartFile file = new MockMultipartFile("image.png", "content".getBytes());
+        //When
+        User user = new User("user");
+        Comment comment = new Comment();
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(user));
+        fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
+        Mockito.when(service.commentPost(any(Long.class), any(Comment.class))).thenReturn(Optional.of(comment));
+
+        ResponseEntity response = controller.createComment(id, content, file);
+        //Then
+        assertEquals(ResponseEntity.ok(comment), response);
+    }
+
+    @Test
+    void Given_PostIdAndCommentContentAndImage_When_ErrorWhileCreatingPostCommentByPostIdByAPI_Then_ReturnedResponseInternalServerError() {
+        //Given
+        long id = 1;
+        String content = "content";
+        MockMultipartFile file = new MockMultipartFile("image.png", "content".getBytes());
+        //When
+        User user = new User("user");
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(user));
+        fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
+        fileUtils.when(() -> FileUtils.saveFile(Comment.IMAGES_DIRECTORY_PATH, file.getOriginalFilename(), file)).thenThrow(IOException.class);
+
+        ResponseEntity response = controller.createComment(id, content, file);
+        //Then
+        assertEquals(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().getStatusCode(), response.getStatusCode());
+    }
+
+    @Test
+    void Given_PostIdAndCommentContentAndImage_When_CreatingPostCommentByWrongPostIdByAPI_Then_ReturnedResponseNotFound() {
+        //Given
+        long id = 1;
+        String content = "content";
+        MockMultipartFile file = new MockMultipartFile("name", null, null, new byte[0]);
+        //When
+        User user = new User("user");
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(user));
+
+        ResponseEntity response = controller.createComment(id, content, file);
         //Then
         assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build().getStatusCode(), response.getStatusCode());
     }
