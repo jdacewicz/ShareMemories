@@ -1,6 +1,5 @@
 package com.sharememories.sharememories.controller;
 
-import com.sharememories.sharememories.domain.Post;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
@@ -44,7 +43,7 @@ public class UserController {
         Optional<String> userImageName = userDetailsService.getUserImageName(id);
         if (userImageName.isPresent()) {
             try {
-                FileUtils.deleteFile(Post.IMAGES_DIRECTORY_PATH, userImageName.get());
+                FileUtils.deleteFile(User.IMAGES_DIRECTORY_PATH, userImageName.get());
             } catch (IOException e) {
                 Map<String, Object> map = new LinkedHashMap<>();
                 map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
