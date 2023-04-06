@@ -250,7 +250,7 @@ function appendPost(post) {
         '</div>';
 
     $("#posts").append(
-        '<div name="post[' + index + ']" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
+        '<div name="post[' + index + ']" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 shadow">' +
             '<div class="block">' +
                 '<div class="float-left">' +
                     '<a href="/profile/' + post.creator.id + '">' +
@@ -265,7 +265,7 @@ function appendPost(post) {
                     '</button>' +
                 '</div>' +
             '</div>' +
-            '<div class="mt-2">' +
+            '<div class="block clear-left pt-2">' +
                 '<span>' + post.content + '</span>' +
             '</div>' +
             postImage +
@@ -373,7 +373,7 @@ function appendReactionDataToPanel(reaction) {
 
 function appendReactionCreateFormToPanel() {
     $("#panels").append(
-        '<div id="reactions-create" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
+        '<div id="reactions-create" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 shadow">' +
             '<div class="border p-4 rounded-lg">' +
                 '<span class="block mb-2 text-sm uppercase font-medium text-gray-900 dark:text-white text-center">' +
                     'Create reaction' +
@@ -402,7 +402,7 @@ function appendReactionEditFormToPanel(reaction) {
     editForm.remove();
 
     $("#panels").append(
-        '<div id="reaction-edit" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
+        '<div id="reaction-edit" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 shadow">' +
             '<div class="border p-4 rounded-lg">' +
                 '<span class="block mb-2 text-sm uppercase font-medium text-gray-900 dark:text-white text-center">' +
                     'Edit reaction: ' + reaction.name +
@@ -428,7 +428,7 @@ function appendReactionEditFormToPanel(reaction) {
 
 function appendContactForm() {
     $("#panels").append(
-        '<div id="contact" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
+        '<div id="contact" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 shadow">' +
             '<div class="border p-4 rounded-lg">' +
                 '<span class="block mb-2 text-sm uppercase font-medium text-gray-900 dark:text-white text-center">' +
                     'Contact Form' +
@@ -472,7 +472,7 @@ function appendUserSearchFormToPanel() {
     panels.remove();
 
     $("#panels").append(
-        '<div id="user-search" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 grid grid-flow-row auto-rows-max shadow">' +
+        '<div id="user-search" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 shadow">' +
             '<div class="border p-4 rounded-lg">' +
                 '<span class="block mb-2 text-sm uppercase font-medium text-gray-900 dark:text-white text-center">' +
                     'Find user' +
@@ -493,8 +493,10 @@ function appendUserSearchFormToPanel() {
 
 function appendInfoToPanel(content) {
     $("#panels").append(
-        '<div id="user-details" class="flex justify-center max-w-md mx-auto rounded-xl mb-4 bg-white p-4 shadow">' +
-            '<span class="mx-auto font-bold">' + content + '</span>' +
+        '<div id="user-details" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 shadow">' +
+            '<div class="flex justify-center">' +
+                '<span class="font-bold">' + content + '</span>' +
+            '</div>' +
         '</div>'
     );
 }
