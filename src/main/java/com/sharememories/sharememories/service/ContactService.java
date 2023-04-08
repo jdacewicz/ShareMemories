@@ -20,4 +20,8 @@ public class ContactService {
     public Optional<Contact> getContactById(long id) {
         return repository.findById(id);
     }
+
+    public void deleteContact(long id) {
+        repository.deleteById(id);
+    }
 }
