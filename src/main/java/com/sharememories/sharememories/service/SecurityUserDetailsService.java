@@ -1,5 +1,6 @@
 package com.sharememories.sharememories.service;
 
+import com.sharememories.sharememories.domain.Contact;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,15 @@ public class SecurityUserDetailsService implements UserDetailsService {
 
     public void deleteUser(long id) {
         repository.deleteById(id);
+    }
+
+    public Optional<User> addUserToFriendsList(User loggedinUser, long addedUserId) {
+        Optional<User> addedUser = repository.findById(addedUserId);
+        if (addedUser.isPresent()) {
+            Contact contact = new Contact(addedUser.get());
+            loggedinUser.getContacts().add(contact);
+            return Optional.of(repository.save(loggedinUser));
+        }
+        return null;
     }
 }

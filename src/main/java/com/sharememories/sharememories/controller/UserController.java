@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -36,6 +37,22 @@ public class UserController {
             map.put("message", "User not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
         }
+    }
+
+    @PutMapping("/invite/{addedUserId}")
+    public ResponseEntity<?> addUserToFriends(@PathVariable long addedUserId) {
+        User user = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName())
+                .get();
+        Optional<User> output = userDetailsService.addUserToFriendsList(user, addedUserId);
+        if (!output.isPresent()) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("status", HttpStatus.NOT_FOUND.value());
+            map.put("message", "Could not find user with id " + addedUserId + ".");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+        }
+        return ResponseEntity.ok(output.get());
     }
 
     @DeleteMapping("/{id}")
