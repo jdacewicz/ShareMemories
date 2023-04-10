@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class SecurityUserDetailsService implements UserDetailsService {
@@ -47,6 +48,10 @@ public class SecurityUserDetailsService implements UserDetailsService {
 
     public void deleteUser(long id) {
         repository.deleteById(id);
+    }
+
+    public Optional<Set<Contact>> getAllContacts(long userId) {
+        return repository.findById(userId).map(u -> u.getContacts());
     }
 
     public Optional<User> addUserToFriendsList(User loggedinUser, long addedUserId) {

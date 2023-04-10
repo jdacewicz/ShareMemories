@@ -49,28 +49,10 @@
             <div>
                 <span>Chat</span>
             </div>
-            <div>
-                <a th:href="'/profile/' + ${user.getId()}">
-                    <img class="rounded-full w-8 h-8 inline mr-2" th:src="${user.getImagePath()}">
-                    <span class="font-bold" th:text="${user.getFirstname()} + ' ' + ${user.getLastname()}"/>
-                </a>
-            </div>
-            <div>
-                <a th:href="'/profile/' + ${user.getId()}">
-                    <img class="rounded-full w-8 h-8 inline mr-2" th:src="${user.getImagePath()}">
-                    <span class="font-bold" th:text="${user.getFirstname()} + ' ' + ${user.getLastname()}"/>
-                </a>
-            </div>
-            <div>
-                <a th:href="'/profile/' + ${user.getId()}">
-                    <img class="rounded-full w-8 h-8 inline mr-2" th:src="${user.getImagePath()}">
-                    <span class="font-bold" th:text="${user.getFirstname()} + ' ' + ${user.getLastname()}"/>
-                </a>
-            </div>
-            <div>
-                <a th:href="'/profile/' + ${user.getId()}">
-                    <img class="rounded-full w-8 h-8 inline mr-2" th:src="${user.getImagePath()}">
-                    <span class="font-bold" th:text="${user.getFirstname()} + ' ' + ${user.getLastname()}"/>
+            <div th:each="contact : ${contacts}">
+                <a th:href="'/profile/' + ${contact.getUser().getId()}">
+                    <img class="rounded-full w-8 h-8 inline mr-2" th:src="${contact.getUser().getImagePath()}">
+                    <span class="font-bold" th:text="${contact.getUser().getFirstname()} + ' ' + ${contact.getUser().getLastname()}"/>
                 </a>
             </div>
         </div>

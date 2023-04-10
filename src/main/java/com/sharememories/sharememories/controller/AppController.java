@@ -1,5 +1,6 @@
 package com.sharememories.sharememories.controller;
 
+import com.sharememories.sharememories.domain.Contact;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.EmailServiceImpl;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 public class AppController {
@@ -41,7 +43,9 @@ public class AppController {
                         .getAuthentication()
                         .getName())
                 .get();
+        Optional<Set<Contact>> contacts = userDetailsService.getAllContacts(user.getId());
         model.addAttribute("user", user);
+        model.addAttribute("contacts", contacts.get());
         return "main";
     }
 
