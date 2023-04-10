@@ -21,13 +21,19 @@
             <span>Birthday: --/--/----</span>
             <span>City: ---</span>
             <span th:text="'Active since: ' + ${user.getCreationDate()}"></span>
+            <button type="button" name="add-to-friends" th:value="${user.getId()}">
+                <img class="w-12" src="/images/icons/user-icon.svg">
+                ADD TO FRIENDS
+            </button>
         </div>
     </div>
     <div id="user-posts" class="float-right w-7/12 grid grid-flow-row auto-rows-max">
         <div class="mb-4 p-4">
-            <a href="/">
-                <img class="w-12" src="/images/icons/go-back-icon.svg">
-            </a>
+            <div>
+                <a href="/">
+                    <img class="w-12" src="/images/icons/go-back-icon.svg">
+                </a>
+            </div>
             <div id="posts" class="hidden">
             </div>
         </div>

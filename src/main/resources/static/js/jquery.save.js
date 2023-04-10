@@ -50,6 +50,13 @@ $(function () {
         let url = "/api/comments/" + commentId + "/react/" + reactionId;
         saveRequestedData(url, "PUT");
     })
+
+    $("button[name='add-to-friends']").click(function () {
+        let id = $(this).val();
+
+        let url = "/api/users/invite/" + id;
+        saveRequestedData(url, "PUT");
+    })
 });
 
 function saveRequestedData(action, method) {
