@@ -55,10 +55,11 @@ public class SecurityUserDetailsService implements UserDetailsService {
 
     public Optional<User> addUserToFriendsList(User loggedinUser, long addedUserId) {
         Optional<User> addedUser = repository.findById(addedUserId);
-        if (addedUser.isPresent()) {
+        if (addedUser.isPresent() && !loggedinUser.getId().equals(addedUserId)) {
+
             loggedinUser.getContacts().add(addedUser.get());
             return Optional.of(repository.save(loggedinUser));
         }
-        return null;
+        return Optional.empty();
     }
 }

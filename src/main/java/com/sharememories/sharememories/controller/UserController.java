@@ -49,7 +49,7 @@ public class UserController {
         if (!output.isPresent()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
-            map.put("message", "Could not find user with id " + addedUserId + ".");
+            map.put("message", "Could not find User or You're trying to add yourself to friends.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
         }
         return ResponseEntity.ok(output.get());
