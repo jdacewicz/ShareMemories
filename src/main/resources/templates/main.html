@@ -9,6 +9,45 @@
     <title>ShareMemories</title>
 </head>
 <body class="bg-gray-100 w-screen">
+    <div id="chat-window" class="fixed z-50 w-screen h-screen bg-gray-800 bg-opacity-25 hidden">
+        <div class="flex h-full">
+            <div class="max-w-lg m-auto h-2/3 p-4">
+                <div class="block">
+                    <button id="hide-chat-window" class="rounded-xl bg-white shadow">
+                        <img class="w-10" src="/images/icons/go-back-icon.svg">
+                    </button>
+                </div>
+                <div class="rounded-xl h-full bg-white shadow p-2">
+                    <div id="chat-contact" class="block">
+                        <img class="rounded-full w-12 h-12 inline mr-2" th:src="${user.getImagePath()}">
+                        <span class="font-bold" th:text="${user.getFirstname()} + ' ' + ${user.getLastname()}"/>
+                    </div>
+                    <div id="chat-messages" class="border border-gray-200 rounded-lg h-2/3 m-2">
+
+                    </div>
+                    <div id="chat-message-form">
+                        <form action="/api/posts" method="POST" enctype="multipart/form-data">
+                            <div class="w-full border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                                <div class="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
+                                    <textarea name="content" rows="3" class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Write something..." required></textarea>
+                                    <img src="">
+                                </div>
+                                <div class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
+                                    <div class="flex pl-0 space-x-1 sm:pl-2">
+                                        <input name="image" type="file" class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
+                                    </div>
+                                    <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">
+                                        Send
+                                    </button>
+                                </div>
+                            </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="fixed max-w-md w-1/6 mb-5 bg-white p-5 shadow h-screen rounded-xl h-full grid grid-flow-row gap-4">
         <div class="flex justify-center">
             <span class="m-auto">
@@ -50,10 +89,10 @@
                 <span>Chat</span>
             </div>
             <div th:each="contact : ${contacts}">
-                <a th:href="'/profile/' + ${contact.getId()}">
+                <button name="contact">
                     <img class="rounded-full w-8 h-8 inline mr-2" th:src="${contact.getImagePath()}">
                     <span class="font-bold" th:text="${contact.getFirstname()} + ' ' + ${contact.getLastname()}"/>
-                </a>
+                </button>
             </div>
         </div>
     </div>

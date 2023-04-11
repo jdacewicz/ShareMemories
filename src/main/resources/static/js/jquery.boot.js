@@ -128,6 +128,14 @@ $(document).ready(function () {
 
         loadUserDetails(id);
     });
+
+    $("button[name='contact']").click(function () {
+        $("#chat-window").fadeIn("fast");
+    });
+
+    $("#hide-chat-window").click(function () {
+        $("#chat-window").fadeOut("fast");
+    })
 });
 
 function loadPosts() {
