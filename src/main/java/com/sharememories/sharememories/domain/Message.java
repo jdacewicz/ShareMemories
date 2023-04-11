@@ -20,6 +20,12 @@ public class Message {
     public Message() {
     }
 
+    public Message(User sender, User receiver, String content) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.content = content;
+    }
+
     public long getId() {
         return id;
     }

@@ -30,4 +30,12 @@ public class MessageService {
     public List<Message> getAllMessagesByReceiver(User receiver) {
         return repository.getAllByReceiver(receiver);
     }
+
+    public List<Message> getAllMessagesBySenderAndReceiver(User sender, User receiver) {
+        return repository.findBySenderAndReceiver(sender, receiver);
+    }
+
+    public Message createMessage(Message message) {
+        return repository.save(message);
+    }
 }
