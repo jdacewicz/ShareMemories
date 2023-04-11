@@ -62,6 +62,6 @@ public class CommentService {
             comment.setPost(post.get());
             return Optional.of(commentRepository.save(comment));
         }
-        return null;
+        return Optional.empty();
     }
 }
