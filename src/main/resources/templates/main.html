@@ -50,9 +50,9 @@
                 <span>Chat</span>
             </div>
             <div th:each="contact : ${contacts}">
-                <a th:href="'/profile/' + ${contact.getUser().getId()}">
-                    <img class="rounded-full w-8 h-8 inline mr-2" th:src="${contact.getUser().getImagePath()}">
-                    <span class="font-bold" th:text="${contact.getUser().getFirstname()} + ' ' + ${contact.getUser().getLastname()}"/>
+                <a th:href="'/profile/' + ${contact.getId()}">
+                    <img class="rounded-full w-8 h-8 inline mr-2" th:src="${contact.getImagePath()}">
+                    <span class="font-bold" th:text="${contact.getFirstname()} + ' ' + ${contact.getLastname()}"/>
                 </a>
             </div>
         </div>

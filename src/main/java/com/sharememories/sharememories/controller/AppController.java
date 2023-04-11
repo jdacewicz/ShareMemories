@@ -1,6 +1,5 @@
 package com.sharememories.sharememories.controller;
 
-import com.sharememories.sharememories.domain.Contact;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.EmailServiceImpl;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
@@ -43,7 +42,7 @@ public class AppController {
                         .getAuthentication()
                         .getName())
                 .get();
-        Optional<Set<Contact>> contacts = userDetailsService.getAllContacts(user.getId());
+        Optional<Set<User>> contacts = userDetailsService.getAllContacts(user.getId());
         model.addAttribute("user", user);
         model.addAttribute("contacts", contacts.get());
         return "main";

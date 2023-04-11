@@ -38,8 +38,13 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Comment> comments;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<Contact> contacts;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "contacts", joinColumns = {
+            @JoinColumn(name = "idA")}, inverseJoinColumns = {
+            @JoinColumn(name = "idB")
+    })
+    @JsonIgnore
+    private Set<User> contacts;
 
     public User() {
     }
@@ -166,11 +171,11 @@ public class User implements UserDetails {
         this.creationDate = creationDate;
     }
 
-    public Set<Contact> getContacts() {
+    public Set<User> getContacts() {
         return contacts;
     }
 
-    public void setContacts(Set<Contact> contacts) {
+    public void setContacts(Set<User> contacts) {
         this.contacts = contacts;
     }
 }
