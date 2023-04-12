@@ -48,4 +48,9 @@ public class MessageService {
     public Message createMessage(Message message) {
         return repository.save(message);
     }
+
+    @Transactional
+    public void setMessagesSeen(User sender, User receiver) {
+        repository.updateBySenderAndReceiverSetMessageSeen(sender, receiver, true);
+    }
 }

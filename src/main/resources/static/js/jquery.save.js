@@ -66,6 +66,16 @@ $(function () {
         let url = "/api/users/invite/" + id;
         saveRequestedData(url, "PUT");
     });
+
+    $("button[name^='contact[']").click(function () {
+        let count = $(this).children("span[name='notify-count']");
+        if (count.length) {
+            let id = $(this).val();
+
+            let url = "/api/messages/user/" + id + "/show";
+            saveRequestedData(url, "PUT");
+        }
+    });
 });
 
 function saveRequestedData(action, method) {

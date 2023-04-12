@@ -112,4 +112,22 @@ public class MessageController {
             return ResponseEntity.ok(message);
         }
     }
+
+    @PutMapping("/user/{contactId}/show")
+    public ResponseEntity<?> setMessagesSeen(@PathVariable long contactId) {
+        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName())
+                .get();
+        Optional<User> contact = userDetailsService.getUserById(contactId);
+        if (!contact.isPresent()) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("status", HttpStatus.NOT_FOUND.value());
+            map.put("message", "Contact not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+        } else {
+            messageService.setMessagesSeen(contact.get(), loggedUser);
+            return ResponseEntity.ok().build();
+        }
+    }
 }
