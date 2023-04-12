@@ -47,22 +47,36 @@ public class MessageController {
 
     @GetMapping("/user/{contactId}")
     public ResponseEntity<?> getAllMessagesWithUser(@PathVariable long contactId) {
-        Optional<User> loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName());
+        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName())
+                .get();
         Optional<User> contact = userDetailsService.getUserById(contactId);
-        if (!contact.isPresent() && loggedUser.isPresent()) {
+        if (!contact.isPresent()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Contact not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
         } else {
-            List<Message> messages = messageService.getAllMessagesBySenderAndReceiver(loggedUser.get(), contact.get());
+            List<Message> messages = messageService.getAllMessagesBySenderAndReceiver(loggedUser, contact.get());
             if (messages.isEmpty())
                 return ResponseEntity.noContent().build();
             else
                 return ResponseEntity.ok(messages);
         }
+    }
+
+    @GetMapping("/notify")
+    public ResponseEntity<?> getNotificationsCount() {
+        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName())
+                .get();
+        Map<Long, Long> notifyCounts = messageService.getNotificationsCount(loggedUser);
+        if (notifyCounts.isEmpty())
+            return ResponseEntity.noContent().build();
+        else
+            return ResponseEntity.ok(notifyCounts);
     }
 
     @PostMapping("/user/{contactId}")

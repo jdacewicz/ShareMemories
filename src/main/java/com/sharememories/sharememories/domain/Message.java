@@ -19,6 +19,7 @@ public class Message {
     private User receiver;
     private String content;
     private String image;
+    private boolean messageSeen = false;
 
     public Message() {
     }
@@ -80,5 +81,13 @@ public class Message {
 
     public void setReceiver(User receiver) {
         this.receiver = receiver;
+    }
+
+    public boolean isMessageSeen() {
+        return messageSeen;
+    }
+
+    public void setMessageSeen(boolean messageSeen) {
+        this.messageSeen = messageSeen;
     }
 }

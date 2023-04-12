@@ -1,5 +1,6 @@
 $(document).ready(function () {
     loadPosts();
+    checkNewMessages();
     $("#posts").fadeIn("fast");
 
     $("#create-post-image").on("change", function () {
@@ -129,7 +130,7 @@ $(document).ready(function () {
         loadUserDetails(id);
     });
 
-    $("button[name='contact']").click(function () {
+    $("button[name^='contact[']").click(function () {
         let id = $(this).val();
         let img = $(this).children("img").attr("src");
         let name = $(this).children("span").text();
@@ -139,6 +140,7 @@ $(document).ready(function () {
         $("#chat-contact span").text(name);
         $("#chat-message-form form").attr("action", url);
 
+        $(this).children("span[name='notify-count']").remove();
         loadChatBox(id);
 
         $("#chat-window").fadeIn("fast");
@@ -232,6 +234,19 @@ function loadChatBox(userId) {
             data.forEach(function (message) {
                 appendMessageToChatBox(message);
             });
+        }
+    });
+}
+
+function checkNewMessages() {
+    $.ajax({
+        type: "GET",
+        url: "/api/messages/notify",
+        dataType: "JSON",
+        success: function (data) {
+            for (let key in data) {
+                appendNotificationToContact(key, data[key]);
+            }
         }
     });
 }
@@ -562,5 +577,13 @@ function appendMessageToChatBox(message) {
             image +
             '<span class="border text-white bg-indigo-400 rounded-lg py-1 px-3">' + message.content + '</span>' +
         '</div>'
+    );
+}
+
+function appendNotificationToContact(contactId, notifyCount) {
+    $("button[name='contact[" + contactId + "]']").append(
+        '<span name="notify-count" class="font-bold text-white border py-1 px-2 bg-red-600">' +
+            notifyCount +
+        '</span>'
     );
 }

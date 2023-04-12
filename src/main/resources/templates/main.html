@@ -87,9 +87,9 @@
                 <span>Chat</span>
             </div>
             <div th:each="contact : ${contacts}">
-                <button type="button" name="contact" th:value="${contact.getId()}">
+                <button type="button" th:name="'contact['  + ${contact.getId()} + ']'" th:value="${contact.getId()}">
                     <img class="rounded-full w-8 h-8 inline mr-2" th:src="${contact.getImagePath()}">
-                    <span class="font-bold" th:text="${contact.getFirstname()} + ' ' + ${contact.getLastname()}"/>
+                    <span class="font-bold mr-1" th:text="${contact.getFirstname()} + ' ' + ${contact.getLastname()}"/>
                 </button>
             </div>
         </div>
