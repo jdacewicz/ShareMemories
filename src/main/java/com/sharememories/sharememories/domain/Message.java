@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 @Table(name = "messages")
 public class Message {
 
+    @Transient
+    public static final String IMAGES_DIRECTORY_PATH = "uploads/pictures/messages";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "messageId")
@@ -24,6 +27,19 @@ public class Message {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
+    }
+
+    public Message(User sender, User receiver, String content, String image) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.content = content;
+        this.image = image;
+    }
+
+    public String getImagePath() {
+        if (image == null) return null;
+
+        return "/" + IMAGES_DIRECTORY_PATH + "/" + image;
     }
 
     public long getId() {

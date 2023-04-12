@@ -554,9 +554,12 @@ function appendUserDetailsToPanel(user) {
 }
 
 function appendMessageToChatBox(message) {
+    let image = (message.imagePath == null) ? "" : '<img class="border text-white bg-indigo-400 rounded-lg py-1 px-3 mx-auto h-1/2 w-1/2 float-left"" src="' + message.imagePath + '">';
+
     $("#chat-messages").append(
         '<div class="block p-2">' +
-            '<img class="rounded-full w-8 h-8 inline mr-2" src="' + message.sender.imagePath + '">' +
+            '<img class="rounded-full w-8 h-8 inline mr-2 float-left" src="' + message.sender.imagePath + '">' +
+            image +
             '<span class="border text-white bg-indigo-400 rounded-lg py-1 px-3">' + message.content + '</span>' +
         '</div>'
     );

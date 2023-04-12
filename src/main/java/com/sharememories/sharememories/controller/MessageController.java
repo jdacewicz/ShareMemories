@@ -4,6 +4,7 @@ import com.sharememories.sharememories.domain.Message;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.MessageService;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
+import com.sharememories.sharememories.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +65,6 @@ public class MessageController {
         }
     }
 
-    //TODO including image to message
     @PostMapping("/user/{contactId}")
     public ResponseEntity<?> sendMessageToUser(@PathVariable long contactId,
                                                @RequestPart String content,
@@ -73,13 +74,27 @@ public class MessageController {
                         .getName())
                 .get();
         Optional<User> contact = userDetailsService.getUserById(contactId);
+        Message message;
         if (!contact.isPresent()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Contact not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
         } else {
-            Message message = messageService.createMessage(new Message(loggedUser, contact.get(), content));
+            if (!file.isEmpty()) {
+                String imageName = FileUtils.generateUniqueName(file.getOriginalFilename());
+                try {
+                    FileUtils.saveFile(Message.IMAGES_DIRECTORY_PATH, imageName, file);
+                } catch (IOException e) {
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+                    map.put("message", "Error while uploading Message image.");
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+                }
+                message = messageService.createMessage(new Message(loggedUser, contact.get(), content, imageName));
+            } else {
+                message = messageService.createMessage(new Message(loggedUser, contact.get(), content));
+            }
             return ResponseEntity.ok(message);
         }
     }
