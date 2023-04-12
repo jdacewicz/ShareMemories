@@ -130,11 +130,24 @@ $(document).ready(function () {
     });
 
     $("button[name='contact']").click(function () {
+        let id = $(this).val();
+        let img = $(this).children("img").attr("src");
+        let name = $(this).children("span").text();
+        let url = "/api/messages/user/" + id;
+
+        $("#chat-contact img").attr("src", img);
+        $("#chat-contact span").text(name);
+        $("#chat-message-form form").attr("action", url);
+
+        loadChatBox(id);
+
         $("#chat-window").fadeIn("fast");
     });
 
     $("#hide-chat-window").click(function () {
         $("#chat-window").fadeOut("fast");
+
+        $("#chat-messages div").remove();
     })
 });
 
@@ -206,6 +219,19 @@ function loadUserDetails(id) {
         dataType: "JSON",
         success: function (user) {
             appendUserDetailsToPanel(user);
+        }
+    });
+}
+
+function loadChatBox(userId) {
+    $.ajax({
+        type: "GET",
+        url: "/api/messages/user/" + userId,
+        dataType: "JSON",
+        success: function (data) {
+            data.forEach(function (message) {
+                appendMessageToChatBox(message);
+            });
         }
     });
 }
@@ -523,6 +549,15 @@ function appendUserDetailsToPanel(user) {
                     '<img class="w-12" src="/images/icons/delete-icon.svg">' +
                 '</button>' +
             '</div>' +
+        '</div>'
+    );
+}
+
+function appendMessageToChatBox(message) {
+    $("#chat-messages").append(
+        '<div class="block p-2">' +
+            '<img class="rounded-full w-8 h-8 inline mr-2" src="' + message.sender.imagePath + '">' +
+            '<span class="border text-white bg-indigo-400 rounded-lg py-1 px-3">' + message.content + '</span>' +
         '</div>'
     );
 }

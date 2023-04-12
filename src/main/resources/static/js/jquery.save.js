@@ -31,6 +31,15 @@ $(function () {
         saveMultipartRequestedData(frm, data)
     });
 
+    $("#chat-message-form").submit(function (e) {
+        e.preventDefault();
+
+        let frm = $("#chat-message-form form");
+        let data = new FormData($('#chat-message-form form')[0]);
+
+        saveMultipartRequestedData(frm, data)
+    });
+
     $("#posts").on("click", "div[name='post-reactions'] button", function (e) {
         e.preventDefault();
         let postDiv = $(this).closest("div[name^='post[']").attr("name");
@@ -39,7 +48,7 @@ $(function () {
 
         let url = "/api/posts/" + postId + "/react/" + reactionId;
         saveRequestedData(url, "PUT");
-    })
+    });
 
     $("#posts").on("click", "div[name='comment-reactions'] button", function (e) {
         e.preventDefault();
@@ -49,14 +58,14 @@ $(function () {
 
         let url = "/api/comments/" + commentId + "/react/" + reactionId;
         saveRequestedData(url, "PUT");
-    })
+    });
 
     $("button[name='add-to-friends']").click(function () {
         let id = $(this).val();
 
         let url = "/api/users/invite/" + id;
         saveRequestedData(url, "PUT");
-    })
+    });
 });
 
 function saveRequestedData(action, method) {
