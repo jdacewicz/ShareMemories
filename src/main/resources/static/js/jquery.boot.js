@@ -585,5 +585,5 @@ function appendNotificationToContact(contactId, notifyCount) {
         '<span name="notify-count" class="font-bold text-white border py-1 px-2 bg-red-600">' +
             notifyCount +
         '</span>'
-    );
+    ).parent().prependTo("#contact-list");
 }
