@@ -9,9 +9,9 @@
     <title>ShareMemories</title>
 </head>
 <body class="bg-gray-100 w-screen">
-    <div id="chat-window" class="fixed z-50 w-screen h-screen bg-gray-800 bg-opacity-25 hidden">
+    <div id="chat-window" class="fixed z-50 w-screen h-screen bg-black bg-opacity-25 hidden">
         <div class="flex h-full">
-            <div class="max-w-lg m-auto h-2/3 p-4">
+            <div class="max-w-lg m-auto h-3/4 p-4">
                 <div class="block">
                     <button id="hide-chat-window" class="rounded-xl bg-white shadow">
                         <img class="w-10" src="/images/icons/go-back-icon.svg">
@@ -19,14 +19,13 @@
                 </div>
                 <div class="rounded-xl h-full bg-white shadow p-2">
                     <div id="chat-contact" class="block">
-                        <img class="rounded-full w-12 h-12 inline mr-2" th:src="${user.getImagePath()}">
-                        <span class="font-bold" th:text="${user.getFirstname()} + ' ' + ${user.getLastname()}"/>
+                        <img class="rounded-full w-12 h-12 inline mr-2">
+                        <span class="font-bold"/>
                     </div>
                     <div id="chat-messages" class="border border-gray-200 rounded-lg h-2/3 m-2">
-
                     </div>
                     <div id="chat-message-form">
-                        <form action="/api/posts" method="POST" enctype="multipart/form-data">
+                        <form method="POST" enctype="multipart/form-data">
                             <div class="w-full border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
                                 <div class="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
                                     <textarea name="content" rows="3" class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Write something..." required></textarea>
@@ -89,7 +88,7 @@
                 <span>Chat</span>
             </div>
             <div th:each="contact : ${contacts}">
-                <button name="contact">
+                <button type="button" name="contact" th:value="${contact.getId()}">
                     <img class="rounded-full w-8 h-8 inline mr-2" th:src="${contact.getImagePath()}">
                     <span class="font-bold" th:text="${contact.getFirstname()} + ' ' + ${contact.getLastname()}"/>
                 </button>
