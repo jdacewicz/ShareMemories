@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "reactions")
@@ -99,5 +100,18 @@ public class Reaction {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Reaction reaction = (Reaction) o;
+        return Objects.equals(name, reaction.name) && Objects.equals(image, reaction.image);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, image);
     }
 }
