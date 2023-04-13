@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -44,7 +45,7 @@ public class User implements UserDetails {
             @JoinColumn(name = "idB")
     })
     @JsonIgnore
-    private Set<User> contacts;
+    private Set<User> contacts = new HashSet<>();
 
     public User() {
     }
