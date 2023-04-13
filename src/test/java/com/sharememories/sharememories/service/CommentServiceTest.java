@@ -10,9 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.parameters.P;
 
 import java.util.Optional;
 
@@ -49,9 +47,8 @@ class CommentServiceTest {
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
 
         service.deletePostComment(postId, commentId);
-        boolean commentDeleted = post.getComments().isEmpty();
         //Then
-        assert(commentDeleted);
+        assert(post.getComments().isEmpty());
     }
 
     @Test
@@ -67,9 +64,8 @@ class CommentServiceTest {
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
 
         service.deletePostComment(postId, commentId);
-        boolean commentDeleted = post.getComments().isEmpty();
         //Then
-        assertFalse(commentDeleted);
+        assertFalse(post.getComments().isEmpty());
     }
 
     @Test
@@ -85,8 +81,23 @@ class CommentServiceTest {
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
 
         service.reactToComment(reactionId, commentId);
-        boolean reactionAdded = !comment.getReactions().isEmpty();
         //Then
-        assert(reactionAdded);
+        assertFalse(comment.getReactions().isEmpty());
+    }
+
+    @Test
+    void Given_ReactionIdAndCommentId_When_ReactingToCommentByWrongReactionIdAndProperCommentId_Then_ReactionNotAddedToComment() {
+        //Given
+        int reactionId = 1;
+        long commentId = 1;
+        //When
+        Reaction reaction = new Reaction();
+        Comment comment = new Comment();
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+
+        service.reactToComment(reactionId, commentId);
+        //Then
+        assert(comment.getReactions().isEmpty());
     }
 }
