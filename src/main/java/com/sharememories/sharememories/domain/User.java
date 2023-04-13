@@ -2,6 +2,7 @@ package com.sharememories.sharememories.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,7 +17,8 @@ import java.util.Set;
 public class User implements UserDetails {
 
     @Transient
-    public static final String IMAGES_DIRECTORY_PATH = "uploads/pictures";
+    @Value("${user.image.directory}")
+    public static String IMAGES_DIRECTORY_PATH;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

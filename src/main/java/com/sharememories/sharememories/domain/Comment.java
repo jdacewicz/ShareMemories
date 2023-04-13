@@ -3,6 +3,7 @@ package com.sharememories.sharememories.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sharememories.sharememories.util.TimeUtils;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,7 +18,9 @@ import java.util.stream.Collectors;
 public class Comment {
 
     @Transient
-    public static final String IMAGES_DIRECTORY_PATH = "uploads/pictures/comments";
+    @Value("${comment.image.directory}")
+    public static String IMAGES_DIRECTORY_PATH;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "commentId")

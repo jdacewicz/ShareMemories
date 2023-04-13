@@ -1,13 +1,15 @@
 package com.sharememories.sharememories.domain;
 
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Value;
 
 @Entity
 @Table(name = "messages")
 public class Message {
 
     @Transient
-    public static final String IMAGES_DIRECTORY_PATH = "uploads/pictures/messages";
+    @Value("${message.image.directory}")
+    public static String IMAGES_DIRECTORY_PATH;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

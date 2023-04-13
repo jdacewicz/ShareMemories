@@ -2,6 +2,7 @@ package com.sharememories.sharememories.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,9 @@ import java.util.Objects;
 public class Reaction {
 
     @Transient
-    public static final String IMAGES_DIRECTORY_PATH = "uploads/reactions";
+    @Value("${reaction.image.directory}")
+    public static String IMAGES_DIRECTORY_PATH;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "reactionId")
