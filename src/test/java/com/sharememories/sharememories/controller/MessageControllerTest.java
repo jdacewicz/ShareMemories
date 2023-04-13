@@ -12,10 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -72,7 +74,7 @@ class MessageControllerTest {
     }
 
     @Test
-    void Given_UserId_When_GettingAllMessagesWithUserByProperUserIdByAPI_Then_ReturnedResponseOkWithListOfMessages() {
+    void Given_ContactUserId_When_GettingAllMessagesWithUserByProperUserIdByAPI_Then_ReturnedResponseOkWithListOfMessages() {
         //Given
         long contactId = 1;
         //When
@@ -98,7 +100,7 @@ class MessageControllerTest {
     }
 
     @Test
-    void Given_UserId_When_GettingAllMessagesWithUserByProperUserIdByAPI_Then_ReturnedResponseNoContentIfListIsEmpty() {
+    void Given_ContactUserId_When_GettingAllMessagesWithUserByProperUserIdByAPI_Then_ReturnedResponseNoContentIfListIsEmpty() {
         //Given
         long contactId = 1;
         //When
@@ -120,7 +122,7 @@ class MessageControllerTest {
     }
 
     @Test
-    void Given_UserId_When_GettingAllMessagesWithUserByWrongUserIdByAPI_Then_ReturnedResponseNotFound() {
+    void Given_ContactUserId_When_GettingAllMessagesWithUserByWrongUserIdByAPI_Then_ReturnedResponseNotFound() {
         //Given
         long contactId = 1;
         //When
@@ -180,15 +182,145 @@ class MessageControllerTest {
         assertEquals(ResponseEntity.noContent().build(), response);
     }
 
-    void Test1() {
+    @Test
+    void Given_ContactUserIdAndContent_When_SendingMessageToUserByProperUserIdByAPI_Then_ReturnedResponseOkWithMessage() {
         //Given
+        long contactId = 1;
+        String content = "test";
+        MockMultipartFile emptyFile = new MockMultipartFile("name", null, null, new byte[0]);
         //When
+        User loggedUser = new User("user");
+        User contact = new User("user2");
+        Message message = new Message();
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        Mockito.when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
+        Mockito.when(messageService.createMessage(any(Message.class))).thenReturn(message);
+
+        ResponseEntity response = controller.sendMessageToUser(contactId, content, emptyFile);
         //Then
+        assertEquals(ResponseEntity.ok(message), response);
     }
 
-    void Test2() {
+    @Test
+    void Given_ContactUserIdAndContent_When_SendingMessageToUserByWrongUserIdByAPI_Then_ReturnedResponseNotFound() {
         //Given
+        long contactId = 1;
+        String content = "test";
+        MockMultipartFile emptyFile = new MockMultipartFile("name", null, null, new byte[0]);
         //When
+        User loggedUser = new User("user");
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+
+        ResponseEntity response = controller.sendMessageToUser(contactId, content, emptyFile);
         //Then
+        assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build().getStatusCode(), response.getStatusCode());
+    }
+
+    @Test
+    void Given_ContactUserIdAndContentAndImage_When_SendingMessageByProperUserIdByAPI_Then_ReturnedResponseOkWithMessage() {
+        //Given
+        long contactId = 1;
+        String content = "test";
+        MockMultipartFile file = new MockMultipartFile("image.png", "content".getBytes());
+        //When
+        User loggedUser = new User("user");
+        User contact = new User("user2");
+        Message message = new Message();
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        Mockito.when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
+        Mockito.when(messageService.createMessage(any(Message.class))).thenReturn(message);
+
+        ResponseEntity response = controller.sendMessageToUser(contactId, content, file);
+        //Then
+        assertEquals(ResponseEntity.ok(message), response);
+    }
+
+    @Test
+    void Given_ContactUserIdAndContentAndImage_When_ErrorWhileSendingMessageByProperUserIdByAPI_Then_ReturnedResponseInternalServerError() {
+        //Given
+        long contactId = 1;
+        String content = "test";
+        MockMultipartFile file = new MockMultipartFile("image.png", "content".getBytes());
+        //When
+        User loggedUser = new User("user");
+        User contact = new User("user2");
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        Mockito.when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
+        fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
+        fileUtils.when(() -> FileUtils.saveFile(Message.IMAGES_DIRECTORY_PATH, file.getOriginalFilename(), file)).thenThrow(IOException.class);
+
+        ResponseEntity response = controller.sendMessageToUser(contactId, content, file);
+        //Then
+        assertEquals(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().getStatusCode(), response.getStatusCode());
+    }
+
+    @Test
+    void Given_ContactUserId_When_SettingMessagesSeenByProperUserIdByAPI_Then_ReturnedResponseOk() {
+        //Given
+        long contactId = 1;
+        //When
+        User loggedUser = new User("user");
+        User contact = new User("user2");
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        Mockito.when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
+
+        ResponseEntity response = controller.setMessagesSeen(contactId);
+        //Then
+        assertEquals(ResponseEntity.ok().build(), response);
+    }
+
+    @Test
+    void Given_ContactUserId_When_SettingMessagesSeenByWrongUserIdByAPI_Then_ReturnedResponseNotFound() {
+        //Given
+        long contactId = 1;
+        //When
+        User loggedUser = new User("user");
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+
+        ResponseEntity response = controller.setMessagesSeen(contactId);
+        //Then
+        assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build().getStatusCode(), response.getStatusCode());
     }
 }
