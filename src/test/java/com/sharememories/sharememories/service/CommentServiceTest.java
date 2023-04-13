@@ -100,4 +100,34 @@ class CommentServiceTest {
         //Then
         assert(comment.getReactions().isEmpty());
     }
+
+    @Test
+    void Give_PostIdAndComment_When_CommentingPostByProperPostId_Then_CommentReferenceToPostIsSet() {
+        //Given
+        long postId = 1;
+        Comment comment = new Comment();
+        //When
+        Post post = new Post();
+
+        when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+        when(commentRepository.save(comment))
+                .thenAnswer(i -> i.getArguments()[0]);
+
+        Comment output = service.commentPost(postId, comment).get();
+        //Then
+        assertEquals(post, output.getPost());
+    }
+
+    @Test
+    void Give_PostIdAndComment_When_CommentingPostByWrongPostId_Then_CommentReferenceToPostIsNotSet() {
+        //Given
+        long postId = 1;
+        Comment comment = new Comment();
+        //When
+        Post post = new Post();
+
+        Optional<Comment> output = service.commentPost(postId, comment);
+        //Then
+        assertFalse(output.isPresent());
+    }
 }
