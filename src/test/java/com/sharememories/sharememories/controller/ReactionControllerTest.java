@@ -193,7 +193,7 @@ class ReactionControllerTest {
         int id = 1;
         //When
         Mockito.when(service.getReactionImageName(id)).thenReturn(Optional.of("image.png"));
-        fileUtils.when(() -> FileUtils.deleteFile(any(String.class), any(String.class))).thenThrow(IOException.class);
+        fileUtils.when(() -> FileUtils.deleteFile(Reaction.IMAGES_DIRECTORY_PATH, "image.png")).thenThrow(IOException.class);
 
         ResponseEntity response = controller.deleteReaction(id);
         //Then
