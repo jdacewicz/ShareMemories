@@ -1,6 +1,7 @@
 package com.sharememories.sharememories.service;
 
 import com.sharememories.sharememories.domain.User;
+import com.sharememories.sharememories.repository.MessageRepository;
 import com.sharememories.sharememories.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,51 +15,57 @@ import java.util.Set;
 @Service
 public class SecurityUserDetailsService implements UserDetailsService {
 
-    private UserRepository repository;
+    private UserRepository userRepository;
+    private MessageRepository messageRepository;
 
     @Autowired
-    public SecurityUserDetailsService(UserRepository repository) {
-        this.repository = repository;
+    public SecurityUserDetailsService(UserRepository userRepository, MessageRepository messageRepository) {
+        this.userRepository = userRepository;
+        this.messageRepository = messageRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = repository.findByUsername(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not present"));
         return user;
     }
 
     public Optional<User> getUserByUsername(String username) {
-        return repository.findByUsername(username);
+        return userRepository.findByUsername(username);
     }
 
     public Optional<User> getUserById(long id) {
-        return repository.findById(id);
+        return userRepository.findById(id);
     }
 
     public Optional<String> getUserImageName(long id) {
-        return repository.findById(id)
+        return userRepository.findById(id)
                 .map(u -> u.getProfileImage());
     }
 
     public void creatUser(UserDetails user) {
-        repository.save((User) user);
+        userRepository.save((User) user);
     }
 
     public void deleteUser(long id) {
-        repository.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     public Optional<Set<User>> getAllContacts(long userId) {
-        return repository.findById(userId).map(u -> u.getContacts());
+        return userRepository.findById(userId).map(u -> u.getContacts());
+    }
+
+    public Set<User> getAllUnknownMessageSenders(User receiver, boolean messageSeen) {
+        return messageRepository.findAllSendersByNotInContactsAndMessageSeen(receiver, receiver.getContacts(), messageSeen);
     }
 
     public Optional<User> addUserToFriendsList(User loggedinUser, long addedUserId) {
-        Optional<User> addedUser = repository.findById(addedUserId);
+        Optional<User> addedUser = userRepository.findById(addedUserId);
         if (addedUser.isPresent() && !loggedinUser.getId().equals(addedUserId)) {
 
             loggedinUser.getContacts().add(addedUser.get());
-            return Optional.of(repository.save(loggedinUser));
+            return Optional.of(userRepository.save(loggedinUser));
         }
         return Optional.empty();
     }

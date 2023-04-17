@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/api/users", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,6 +38,19 @@ public class UserController {
             map.put("message", "User not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
         }
+    }
+
+    @GetMapping("/contacts/unknown")
+    public ResponseEntity<?> getAllUnknownMessageSenders() {
+        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName())
+                .get();
+        Set<User> senders = userDetailsService.getAllUnknownMessageSenders(loggedUser, false);
+        if (senders.isEmpty())
+            return ResponseEntity.noContent().build();
+        else
+            return ResponseEntity.ok(senders);
     }
 
     @PutMapping("/invite/{addedUserId}")
