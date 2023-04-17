@@ -41,8 +41,16 @@ public class MessageService {
     public Map<Long, Long> getNotificationsCount(User receiver) {
         List<Message> messages = repository.getAllByReceiverAndMessageSeen(receiver, false);
 
-        return messages.stream()
+        Map<Long, Long> output = messages.stream()
+                .filter(m -> receiver.getContacts().contains(m.getSender()))
                 .collect(Collectors.groupingBy(m -> m.getSender().getId(), Collectors.counting()));
+
+        long count = messages.stream()
+                .filter(m -> !receiver.getContacts().contains(m.getSender()))
+                .count();
+
+        output.put((long) -1, count);
+        return output;
     }
 
     public Message createMessage(Message message) {

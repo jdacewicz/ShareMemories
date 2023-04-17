@@ -581,6 +581,8 @@ function appendMessageToChatBox(message) {
 }
 
 function appendNotificationToContact(contactId, notifyCount) {
+    $("button[name='contact[" + contactId + "]'] span[name='notify-count']").remove();
+
     $("button[name='contact[" + contactId + "]']").append(
         '<span name="notify-count" class="font-bold text-white border py-1 px-2 bg-red-600">' +
             notifyCount +

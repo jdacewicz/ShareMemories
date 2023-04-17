@@ -28,13 +28,15 @@ class MessageServiceTest {
     }
 
     @Test
-    void Given_User_When_GettingNotificationsCountByMessageReceiverReturnsNotEmptyList_Then_ReturnedProperMapOfCounts() {
+    void Given_User_When_GettingNotificationsCountByMessageReceiver_Then_ReturnedProperMapOfCountsOfMessagesFromContacts() {
         //Given
         User receiver = new User();
         receiver.setId((long) 1);
         //When
         User sender = new User();
+        receiver.getContacts().add(sender);
         sender.setId((long) 2);
+
         Message message = new Message(sender, receiver, "test");
         List<Message> messageList = List.of(message, message);
 
@@ -46,17 +48,21 @@ class MessageServiceTest {
     }
 
     @Test
-    void Given_User_When_GettingNotificationsCountByMessageReceiverReturnsEmptyList_Then_ReturnedEmptyMapOfCounts() {
+    void Given_User_When_GettingNotificationsCountByMessageReceiver_Then_ReturnedProperMapOfCountsOfMessagesNotFromContacts() {
         //Given
         User receiver = new User();
         receiver.setId((long) 1);
         //When
-        List<Message> messageList = List.of();
+        User sender = new User();
+        sender.setId((long) 2);
+
+        Message message = new Message(sender, receiver, "test");
+        List<Message> messageList = List.of(message, message);
 
         Mockito.when(repository.getAllByReceiverAndMessageSeen(receiver, false)).thenReturn(messageList);
 
         Map<Long, Long> output = service.getNotificationsCount(receiver);
         //Then
-        assert(output.isEmpty());
+        assertEquals(2, output.get((long) -1));
     }
 }
