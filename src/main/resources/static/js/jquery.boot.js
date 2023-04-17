@@ -143,14 +143,30 @@ $(document).ready(function () {
         $(this).children("span[name='notify-count']").remove();
         loadChatBox(id);
 
+        $("#chat").show();
         $("#chat-window").fadeIn("fast");
     });
 
-    $("#hide-chat-window").click(function () {
+    $("button[name='unknown-contact[-1]']").click(function () {
+        loadUnknownContactsList();
+
+        $("#unknown-contacts-list").show();
+        $("#chat-window").fadeIn("fast");
+    })
+
+    $("#hide-chat").click(function () {
         $("#chat-window").fadeOut("fast");
 
         $("#chat-messages div").remove();
-    })
+        $("#chat").hide();
+    });
+
+    $("#hide-unknown-contacts-list").click(function () {
+        $("#chat-window").fadeOut("fast");
+
+        $("#unknown-contacts div").remove();
+        $("#unknown-contacts-list").hide();
+    });
 });
 
 function loadPosts() {
@@ -233,6 +249,26 @@ function loadChatBox(userId) {
         success: function (data) {
             data.forEach(function (message) {
                 appendMessageToChatBox(message);
+            });
+        }
+    });
+}
+
+function loadUnknownContactsList() {
+    $.ajax({
+        type: "GET",
+        url: "/api/users/contacts/unknown",
+        dataType: "JSON",
+        success: function (users) {
+            $.ajax({
+                type: "GET",
+                url: "/api/messages/notify/unknown",
+                dataType: "JSON",
+                success: function (messages) {
+                    users.forEach(function (user) {
+                       appendUserToUnknownUsersList(user, messages[user.id]);
+                    });
+                }
             });
         }
     });
@@ -592,4 +628,20 @@ function appendNotificationToContact(contactId, notifyCount) {
             notifyCount +
         '</span>'
     ).parent().prependTo("#contact-list");
+}
+
+function appendUserToUnknownUsersList(user, count) {
+    $("#unknown-contacts").append(
+        '<div class="block p-4">' +
+            '<button type="button" name="contact['  + user.id + ']" value="' + user.id + '">' +
+                '<img class="rounded-full w-8 h-8 inline mr-2" src="' + user.imagePath + '">' +
+                '<span class="font-bold mr-1">' +
+                    user.firstname + ' ' + user.lastname +
+                '</span>' +
+                '<span name="notify-count" class="font-bold text-white border py-1 px-2 bg-red-600">' +
+                    count +
+                '</span>' +
+            '</button>' +
+        '</div>'
+    );
 }
