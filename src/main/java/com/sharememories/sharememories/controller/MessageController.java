@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/messages", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,12 +64,25 @@ public class MessageController {
     }
 
     @GetMapping("/notify")
-    public ResponseEntity<?> getNotificationsCount() {
+    public ResponseEntity<?> getAllNotificationsCount() {
         User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName())
                 .get();
-        Map<Long, Long> notifyCounts = messageService.getNotificationsCount(loggedUser);
+        Map<Long, Long> notifyCounts = messageService.getAllNotificationsCount(loggedUser);
+        if (notifyCounts.isEmpty())
+            return ResponseEntity.noContent().build();
+        else
+            return ResponseEntity.ok(notifyCounts);
+    }
+
+    @GetMapping("/notify/unknown")
+    public ResponseEntity<?> getAllNotificationsFromUnknownSenderCount() {
+        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName())
+                .get();
+        Map<Long, Long> notifyCounts = messageService.getUnknownSenderNotificationsCount(loggedUser, false);
         if (notifyCounts.isEmpty())
             return ResponseEntity.noContent().build();
         else

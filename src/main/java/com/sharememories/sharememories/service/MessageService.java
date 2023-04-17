@@ -38,7 +38,7 @@ public class MessageService {
         return repository.findAllBySenderAndReceiver(sender, receiver);
     }
 
-    public Map<Long, Long> getNotificationsCount(User receiver) {
+    public Map<Long, Long> getAllNotificationsCount(User receiver) {
         List<Message> messages = repository.getAllByReceiverAndMessageSeen(receiver, false);
 
         Map<Long, Long> output = messages.stream()
@@ -51,6 +51,13 @@ public class MessageService {
 
         output.put((long) -1, count);
         return output;
+    }
+
+    public Map<Long, Long> getUnknownSenderNotificationsCount(User receiver, boolean messageSeen) {
+        List<Message> messages = repository.findAllByReceiverAndSenderNotInContactsAndMessageSeen(receiver, receiver.getContacts(), messageSeen);
+
+        return messages.stream()
+                .collect(Collectors.groupingBy(m -> m.getSender().getId(), Collectors.counting()));
     }
 
     public Message createMessage(Message message) {

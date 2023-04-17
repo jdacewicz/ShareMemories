@@ -42,7 +42,7 @@ class MessageServiceTest {
 
         Mockito.when(repository.getAllByReceiverAndMessageSeen(receiver, false)).thenReturn(messageList);
 
-        Map<Long, Long> output = service.getNotificationsCount(receiver);
+        Map<Long, Long> output = service.getAllNotificationsCount(receiver);
         //Then
         assertEquals(2, output.get((long) 2));
     }
@@ -61,7 +61,7 @@ class MessageServiceTest {
 
         Mockito.when(repository.getAllByReceiverAndMessageSeen(receiver, false)).thenReturn(messageList);
 
-        Map<Long, Long> output = service.getNotificationsCount(receiver);
+        Map<Long, Long> output = service.getAllNotificationsCount(receiver);
         //Then
         assertEquals(2, output.get((long) -1));
     }

@@ -156,9 +156,9 @@ class MessageControllerTest {
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
         Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
         Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
-        Mockito.when(messageService.getNotificationsCount(loggedUser)).thenReturn(notifyCounts);
+        Mockito.when(messageService.getAllNotificationsCount(loggedUser)).thenReturn(notifyCounts);
 
-        ResponseEntity response = controller.getNotificationsCount();
+        ResponseEntity response = controller.getAllNotificationsCount();
         //Then
         assertEquals(ResponseEntity.ok(notifyCounts), response);
     }
@@ -177,7 +177,7 @@ class MessageControllerTest {
         Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
         Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
 
-        ResponseEntity response = controller.getNotificationsCount();
+        ResponseEntity response = controller.getAllNotificationsCount();
         //Then
         assertEquals(ResponseEntity.noContent().build(), response);
     }
