@@ -244,6 +244,10 @@ function checkNewMessages() {
         url: "/api/messages/notify",
         dataType: "JSON",
         success: function (data) {
+            if (data[-1] == 0) {
+                $("button[name='unknown-contact[-1]']").parent().remove();
+            }
+
             for (let key in data) {
                 appendNotificationToContact(key, data[key]);
             }
@@ -581,9 +585,9 @@ function appendMessageToChatBox(message) {
 }
 
 function appendNotificationToContact(contactId, notifyCount) {
-    $("button[name='contact[" + contactId + "]'] span[name='notify-count']").remove();
+    $("button[name*='contact[" + contactId + "]'] span[name='notify-count']").remove();
 
-    $("button[name='contact[" + contactId + "]']").append(
+    $("button[name*='contact[" + contactId + "]']").append(
         '<span name="notify-count" class="font-bold text-white border py-1 px-2 bg-red-600">' +
             notifyCount +
         '</span>'

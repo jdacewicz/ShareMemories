@@ -83,6 +83,11 @@
     </div>
     <div class="float-right max-w-md w-1/6 h-screen">
         <div id="contact-list" class="fixed w-1/6 mb-5 bg-white p-5 shadow rounded-xl grid grid-flow-row auto-rows-max gap-4">
+            <div>
+                <button type="button" name="unknown-contact[-1]">
+                    Unknown contacts
+                </button>
+            </div>
             <div th:each="contact : ${contacts}">
                 <button type="button" th:name="'contact['  + ${contact.getId()} + ']'" th:value="${contact.getId()}">
                     <img class="rounded-full w-8 h-8 inline mr-2" th:src="${contact.getImagePath()}">
