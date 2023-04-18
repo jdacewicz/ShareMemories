@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -137,5 +138,46 @@ class UserControllerTest {
         ResponseEntity response = controller.addUserToFriends(addedUserId);
         //Then
         assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build().getStatusCode(), response.getStatusCode());
+    }
+
+    @Test
+    void Given__When_GettingAllUnknownMessageSenders_Then_ReturnedResponseOkWithSendersIfNotEmpty() {
+        //Given
+        //When
+        User loggedUser = new User("user");
+        User unknownUser = new User("user2");
+        Set<User> userSet = Set.of(unknownUser);
+
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(service.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(service.getAllUnknownMessageSenders(loggedUser, false)).thenReturn(userSet);
+
+        ResponseEntity response = controller.getAllUnknownMessageSenders();
+        //Then
+        assertEquals(ResponseEntity.ok(userSet), response);
+    }
+
+    @Test
+    void Given__When_GettingAllUnknownMessageSenders_Then_ReturnedResponseNoContentIfEmpty() {
+        //Given
+        //When
+        User loggedUser = new User("user");
+
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(service.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+
+        ResponseEntity response = controller.getAllUnknownMessageSenders();
+        //Then
+        assertEquals(ResponseEntity.noContent().build(), response);
     }
 }
