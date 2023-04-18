@@ -41,20 +41,23 @@ public class MessageService {
     public Map<Long, Long> getAllNotificationsCount(User receiver) {
         List<Message> messages = repository.getAllByReceiverAndMessageSeen(receiver, false);
 
-        Map<Long, Long> output = messages.stream()
-                .filter(m -> receiver.getContacts().contains(m.getSender()))
-                .collect(Collectors.groupingBy(m -> m.getSender().getId(), Collectors.counting()));
+        if (!messages.isEmpty()) {
+            Map<Long, Long> output = messages.stream()
+                    .filter(m -> receiver.getContacts().contains(m.getSender()))
+                    .collect(Collectors.groupingBy(m -> m.getSender().getId(), Collectors.counting()));
 
-        long count = messages.stream()
-                .filter(m -> !receiver.getContacts().contains(m.getSender()))
-                .count();
+            long count = messages.stream()
+                    .filter(m -> !receiver.getContacts().contains(m.getSender()))
+                    .count();
 
-        output.put((long) -1, count);
-        return output;
+            output.put((long) -1, count);
+            return output;
+        }
+        return Map.of();
     }
 
-    public Map<Long, Long> getUnknownSenderNotificationsCount(User receiver, boolean messageSeen) {
-        List<Message> messages = repository.findAllByReceiverAndSenderNotInContactsAndMessageSeen(receiver, receiver.getContacts(), messageSeen);
+    public Map<Long, Long> getUnknownSenderNotificationsCount(User receiver) {
+        List<Message> messages = repository.findAllByReceiverAndSenderNotInContactsAndMessageSeen(receiver, receiver.getContacts(), false);
 
         return messages.stream()
                 .collect(Collectors.groupingBy(m -> m.getSender().getId(), Collectors.counting()));

@@ -82,7 +82,7 @@ public class MessageController {
                         .getAuthentication()
                         .getName())
                 .get();
-        Map<Long, Long> notifyCounts = messageService.getUnknownSenderNotificationsCount(loggedUser, false);
+        Map<Long, Long> notifyCounts = messageService.getUnknownSenderNotificationsCount(loggedUser);
         if (notifyCounts.isEmpty())
             return ResponseEntity.noContent().build();
         else
