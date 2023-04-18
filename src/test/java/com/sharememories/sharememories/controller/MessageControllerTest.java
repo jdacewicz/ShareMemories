@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 class MessageControllerTest {
 
@@ -42,7 +43,7 @@ class MessageControllerTest {
 
     @BeforeAll
     static void init() {
-        fileUtils = Mockito.mockStatic(FileUtils.class);
+        fileUtils = mockStatic(FileUtils.class);
     }
 
     @AfterAll
@@ -56,7 +57,7 @@ class MessageControllerTest {
         long id = 1;
         //When
         Message message = new Message();
-        Mockito.when(messageService.getMessage(id)).thenReturn(Optional.of(message));
+        when(messageService.getMessage(id)).thenReturn(Optional.of(message));
 
         ResponseEntity response = controller.getMessage(id);
         //Then
@@ -83,16 +84,16 @@ class MessageControllerTest {
         Message message = new Message();
         List<Message> messageList = List.of(message);
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
-        Mockito.when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
 
-        Mockito.when(messageService.getAllMessagesBySenderAndReceiver(loggedUser, contact)).thenReturn(messageList);
+        when(messageService.getAllMessagesBySenderAndReceiver(loggedUser, contact)).thenReturn(messageList);
 
         ResponseEntity response = controller.getAllMessagesWithUser(contactId);
         //Then
@@ -107,14 +108,14 @@ class MessageControllerTest {
         User loggedUser = new User("user");
         User contact = new User("contact");
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
-        Mockito.when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
 
         ResponseEntity response = controller.getAllMessagesWithUser(contactId);
         //Then
@@ -128,13 +129,13 @@ class MessageControllerTest {
         //When
         User loggedUser = new User("user");
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
 
         ResponseEntity response = controller.getAllMessagesWithUser(contactId);
         //Then
@@ -149,14 +150,14 @@ class MessageControllerTest {
         long keyAndValue = 1;
         Map<Long, Long> notifyCounts = Map.of(keyAndValue, keyAndValue);
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
-        Mockito.when(messageService.getAllNotificationsCount(loggedUser)).thenReturn(notifyCounts);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(messageService.getAllNotificationsCount(loggedUser)).thenReturn(notifyCounts);
 
         ResponseEntity response = controller.getAllNotificationsCount();
         //Then
@@ -169,13 +170,13 @@ class MessageControllerTest {
         //When
         User loggedUser = new User("user");
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
 
         ResponseEntity response = controller.getAllNotificationsCount();
         //Then
@@ -193,15 +194,15 @@ class MessageControllerTest {
         User contact = new User("user2");
         Message message = new Message();
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
-        Mockito.when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
-        Mockito.when(messageService.createMessage(any(Message.class))).thenReturn(message);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
+        when(messageService.createMessage(any(Message.class))).thenReturn(message);
 
         ResponseEntity response = controller.sendMessageToUser(contactId, content, emptyFile);
         //Then
@@ -217,13 +218,13 @@ class MessageControllerTest {
         //When
         User loggedUser = new User("user");
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
 
         ResponseEntity response = controller.sendMessageToUser(contactId, content, emptyFile);
         //Then
@@ -241,15 +242,15 @@ class MessageControllerTest {
         User contact = new User("user2");
         Message message = new Message();
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
-        Mockito.when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
-        Mockito.when(messageService.createMessage(any(Message.class))).thenReturn(message);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
+        when(messageService.createMessage(any(Message.class))).thenReturn(message);
 
         ResponseEntity response = controller.sendMessageToUser(contactId, content, file);
         //Then
@@ -266,14 +267,14 @@ class MessageControllerTest {
         User loggedUser = new User("user");
         User contact = new User("user2");
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
-        Mockito.when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
         fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
         fileUtils.when(() -> FileUtils.saveFile(Message.IMAGES_DIRECTORY_PATH, file.getOriginalFilename(), file)).thenThrow(IOException.class);
 
@@ -290,14 +291,14 @@ class MessageControllerTest {
         User loggedUser = new User("user");
         User contact = new User("user2");
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
-        Mockito.when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(detailsService.getUserById(contactId)).thenReturn(Optional.of(contact));
 
         ResponseEntity response = controller.setMessagesSeen(contactId);
         //Then
@@ -311,16 +312,56 @@ class MessageControllerTest {
         //When
         User loggedUser = new User("user");
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        Mockito.when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        Mockito.when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
 
         ResponseEntity response = controller.setMessagesSeen(contactId);
         //Then
         assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build().getStatusCode(), response.getStatusCode());
+    }
+
+    @Test
+    void Given__When_GettingAllNotificationsCountFromUnknownSenders_Then_ReturnedResponseOkWithMapOfCountsIfNotEmpty() {
+        //Given
+        //When
+        Map<Long, Long> notifyCounts = Map.of((long) 1, (long) 1);
+        User loggedUser = new User("user");
+
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+        when(messageService.getUnknownSenderNotificationsCount(any(User.class))).thenReturn(notifyCounts);
+
+        ResponseEntity response = controller.getAllNotificationsFromUnknownSenderCount();
+        //Then
+        assertEquals(ResponseEntity.ok(notifyCounts), response);
+    }
+
+    @Test
+    void Given__When_GettingAllNotificationsCountFromUnknownSenders_Then_ReturnedResponseNoContentIfEmpty() {
+        //Given
+        //When
+        User loggedUser = new User("user");
+
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
+        when(detailsService.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+
+        ResponseEntity response = controller.getAllNotificationsFromUnknownSenderCount();
+        //Then
+        assertEquals(ResponseEntity.noContent().build(), response);
     }
 }
