@@ -76,6 +76,16 @@ $(function () {
             saveRequestedData(url, "PUT");
         }
     });
+
+    $("#unknown-contacts").on("click", "button[name^='contact[']", function () {
+        let count = $(this).children("span[name='notify-count']");
+        if (count.length) {
+            let id = $(this).val();
+
+            let url = "/api/messages/user/" + id + "/show";
+            saveRequestedData(url, "PUT");
+        }
+    });
 });
 
 function saveRequestedData(action, method) {

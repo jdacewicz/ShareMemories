@@ -147,6 +147,30 @@ $(document).ready(function () {
         $("#chat-window").fadeIn("fast");
     });
 
+    $("#unknown-contacts").on("click", "button[name^='contact[']", function () {
+        let id = $(this).val();
+        let img = $(this).children("img").attr("src");
+        let name = $(this).children("span").text();
+        let url = "/api/messages/user/" + id;
+
+        $("#chat-contact img").attr("src", img);
+        $("#chat-contact span").text(name);
+        $("#chat-message-form form").attr("action", url);
+
+        let countSum = parseInt($("button[name='unknown-contact[-1]']").children("span[name='notify-count']").text());
+        let contactCount = parseInt($(this).children("span[name='notify-count']").text());
+        if (countSum - contactCount == 0) {
+            $("button[name='unknown-contact[-1]']").parent().remove();
+        } else {
+            $("button[name='unknown-contact[-1]']").children("span[name='notify-count']").text(countSum - contactCount);
+        }
+        loadChatBox(id);
+
+        $("#unknown-contacts-list").hide();
+        $("#chat").show();
+        $("#chat-window").fadeIn("fast");
+    });
+
     $("button[name='unknown-contact[-1]']").click(function () {
         loadUnknownContactsList();
 
