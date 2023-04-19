@@ -39,9 +39,11 @@ public class Post {
     )
     @OrderBy("id ASC")
     private List<Reaction> reactions = new ArrayList<>();
-
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private PostGroup group;
 
     public Post() {
     }
@@ -145,5 +147,13 @@ public class Post {
 
     public void setCreator(User creator) {
         this.creator = creator;
+    }
+
+    public PostGroup getGroup() {
+        return group;
+    }
+
+    public void setGroup(PostGroup group) {
+        this.group = group;
     }
 }
