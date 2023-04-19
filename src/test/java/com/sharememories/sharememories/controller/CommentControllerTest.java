@@ -1,5 +1,6 @@
 package com.sharememories.sharememories.controller;
 
+import com.sharememories.sharememories.controller.api.CommentController;
 import com.sharememories.sharememories.domain.Comment;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.CommentService;

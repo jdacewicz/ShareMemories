@@ -1,5 +1,6 @@
 package com.sharememories.sharememories.controller;
 
+import com.sharememories.sharememories.controller.api.ReactionController;
 import com.sharememories.sharememories.domain.Reaction;
 import com.sharememories.sharememories.service.ReactionService;
 import com.sharememories.sharememories.util.FileUtils;

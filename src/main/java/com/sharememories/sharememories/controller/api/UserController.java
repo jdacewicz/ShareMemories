@@ -1,4 +1,4 @@
-package com.sharememories.sharememories.controller;
+package com.sharememories.sharememories.controller.api;
 
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;

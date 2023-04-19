@@ -1,9 +1,9 @@
 package com.sharememories.sharememories.controller;
 
+import com.sharememories.sharememories.controller.api.UserController;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
-import org.apache.coyote.Response;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
