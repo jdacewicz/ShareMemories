@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.Set;
 
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@MappedSuperclass
 public class Group {
 
     @Id
@@ -21,14 +20,14 @@ public class Group {
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<User> admins = Set.of(owner);
+    private Set<User> admins;
     @ManyToMany
     @JoinTable(
             name = "users_group_members",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<User> members = Set.of(owner);
+    private Set<User> members;
 
     public Group() {
     }
