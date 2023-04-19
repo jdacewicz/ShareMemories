@@ -22,6 +22,9 @@ public class Message {
     private String content;
     private String image;
     private boolean messageSeen = false;
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private MessageGroup group;
 
     public Message() {
     }
@@ -91,5 +94,13 @@ public class Message {
 
     public void setMessageSeen(boolean messageSeen) {
         this.messageSeen = messageSeen;
+    }
+
+    public MessageGroup getGroup() {
+        return group;
+    }
+
+    public void setGroup(MessageGroup group) {
+        this.group = group;
     }
 }
