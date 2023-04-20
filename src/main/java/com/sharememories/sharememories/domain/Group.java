@@ -11,6 +11,7 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "groupId")
     private long id;
+    private String name;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User owner;
@@ -32,12 +33,27 @@ public class Group {
     public Group() {
     }
 
+    public Group(String name, User owner, Set<User> admins, Set<User> members) {
+        this.name = name;
+        this.owner = owner;
+        this.admins = admins;
+        this.members = members;
+    }
+
     public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public User getOwner() {

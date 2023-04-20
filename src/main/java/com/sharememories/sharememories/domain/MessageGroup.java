@@ -13,6 +13,10 @@ public class MessageGroup extends Group {
     public MessageGroup() {
     }
 
+    public MessageGroup(String name, User owner, Set<User> members) {
+        super(name, owner, Set.of(owner), members);
+    }
+
     public Set<Message> getMessages() {
         return messages;
     }
