@@ -1,6 +1,5 @@
 package com.sharememories.sharememories.controller.api;
 
-import com.sharememories.sharememories.domain.MessageGroup;
 import com.sharememories.sharememories.domain.PostGroup;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.PostGroupService;
