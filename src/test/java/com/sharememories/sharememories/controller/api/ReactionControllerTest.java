@@ -1,4 +1,4 @@
-package com.sharememories.sharememories.controller;
+package com.sharememories.sharememories.controller.api;
 
 import com.sharememories.sharememories.controller.api.ReactionController;
 import com.sharememories.sharememories.domain.Reaction;

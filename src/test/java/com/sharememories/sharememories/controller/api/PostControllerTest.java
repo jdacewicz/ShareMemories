@@ -1,4 +1,4 @@
-package com.sharememories.sharememories.controller;
+package com.sharememories.sharememories.controller.api;
 
 import com.sharememories.sharememories.controller.api.PostController;
 import com.sharememories.sharememories.domain.Post;
