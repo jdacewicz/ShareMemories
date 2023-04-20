@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -58,6 +59,10 @@ public class SecurityUserDetailsService implements UserDetailsService {
 
     public Set<User> getAllUnknownMessageSenders(User receiver, boolean messageSeen) {
         return messageRepository.findAllSendersByNotInContactsAndMessageSeen(receiver, receiver.getContacts(), messageSeen);
+    }
+
+    public Set<User> getUsers(List<Long> ids) {
+        return userRepository.getAllByIdInList(ids);
     }
 
     public Optional<User> addUserToFriendsList(User loggedinUser, long addedUserId) {

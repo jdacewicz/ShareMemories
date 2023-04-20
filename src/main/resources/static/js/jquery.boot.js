@@ -191,6 +191,20 @@ $(document).ready(function () {
         $("#unknown-contacts div").remove();
         $("#unknown-contacts-list").hide();
     });
+
+    $("button[name='create-group']").click(function () {
+        loadContactsList();
+
+        $("#create-message-group-window").show();
+        $("#chat-window").fadeIn("fast");
+    });
+
+    $("#hide-create-message-group-window").click(function () {
+        $("#chat-window").fadeOut("fast");
+
+        $("#create-message-group-window #contacts-list div").remove();
+        $("#create-message-group-window").hide();
+    })
 });
 
 function loadPosts() {
@@ -294,6 +308,19 @@ function loadUnknownContactsList() {
                     });
                 }
             });
+        }
+    });
+}
+
+function loadContactsList() {
+    $.ajax({
+        type: "GET",
+        url: "/api/users/contacts/all",
+        dataType: "JSON",
+        success: function (users) {
+            users.forEach(function (user) {
+                appendUserToCreatGroupPanel(user);
+            })
         }
     });
 }
@@ -666,6 +693,20 @@ function appendUserToUnknownUsersList(user, count) {
                     count +
                 '</span>' +
             '</button>' +
+        '</div>'
+    );
+}
+
+function appendUserToCreatGroupPanel(user) {
+    $("#create-message-group-window #contacts-list").append(
+        '<div>' +
+            '<label for="contact['  + user.id + ']">' +
+                '<img class="rounded-full w-8 h-8 inline mr-2" src="' + user.imagePath + '">' +
+                '<span class="font-bold mr-1">' +
+                    user.firstname + ' ' + user.lastname +
+                '</span>' +
+            '</label>' +
+            '<input type="checkbox" name="contact['  + user.id + ']" value="' + user.id + '">' +
         '</div>'
     );
 }

@@ -53,6 +53,25 @@ public class UserController {
             return ResponseEntity.ok(senders);
     }
 
+    @GetMapping("/contacts/all")
+    public ResponseEntity<?> getAllContacts() {
+        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName())
+                .get();
+        Optional<Set<User>> contacts = userDetailsService.getAllContacts(loggedUser.getId());
+        if (!contacts.isPresent()) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("status", HttpStatus.NOT_FOUND.value());
+            map.put("message", "Could not find User.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+        }
+        if (contacts.get().isEmpty())
+            return ResponseEntity.noContent().build();
+        else
+            return ResponseEntity.ok(contacts);
+    }
+
     @PutMapping("/invite/{addedUserId}")
     public ResponseEntity<?> addUserToFriends(@PathVariable long addedUserId) {
         User user = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()

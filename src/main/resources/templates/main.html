@@ -58,6 +58,28 @@
                 </div>
             </div>
         </div>
+        <div id="create-message-group-window" class="flex h-full hidden">
+            <div class="max-w-lg m-auto h-3/4 p-4">
+                <div class="block">
+                    <button id="hide-create-message-group-window" class="rounded-xl bg-white shadow">
+                        <img class="w-10" src="/images/icons/go-back-icon.svg">
+                    </button>
+                </div>
+                <div class="rounded-xl h-full bg-white shadow p-4">
+                    <form id="create-message-group-from" class="border border-gray-200 rounded-lg h-full p-2">
+                        <div class="mb-6">
+                            <label for="group-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Group name</label>
+                            <input type="email" name="name" id="group-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="ex. Class 1A" required>
+                        </div>
+                        <div id="contacts-list" class="mb-6">
+                        </div>
+                        <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">
+                            Create
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="fixed max-w-md w-1/6 mb-5 bg-white p-5 shadow h-screen rounded-xl h-full grid grid-flow-row gap-4">
         <div class="flex justify-center">
@@ -99,6 +121,16 @@
             <div>
                 <button type="button" name="unknown-contact[-1]" class="font-bold">
                     Unknown contacts
+                </button>
+            </div>
+            <div class="border-b-2" th:each="group : ${user.getMessagesGroupsMember()}">
+                <button type="button" th:name="'group['  + ${group.getId()} + ']'" th:value="${group.getId()}">
+                    <span class="font-bold mr-1" th:text="${group.getName()}"/>
+                </button>
+            </div>
+            <div>
+                <button type="button" name="create-group" class="font-bold">
+                    Create group
                 </button>
             </div>
             <div th:each="contact : ${contacts}">
