@@ -15,6 +15,10 @@ public class PostGroup extends Group {
     public PostGroup() {
     }
 
+    public PostGroup(String name, User owner, Set<User> members) {
+        super(name, owner, Set.of(owner), members);
+    }
+
     public Set<Post> getPosts() {
         return posts;
     }
