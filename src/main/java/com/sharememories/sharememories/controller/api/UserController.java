@@ -53,7 +53,7 @@ public class UserController {
             return ResponseEntity.ok(senders);
     }
 
-    @GetMapping("/contacts/all")
+    @GetMapping("/contacts")
     public ResponseEntity<?> getAllContacts() {
         User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
                         .getAuthentication()

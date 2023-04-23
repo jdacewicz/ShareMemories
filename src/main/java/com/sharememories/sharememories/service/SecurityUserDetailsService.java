@@ -61,7 +61,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
         return messageRepository.findAllSendersByNotInContactsAndMessageSeen(receiver, receiver.getContacts(), messageSeen);
     }
 
-    public Set<User> getUsers(List<Long> ids) {
+    public Set<User> getUsers(long[] ids) {
         return userRepository.getAllByIdInList(ids);
     }
 
