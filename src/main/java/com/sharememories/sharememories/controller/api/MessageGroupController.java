@@ -10,11 +10,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
 @RestController
-@RequestMapping(value = "/api/messages/groups/", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/messages/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MessageGroupController {
 
     private MessageGroupService groupService;
@@ -29,7 +30,7 @@ public class MessageGroupController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getGroup(@PathVariable long id) {
         Optional<MessageGroup> group = groupService.getGroup(id);
-        if (!group.isPresent()) {
+        if (group.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Message group not found.");
@@ -50,13 +51,22 @@ public class MessageGroupController {
 
     @PostMapping()
     public ResponseEntity<?> createGroup(@RequestPart("name") String name,
-                                         @RequestPart("members") Set<User> members) {
+                                         @RequestPart("members") long[] ids,
+                                         @RequestPart(value = "image", required = false) MultipartFile file) {
         User user = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
                         .getAuthentication()
                         .getName())
                 .get();
-        MessageGroup group = groupService.createGroup(new MessageGroup(name, user, members));
-        return ResponseEntity.status(HttpStatus.CREATED).body(group);
+        Set<User> members = userDetailsService.getUsers(ids);
+        if (members.isEmpty()) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("status", HttpStatus.NOT_FOUND.value());
+            map.put("message", "Could not find users with given ids.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+        } else {
+            MessageGroup group = groupService.createGroup(name, user, members);
+            return ResponseEntity.status(HttpStatus.CREATED).body(group);
+        }
     }
 
     @DeleteMapping("/{id}")

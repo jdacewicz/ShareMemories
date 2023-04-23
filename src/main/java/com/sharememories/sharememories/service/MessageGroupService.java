@@ -1,6 +1,7 @@
 package com.sharememories.sharememories.service;
 
 import com.sharememories.sharememories.domain.MessageGroup;
+import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.repository.MessageGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,11 @@ public class MessageGroupService {
         return repository.getRandomGroups();
     }
 
-    public MessageGroup createGroup(MessageGroup group) {
+    public MessageGroup createGroup(String name, User owner, Set<User> members) {
+        MessageGroup group = new MessageGroup(name, owner);
+        group.addAdmin(owner);
+        group.addMembers(members);
+
         return repository.save(group);
     }
 
