@@ -49,13 +49,11 @@ public class User implements UserDetails {
     @JsonIgnore
     private Set<User> contacts = new HashSet<>();
     @ManyToMany(mappedBy = "members")
-    private Set<MessageGroup> messagesGroupsMember;
+    @JsonIgnore
+    private Set<Group> groupsMember;
     @ManyToMany(mappedBy = "admins")
-    private Set<MessageGroup> messagesGroupsAdmin;
-    @ManyToMany(mappedBy = "members")
-    private Set<PostGroup> postsGroupsMember;
-    @ManyToMany(mappedBy = "admins")
-    private Set<PostGroup> postsGroupsAdmin;
+    @JsonIgnore
+    private Set<Group> groupsAdmin;
 
     public User() {
     }
@@ -190,35 +188,19 @@ public class User implements UserDetails {
         this.contacts = contacts;
     }
 
-    public Set<MessageGroup> getMessagesGroupsMember() {
-        return messagesGroupsMember;
+    public Set<Group> getGroupsMember() {
+        return groupsMember;
     }
 
-    public void setMessagesGroupsMember(Set<MessageGroup> messagesGroupsMember) {
-        this.messagesGroupsMember = messagesGroupsMember;
+    public void setGroupsMember(Set<Group> groupsMember) {
+        this.groupsMember = groupsMember;
     }
 
-    public Set<MessageGroup> getMessagesGroupsAdmin() {
-        return messagesGroupsAdmin;
+    public Set<Group> getGroupsAdmin() {
+        return groupsAdmin;
     }
 
-    public void setMessagesGroupsAdmin(Set<MessageGroup> messagesGroupsAdmin) {
-        this.messagesGroupsAdmin = messagesGroupsAdmin;
-    }
-
-    public Set<PostGroup> getPostsGroupsMember() {
-        return postsGroupsMember;
-    }
-
-    public void setPostsGroupsMember(Set<PostGroup> postsGroupsMember) {
-        this.postsGroupsMember = postsGroupsMember;
-    }
-
-    public Set<PostGroup> getPostsGroupsAdmin() {
-        return postsGroupsAdmin;
-    }
-
-    public void setPostsGroupsAdmin(Set<PostGroup> postsGroupsAdmin) {
-        this.postsGroupsAdmin = postsGroupsAdmin;
+    public void setGroupsAdmin(Set<Group> groupsAdmin) {
+        this.groupsAdmin = groupsAdmin;
     }
 }
