@@ -66,12 +66,15 @@
                     </button>
                 </div>
                 <div class="rounded-xl h-full bg-white shadow p-4">
-                    <form id="create-message-group-from" class="border border-gray-200 rounded-lg h-full p-2">
+                    <form id="create-message-group-from" action="/api/messages/groups" method="POST" enctype="multipart/form-data" class="border border-gray-200 rounded-lg h-full p-2">
                         <div class="mb-6">
                             <label for="group-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Group name</label>
-                            <input type="email" name="name" id="group-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="ex. Class 1A" required>
+                            <input type="text" name="name" id="group-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="ex. Class 1A" required>
                         </div>
                         <div id="contacts-list" class="mb-6">
+                        </div>
+                        <div class="mb-6">
+                            <input type="file" name="image">
                         </div>
                         <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">
                             Create
@@ -123,10 +126,12 @@
                     Unknown contacts
                 </button>
             </div>
-            <div class="border-b-2" th:each="group : ${user.getMessagesGroupsMember()}">
-                <button type="button" th:name="'group['  + ${group.getId()} + ']'" th:value="${group.getId()}">
-                    <span class="font-bold mr-1" th:text="${group.getName()}"/>
-                </button>
+            <div class="border-b-2" th:if="${not user.getGroupsMember().isEmpty()}">
+                <div th:each="group : ${user.getGroupsMember()}">
+                    <button type="button" th:name="'group['  + ${group.getId()} + ']'" th:value="${group.getId()}">
+                        <span class="font-bold mr-1" th:text="${group.getName()}"/>
+                    </button>
+                </div>
             </div>
             <div>
                 <button type="button" name="create-group" class="font-bold">
