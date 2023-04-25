@@ -9,81 +9,98 @@
 <body class="bg-gray-100 h-screen">
     <div class="flex flex-col h-screen justify-between">
         <main class="max-w-2xl m-auto z-10">
-            <div class="flex justify-center mb-6 py-4 px-8">
-                <img src="/images/logo.png" class="h-10" alt="ShareMemories Logo">
+            <div class="flex justify-center mb-4 py-4 px-8">
+                <a href="/">
+                    <img src="/images/logo.png" class="h-10" alt="ShareMemories Logo">
+                </a>
             </div>
-          <form th:action="@{/register}" enctype="multipart/form-data" method="POST" class="grid grid-cols-2 gap-4">
-            <div class="float-left rounded-xl bg-white shadow mb-6">
-                <div class="w-full rounded-lg bg-gray-50">
-                  <div class="px-4 py-2 bg-white rounded-t-lg">
-                    <!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">-->
-                    <div class="my-6 text-center">
-                      <span class="block text-lg font-bold">Welcome!</span>
-                      <span class="block text-md">Sing in to continue access.</span>
-                    </div>
-                    <div class="mb-6">
-                      <label for="username" class="block mb-2 text-sm font-medium text-gray-900">Email address</label>
-                      <input type="email" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@email.com" required>
-                    </div>
-                    <div class="mb-6">
-                      <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                      <input type="password" name="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                    </div>
-                    <div class="mb-6">
-                      <label for="repeat-password" class="block mb-2 text-sm font-medium text-gray-900">Repeat password</label>
-                      <input type="password" name="repeat-password" id="repeat-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                    </div>
-                    <div class="grid md:grid-cols-2 md:gap-6">
-                      <div class="relative z-0 w-full mb-6 group">
-                        <label for="firstname" class="block mb-2 text-sm font-medium text-gray-900">Firstname</label>
-                        <input type="text" name="firstname" id="firstname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                      </div>
-                      <div class="relative z-0 w-full mb-6 group">
-                        <label for="lastname" class="block mb-2 text-sm font-medium text-gray-900">Lastname</label>
-                        <input type="text" name="lastname" id="lastname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-            </div>
-            <div class="float-right rounded-xl bg-white shadow mb-6">
-                <div class="w-full rounded-lg bg-gray-50">
-                  <div class="px-4 py-2 bg-white rounded-t-lg">
-                    <div class="mb-6">
-                      <div class="mb-2">
-                        <label for="image-preview" class="block mb-2 text-sm font-medium text-gray-900">Profile picture</label>
-                        <img id="image-preview" src="/images/default-avatar.png" class="w-full rounded-xl border border-gray-300">
-                      </div>
-                      <input name="image" id="image" type="file" class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100">
-                    </div>
-                    <div class=" mb-6">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Gender</label>
-                        <div class="flex items-start justify-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                            <div class="flex items-center h-5">
-                                <input type="radio" name="gender" id="gender-male" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300" required>
-                                <label for="gender-male" class="ml-2 mr-4 text-sm text-gray-900">Male</label>
+            <form th:action="@{/register}" enctype="multipart/form-data" method="POST" class="grid grid-cols-2 gap-4">
+                <div class="float-left rounded-xl bg-white shadow mb-6">
+                    <div class="w-full rounded-lg bg-gray-50">
+                        <div class="px-4 py-2 bg-white rounded-t-lg">
+                            <!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">-->
+                            <div class="my-6 text-center text-gray-900">
+                                <span class="block text-lg font-bold">Register your account!</span>
+                                <span class="block text-md">Fill out this form.</span>
                             </div>
-                            <div class="flex items-center h-5">
-                                <input type="radio" name="gender" id="gender-female" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300">
-                                <label for="gender-female" class="ml-2 mr-4 text-sm text-gray-900">Female</label>
+                            <div class="block text-center text-md italic mb-6 text-gray-900">
+                                <span>Note: Fields marked with a red asterisk (</span><span class="text-red-500">*</span><span>) are required.</span>
                             </div>
-                            <div class="flex items-center h-5">
-                                <input type="radio" name="gender" id="gender-other" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300">
-                                <label for="gender-other" class="ml-2 mr-4 text-sm text-gray-900">Other</label>
+                            <div class="mb-6">
+                                <label for="username" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Email address<span class="text-red-500">*</span>
+                                </label>
+                                <input type="email" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@email.com" required>
+                            </div>
+                            <div class="mb-6">
+                                <label for="password" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Password<span class="text-red-500">*</span>
+                                </label>
+                                <input type="password" name="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                            </div>
+                            <div class="mb-6">
+                                <label for="repeat-password" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Repeat password<span class="text-red-500">*</span>
+                                </label>
+                                <input type="password" name="repeat-password" id="repeat-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                            </div>
+                            <div class="grid md:grid-cols-2 md:gap-6 mb-6">
+                                <div class="relative z-0 w-full mb-6 group">
+                                    <label for="firstname" class="block mb-2 text-sm font-medium text-gray-900">
+                                        Firstname<span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="firstname" id="firstname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                </div>
+                                <div class="relative z-0 w-full mb-6 group">
+                                    <label for="lastname" class="block mb-2 text-sm font-medium text-gray-900">
+                                        Lastname<span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="lastname" id="lastname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                </div>
                             </div>
                         </div>
                     </div>
-                  </div>
-                  <div class="flex items-center justify-between border-t">
-                    <div class="w-full">
-                      <button type="submit" class="text-white bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium text-sm w-full px-5 py-3 text-center">
-                        Create Account
-                      </button>
-                    </div>
-                  </div>
                 </div>
-            </div>
-          </form>
+                <div class="float-right rounded-xl bg-white shadow mb-6">
+                    <div class="w-full rounded-lg bg-gray-50">
+                        <div class="px-4 py-2 bg-white rounded-t-lg">
+                            <div class="my-6">
+                                <div class="mb-2">
+                                    <label for="image-preview" class="block mb-2 text-sm font-medium text-gray-900">Profile picture</label>
+                                    <img id="image-preview" src="/images/default-avatar.png" class="w-full rounded-xl border border-gray-300">
+                                </div>
+                                <input name="image" id="image" type="file" class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100">
+                            </div>
+                            <div class="mb-6">
+                                <label class="block mb-2 text-sm font-medium text-gray-900">
+                                    Gender<span class="text-red-500">*</span>
+                                </label>
+                                <div class="flex items-start justify-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                    <div class="flex items-center h-5">
+                                        <input type="radio" name="gender" id="gender-male" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300" required>
+                                        <label for="gender-male" class="ml-2 mr-4 text-sm text-gray-900">Male</label>
+                                    </div>
+                                    <div class="flex items-center h-5">
+                                        <input type="radio" name="gender" id="gender-female" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300">
+                                        <label for="gender-female" class="ml-2 mr-4 text-sm text-gray-900">Female</label>
+                                    </div>
+                                    <div class="flex items-center h-5">
+                                        <input type="radio" name="gender" id="gender-other" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300">
+                                        <label for="gender-other" class="ml-2 mr-4 text-sm text-gray-900">Other</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between border-t">
+                            <div class="w-full">
+                                <button type="submit" class="text-white bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium text-sm w-full px-5 py-3 text-center">
+                                    Create Account
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <div class="flex justify-center text-center">
                 <span class="text-sm">
                     <a th:href="@{/login}" class="flex items-center hover:underline">
@@ -99,9 +116,13 @@
                     <a href="/" class="flex items-center mb-4 sm:mb-0">
                         <img src="/images/logo.png" class="h-8 mr-3" alt="ShareMemories Logo" />
                     </a>
-                    <span class="block text-sm text-gray-500 sm:text-center">Created by Jakub Dacewicz - 2023</span>
+                    <span class="block text-sm text-gray-500 sm:text-center">
+                        Created by Jakub Dacewicz - 2023
+                    </span>
                     <span class="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0">
-                        <a href="https://github.com/jdacewicz" class="hover:underline">GitHub: @jdacewicz</a>
+                        <a href="https://github.com/jdacewicz" class="hover:underline">
+                            GitHub: @jdacewicz
+                        </a>
                     </span>
                 </div>
             </div>
