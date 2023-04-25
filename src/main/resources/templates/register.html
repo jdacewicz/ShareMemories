@@ -3,10 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/webjars/tailwindcss/2.1.2/dist/tailwind.min.css}">
+    <link rel="stylesheet" th:href="@{/css/background.css}">
     <script th:src="@{/webjars/jquery/3.6.3/jquery.min.js}"></script>
+    <script th:src="@{/js/jquery.register.js}"></script>
     <title>ShareMemories</title>
 </head>
-<body class="bg-gray-100 h-screen">
+<body class="h-screen hero">
+    <div class="background-cubes">
+        <div class="cube z-0"></div>
+        <div class="cube z-0"></div>
+        <div class="cube z-0"></div>
+        <div class="cube z-0"></div>
+        <div class="cube z-0"></div>
+        <div class="cube z-0"></div>
+    </div>
     <div class="flex flex-col h-screen justify-between">
         <main class="max-w-2xl m-auto z-10">
             <div class="flex justify-center mb-4 py-4 px-8">
@@ -23,7 +33,7 @@
                                 <span class="block text-lg font-bold">Register your account!</span>
                                 <span class="block text-md">Fill out this form.</span>
                             </div>
-                            <div class="block text-center text-md italic mb-6 text-gray-900">
+                            <div class="block text-center text-md mb-6 text-gray-900">
                                 <span>Note: Fields marked with a red asterisk (</span><span class="text-red-500">*</span><span>) are required.</span>
                             </div>
                             <div class="mb-6">
@@ -62,12 +72,12 @@
                     </div>
                 </div>
                 <div class="float-right rounded-xl bg-white shadow mb-6">
-                    <div class="w-full rounded-lg bg-gray-50">
-                        <div class="px-4 py-2 bg-white rounded-t-lg">
+                    <div class="w-full rounded-lg bg-gray-50 h-full">
+                        <div class="px-4 py-2 bg-white rounded-t-lg h-5/6">
                             <div class="my-6">
                                 <div class="mb-2">
                                     <label for="image-preview" class="block mb-2 text-sm font-medium text-gray-900">Profile picture</label>
-                                    <img id="image-preview" src="/images/default-avatar.png" class="w-full rounded-xl border border-gray-300">
+                                    <img id="image-preview" src="/images/default-avatar.png" class="w-full h-72 rounded-xl border border-gray-300">
                                 </div>
                                 <input name="image" id="image" type="file" class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100">
                             </div>
@@ -91,7 +101,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-center justify-between border-t">
+                        <div class="flex items-end justify-between h-1/6">
                             <div class="w-full">
                                 <button type="submit" class="text-white bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium text-sm w-full px-5 py-3 text-center">
                                     Create Account
