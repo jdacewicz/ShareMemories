@@ -50,9 +50,14 @@ public class AppController {
 
     @GetMapping("/profile/{id}")
     private String showProfilePage(@PathVariable long id, Model model) {
+        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName())
+                .get();
         Optional<User> user = userDetailsService.getUserById(id);
         if (user.isPresent()) {
-            model.addAttribute("user", user.get());
+            model.addAttribute("profileUser", user.get());
+            model.addAttribute("loggedUser", loggedUser);
             return "profile";
         }
         return "error";
