@@ -68,6 +68,19 @@ public class User implements UserDetails {
         return "/" + IMAGES_DIRECTORY_PATH + "/" + profileImage;
     }
 
+    public boolean isUserInContacts(long id) {
+        if (this.id == id) return true;
+
+        return contacts.stream()
+                .anyMatch(u -> u.getId() == id);
+    }
+
+    public String getCapitalizedFirstAndLastName() {
+        return this.firstname.substring(0, 1).toUpperCase() + this.firstname.substring(1)
+                + " " +
+                this.lastname.substring(0, 1).toUpperCase() + this.lastname.substring(1);
+    }
+
     public Long getId() {
         return id;
     }
