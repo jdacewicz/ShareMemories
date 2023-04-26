@@ -11,16 +11,24 @@
 <body class="bg-gray-100">
     <div class="flex flex-col h-screen justify-between">
         <main class="max-w-4xl m-auto">
-            <div class="w-full flex items-center justify-between mb-4 py-4">
+            <div class="w-full flex justify-center py-4">
                 <div>
                     <a href="/">
                         <img src="/images/logo.png" class="h-10" alt="ShareMemories Logo">
                     </a>
                 </div>
+            </div>
+            <div class="w-full flex items-center justify-between py-4">
                 <div class="w-1/3 flex justify-center">
                     <a href="/" class="flex items-center hover:underline text-sm">
                         <span>Return to main page.</span>
                         <img src="/images/icons/go-back-icon.svg" class="w-6" alt="return icon">
+                    </a>
+                </div>
+                <div class="w-1/3 flex justify-center">
+                    <a href="/" class="flex items-center hover:underline text-sm font-medium">
+                        <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
+                        <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
                     </a>
                 </div>
             </div>
