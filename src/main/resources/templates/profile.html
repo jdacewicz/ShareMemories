@@ -59,11 +59,11 @@
                     </div>
                 </div>
                 <div class="flex justify-center">
-                    <span th:if="${profileUser.isUserInContacts(loggedUser.getId())}" class="w-full text-white bg-gradient-to-r from-gray-400 to-gray-600 font-medium text-sm
+                    <span th:if="${loggedUser.isUserInContacts(profileUser.getId())}" class="w-full text-white bg-gradient-to-r from-gray-400 to-gray-600 font-medium text-sm
                         px-6 py-3 text-center rounded-b-xl">
                             User already in friends list
                         </span>
-                    <button th:unless="${profileUser.isUserInContacts(loggedUser.getId())}" class="w-full text-white bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-800
+                    <button th:unless="${loggedUser.isUserInContacts(profileUser.getId())}" class="w-full text-white bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-800
                     focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium text-sm px-6 py-3 text-center rounded-b-xl" type="button" name="add-to-friends" th:value="${profileUser.getId()}">
                         <span>Add to friends</span>
                         <!--                            <img class="w-6 rounded-xl" src="/images/icons/user-icon.svg" alt="user icon">-->
