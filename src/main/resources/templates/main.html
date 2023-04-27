@@ -20,7 +20,7 @@
         </div>
         <div class="flex justify-center w-1/6 ml-4">
             <a th:href="'/profile/' + ${loggedUser.getId()}" class="flex items-center hover:underline text-sm font-medium text-white">
-                <img th:src="${loggedUser.getImagePath()}" class="w-6 rounded-xl mx-2 border border-white" alt="logged user profile picture">
+                <img th:src="${loggedUser.getImagePath()}" class="w-6 rounded-xl mx-2 border" alt="logged user profile picture">
                 <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
             </a>
         </div>
@@ -29,17 +29,17 @@
         <div class="float-left w-1/6 ml-4">
             <div class="bg-white rounded-xl shadow mb-6">
                 <div class="w-full mb-4">
-                    <div class="w-full border-b p-2 ml-2">
+                    <div class="w-full border-b px-4 py-2">
                         <span class="text-md font-medium ">Menu</span>
                     </div>
                     <div class="w-full">
                         <a th:href="'/profile/' + ${loggedUser.getId()}" class="w-full flex justify-start items-center p-2 text-sm font-medium hover:bg-gray-100">
-                            <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl mx-2" alt="logged user profile picture">
+                            <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
                             <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
                         </a>
                         <button type="button" class="w-full flex justify-start items-center p-2 text-sm hover:bg-gray-100">
-                            <img src="/images/icons/reactions-icon.svg" class="w-8 rounded-xl mx-2" alt="reactions icon">
-                            <span>Reactions</span>
+                            <img src="/images/icons/support-icon.svg" class="w-8 rounded-xl mx-2" alt="reactions icon">
+                            <span>Support</span>
                         </button>
                     </div>
                     <div class="w-full">
@@ -54,7 +54,7 @@
             </div>
             <div class="bg-white rounded-xl shadow">
                 <div class="w-full mb-4">
-                    <div class="w-full border-b border-t p-2 ml-2">
+                    <div class="w-full border-b border-t px-4 py-2">
                         <span class="text-md font-medium">Admin Panel</span>
                     </div>
                     <div class="w-full">
@@ -71,18 +71,62 @@
             </div>
         </div>
         <div class="float-right w-1/6 bg-white mr-4 rounded-xl shadow">
-            <div class="w-full p-2 border-b ml-2 mb-6">
-                Contacts
+            <div class="w-full">
+                <div class="w-full border-b border-t px-4 py-2">
+                    <span class="text-md font-medium">Contacts</span>
+                </div>
+                <div class="w-full">
+                    <div th:if="${loggedUser.getContacts().isEmpty()}">
+                        <span class="w-full flex justify-center items-center p-4 text-sm font-medium">
+                            You currently have no contacts.
+                        </span>
+                    </div>
+                    <div th:unless="${loggedUser.getContacts().isEmpty()}" th:each="contact : ${loggedUser.getContacts()}">
+                        <button type="button" th:name="'contact[' + ${contact.getId()} + ']'" class="w-full flex justify-start items-center p-2 text-sm font-medium hover:bg-gray-100">
+                            <img th:src="${contact.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
+                            <span th:text="${contact.getCapitalizedFirstAndLastName()}"></span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div class="flex justify-center w-full h-5/6">
-        <div class="w-1/5 z-10">
-            <div class="w-full bg-white">Test</div>
-            <div class="w-full bg-white">Test</div>
-            <div class="w-full bg-white">Test</div>
-            <div class="w-full bg-white">Test</div>
-            <div class="w-full bg-white">Test</div>
+        <div class="w-1/3 z-10">
+            <div class="w-full bg-white rounded-xl shadow">
+                <div class="w-full">
+                    <div class="w-full">
+                        <div class="flex justify-between items-center p-2">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="user profile picture">
+                                </div>
+                                <div class="text-sm">
+                                    <span class="block font-medium hover:underline">
+                                        <a th:href="'/profile/' + ${loggedUser.getId()}" th:text="${loggedUser.getCapitalizedFirstAndLastName()}">
+                                        </a>
+                                    </span>
+                                    <span class="block text-gray-500">2 hours ago.</span>
+                                </div>
+                            </div>
+                            <div>
+                                <button type="button">
+                                    <img src="/images/icons/show-more-icon.svg" class="w-8" alt="show more icon">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        Picture
+                    </div>
+                    <div>
+                        Reactions
+                    </div>
+                </div>
+                <div>
+                    Comments
+                </div>
+            </div>
         </div>
     </div>
 </body>
