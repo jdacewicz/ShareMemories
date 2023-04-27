@@ -42,9 +42,7 @@ public class AppController {
                         .getAuthentication()
                         .getName())
                 .get();
-        Optional<Set<User>> contacts = userDetailsService.getAllContacts(user.getId());
         model.addAttribute("loggedUser", user);
-        model.addAttribute("contacts", contacts.get());
         return "main";
     }
 
