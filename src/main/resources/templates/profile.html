@@ -26,8 +26,8 @@
                     </a>
                 </div>
                 <div class="w-1/3 flex justify-center">
-                    <a href="/" class="flex items-center hover:underline text-sm font-medium">
-                        <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
+                    <a th:href="'/profile/' + ${loggedUser.getId()}" class="flex items-center hover:underline text-sm font-medium">
+                        <img th:src="${loggedUser.getImagePath()}" class="w-6 rounded-xl mx-2 border" alt="logged user profile picture">
                         <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
                     </a>
                 </div>
