@@ -43,7 +43,7 @@ public class AppController {
                         .getName())
                 .get();
         Optional<Set<User>> contacts = userDetailsService.getAllContacts(user.getId());
-        model.addAttribute("user", user);
+        model.addAttribute("loggedUser", user);
         model.addAttribute("contacts", contacts.get());
         return "main";
     }

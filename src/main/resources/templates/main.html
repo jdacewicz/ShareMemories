@@ -8,196 +8,81 @@
     <script th:src="@{/js/jquery.boot.js}"></script>
     <title>ShareMemories</title>
 </head>
-<body class="bg-gray-100 w-screen">
-    <div id="chat-window" class="fixed z-50 w-screen h-screen bg-black bg-opacity-25 hidden">
-        <div id="chat" class="flex h-full hidden">
-            <div class="max-w-lg m-auto h-3/4 p-4">
-                <div class="block">
-                    <button id="hide-chat" class="rounded-xl bg-white shadow">
-                        <img class="w-10" src="/images/icons/go-back-icon.svg">
-                    </button>
-                </div>
-                <div class="rounded-xl h-full bg-white shadow p-2">
-                    <div id="chat-contact" class="block">
-                        <img class="rounded-full w-12 h-12 inline mr-2">
-                        <span class="font-bold"/>
+<body class="bg-gray-100 w-screen h-screen">
+    <div class="flex justify-between mb-4 py-2 w-full bg-gradient-to-r from-purple-100 to-purple-600 shadow">
+        <div class="flex justify-center w-1/6 ml-4">
+            <a href="/">
+                <img src="/images/logo.png" class="h-8" alt="ShareMemories Logo">
+            </a>
+        </div>
+        <div class="flex justify-center w-1/6 ml-4">
+<!--            Search bar-->
+        </div>
+        <div class="flex justify-center w-1/6 ml-4">
+            <a th:href="'/profile/' + ${loggedUser.getId()}" class="flex items-center hover:underline text-sm font-medium text-white">
+                <img th:src="${loggedUser.getImagePath()}" class="w-6 rounded-xl mx-2 border border-white" alt="logged user profile picture">
+                <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
+            </a>
+        </div>
+    </div>
+    <div class="fixed w-full h-5/6">
+        <div class="float-left w-1/6 ml-4">
+            <div class="bg-white rounded-xl shadow mb-6">
+                <div class="w-full mb-4">
+                    <div class="w-full border-b p-2 ml-2">
+                        <span class="text-md font-medium ">Menu</span>
                     </div>
-                    <div id="chat-messages" class="border border-gray-200 rounded-lg h-2/3 m-2">
+                    <div class="w-full">
+                        <a th:href="'/profile/' + ${loggedUser.getId()}" class="w-full flex justify-start items-center p-2 text-sm font-medium hover:bg-gray-100">
+                            <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl mx-2" alt="logged user profile picture">
+                            <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
+                        </a>
+                        <button type="button" class="w-full flex justify-start items-center p-2 text-sm hover:bg-gray-100">
+                            <img src="/images/icons/reactions-icon.svg" class="w-8 rounded-xl mx-2" alt="reactions icon">
+                            <span>Reactions</span>
+                        </button>
                     </div>
-                    <div id="chat-message-form">
-                        <form method="POST" enctype="multipart/form-data">
-                            <div class="w-full border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-                                <div class="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
-                                    <textarea name="content" rows="3" class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Write something..." required></textarea>
-                                </div>
-                                <div class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
-                                    <div class="flex pl-0 space-x-1 sm:pl-2">
-                                        <input name="image" type="file" class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
-                                    </div>
-                                    <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">
-                                        Send
-                                    </button>
-                                </div>
-                            </div>
+                    <div class="w-full">
+                        <form th:action="@{/logout}" method="post" class="w-full">
+                            <button type="submit" class="w-full text-white bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-800
+                            focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium text-sm px-6 py-3 text-center rounded-b-xl">
+                                Logout
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="unknown-contacts-list" class="flex h-full hidden">
-            <div class="max-w-lg m-auto h-3/4 p-4">
-                <div class="block">
-                    <button id="hide-unknown-contacts-list" class="rounded-xl bg-white shadow">
-                        <img class="w-10" src="/images/icons/go-back-icon.svg">
-                    </button>
-                </div>
-                <div class="rounded-xl h-full bg-white shadow p-4">
-                    <div id="unknown-contacts" class="border border-gray-200 rounded-lg h-full">
+            <div class="bg-white rounded-xl shadow">
+                <div class="w-full mb-4">
+                    <div class="w-full border-b border-t p-2 ml-2">
+                        <span class="text-md font-medium">Admin Panel</span>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div id="create-message-group-window" class="flex h-full hidden">
-            <div class="max-w-lg m-auto h-3/4 p-4">
-                <div class="block">
-                    <button id="hide-create-message-group-window" class="rounded-xl bg-white shadow">
-                        <img class="w-10" src="/images/icons/go-back-icon.svg">
-                    </button>
-                </div>
-                <div class="rounded-xl h-full bg-white shadow p-4">
-                    <form id="create-message-group-from" action="/api/messages/groups" method="POST" enctype="multipart/form-data" class="border border-gray-200 rounded-lg h-full p-2">
-                        <div class="mb-6">
-                            <label for="group-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Group name</label>
-                            <input type="text" name="name" id="group-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="ex. Class 1A" required>
-                        </div>
-                        <div id="contacts-list" class="mb-6">
-                        </div>
-                        <div class="mb-6">
-                            <input type="file" name="image">
-                        </div>
-                        <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">
-                            Create
+                    <div class="w-full">
+                        <button type="button" class="w-full flex justify-start items-center p-2 text-sm hover:bg-gray-100">
+                            <img src="/images/icons/users-icon.svg" class="w-8 rounded-xl mx-2" alt="users icon">
+                            <span>Users</span>
                         </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="fixed max-w-md w-1/6 mb-5 bg-white p-5 shadow h-screen rounded-xl h-full grid grid-flow-row gap-4">
-        <div class="flex justify-center">
-            <span class="m-auto">
-                <a href="/"><img src="/images/logo.png"></a>
-            </span>
-        </div>
-        <div>
-            <a th:href="'/profile/' + ${user.getId()}">
-                <img class="rounded-full w-8 h-8 inline mr-2" th:src="${user.getImagePath()}">
-                <span class="font-bold" th:text="${user.getFirstname()} + ' ' + ${user.getLastname()}"/>
-            </a>
-        </div>
-        <div>
-            <span class="block">Admin panels</span>
-            <button class="block" type="button" id="show-reaction-panel">
-                Reactions
-            </button>
-            <button class="block" type="button" id="show-user-panel">
-                User
-            </button>
-        </div>
-        <div>
-            <button id="show-contact-form">
-                Support
-            </button>
-        </div>
-        <div>
-            <button type="button" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">
-                <a href="/logout">LOGOUT</a>
-            </button>
-        </div>
-        <div class="flex justify-center p-4">
-            <span class="m-auto">SHAREMEMORIES - <a href="https://github.com/jdacewicz">@jdacewicz</a> 2023</span>
-        </div>
-    </div>
-    <div class="float-right max-w-md w-1/6 h-screen">
-        <div id="contact-list" class="fixed w-1/6 mb-5 bg-white p-5 shadow rounded-xl grid grid-flow-row auto-rows-max gap-4">
-            <div>
-                <button type="button" name="unknown-contact[-1]" class="font-bold">
-                    Unknown contacts
-                </button>
-            </div>
-            <div class="border-b-2" th:if="${not user.getGroupsMember().isEmpty()}">
-                <div th:each="group : ${user.getGroupsMember()}">
-                    <button type="button" th:name="'group['  + ${group.getId()} + ']'" th:value="${group.getId()}">
-                        <span class="font-bold mr-1" th:text="${group.getName()}"/>
-                    </button>
-                </div>
-            </div>
-            <div>
-                <button type="button" name="create-group" class="font-bold">
-                    Create group
-                </button>
-            </div>
-            <div th:each="contact : ${contacts}">
-                <button type="button" th:name="'contact['  + ${contact.getId()} + ']'" th:value="${contact.getId()}">
-                    <img class="rounded-full w-8 h-8 inline mr-2" th:src="${contact.getImagePath()}">
-                    <span class="font-bold mr-1" th:text="${contact.getFirstname()} + ' ' + ${contact.getLastname()}"/>
-                </button>
-            </div>
-        </div>
-    </div>
-    <div class="pt-4">
-        <div id="main-content">
-            <div class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 shadow">
-                <div>
-                    <a th:href="'/profile/' + ${user.getId()}">
-                        <img class="rounded-full w-8 h-8 inline" th:src="${user.getImagePath()}">
-                        <span class="font-bold" th:text="${user.getFirstname()} + ' ' + ${user.getLastname()}"/>
-                    </a>
-                </div>
-                <form action="/api/posts" method="POST" enctype="multipart/form-data" id="create-post-form" class="mt-2">
-                    <div class="w-full border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-                        <div class="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
-                            <textarea id="created-post-content" name="content" rows="3" class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Write something..." required></textarea>
-                            <img id="create-post-image-preview" src="">
-                        </div>
-                        <div class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
-                            <div class="flex pl-0 space-x-1 sm:pl-2">
-                                <input name="image" id="create-post-image" type="file" class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
-                            </div>
-                            <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">
-                                Public
-                            </button>
-                        </div>
+                        <button type="button" class="w-full flex justify-start items-center p-2 text-sm hover:bg-gray-100">
+                            <img src="/images/icons/reactions-icon.svg" class="w-8 rounded-xl mx-2" alt="reactions icon">
+                            <span>Reactions</span>
+                        </button>
                     </div>
-                    </button>
-                </form>
-            </div>
-            <div id="posts" class="hidden">
-            </div>
-        </div>
-        <div id="panels" class="hidden">
-            <div id="reactions" class="max-w-md mx-auto rounded-xl mb-4 bg-white p-4 shadow hidden">
-                <div class="relative overflow-x-auto border-l border-r border-t rounded-lg">
-                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">
-                                Image
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Name
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Action
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
                 </div>
             </div>
+        </div>
+        <div class="float-right w-1/6 bg-white mr-4 rounded-xl shadow">
+            <div class="w-full p-2 border-b ml-2 mb-6">
+                Contacts
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-center w-full h-5/6">
+        <div class="w-1/5 z-10">
+            <div class="w-full bg-white">Test</div>
+            <div class="w-full bg-white">Test</div>
+            <div class="w-full bg-white">Test</div>
+            <div class="w-full bg-white">Test</div>
+            <div class="w-full bg-white">Test</div>
         </div>
     </div>
 </body>
