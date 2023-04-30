@@ -13,8 +13,7 @@ import java.util.Objects;
 public class Reaction {
 
     @Transient
-    @Value("${reaction.image.directory}")
-    public static String IMAGES_DIRECTORY_PATH;
+    public static String IMAGES_DIRECTORY_PATH = "uploads/pictures/reactions";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
