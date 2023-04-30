@@ -1,6 +1,48 @@
 $(document).ready(function () {
     loadPosts();
+
+    $("#create-post-upload-button").onclick = function () {
+        $("#create-post-form input[type='file']").click();
+    }
+
+    $("#create-post-upload-button").on("click", function () {
+        let fileDialog = $("#create-post-form input[type='file']");
+        fileDialog.click();
+        fileDialog.on("change", function () {
+            let file = fileDialog.get(0).files[0];
+            let reader = new FileReader();
+
+            reader.onload = function () {
+                $("#create-post-image-preview").attr("src", reader.result).show();
+            }
+            reader.readAsDataURL(file);
+        })
+    })
+
+    $("#create-post-form").submit(function (e) {
+       e.preventDefault();
+
+        let frm = $(this);
+        let data = new FormData($(this)[0])
+
+       saveData(frm, data);
+    });
 })
+
+function saveData(frm, data) {
+    $.ajax({
+        enctype : 'multipart/form-data',
+        url: frm.attr("action"),
+        type: frm.attr("method"),
+        data : data,
+        dataType: "JSON",
+        processData : false,
+        contentType : false,
+        success : function() {
+            location.reload();
+        }
+    });
+}
 
 function loadPosts() {
     $.ajax({
@@ -22,16 +64,16 @@ function loadPosts() {
                     });
 
                     if (reactions == null) {
-                        return;
+                        reactions.forEach(function (reaction) {
+                            appendReaction(reaction);
+                        });
                     }
 
-                    reactions.forEach(function (reaction) {
-                        appendReaction(reaction);
-                    });
+                    $("#posts").fadeIn("fast");
                 }
-            })
+            });
         }
-    })
+    });
 }
 
 function appendPost(post) {
@@ -41,7 +83,7 @@ function appendPost(post) {
     $("#posts").append(
         '<div id="post[' + post.id + ']" class="w-full bg-white rounded-xl shadow mb-4">' +
             '<div class="w-full">' +
-                '<div class="w-full">' +
+                '<div class="w-full border-b">' +
                     '<div class="flex justify-between p-2">' +
                         '<div class="flex justify-start">' +
                             '<div class="mt-1 mr-1">' +
@@ -61,8 +103,8 @@ function appendPost(post) {
                         '</div>' +
                     '</div>' +
                 '</div>' +
-                '<div class="w-full">' +
-                    '<span class="py-2 px-4 text-sm">' +
+                '<div class="w-full py-2 px-4">' +
+                    '<span class="text-sm">' +
                         post.content +
                     '</span>' +
                 '</div>' +
@@ -99,8 +141,8 @@ function appendPost(post) {
 }
 
 function appendReaction(reaction) {
-    $("div[name='reactions']").append(
-        '<div class="reaction[' + reaction.id + '] w-6 m-2">' +
+    $(".reactions").append(
+        '<div class="reaction[' + reaction.id + '] w-8 m-2">' +
             '<img src="' + reaction.imagePath + '" alt="' + reaction.name + ' reaction">' +
         '</div>'
     );
