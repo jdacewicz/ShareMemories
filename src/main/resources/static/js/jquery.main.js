@@ -1,39 +1,39 @@
 $(document).ready(function () {
     loadPosts();
 
-    $("#create-post-upload-button").onclick = function () {
-        $("#create-post-form input[type='file']").click();
-    }
+    $("#main-content").on("click", ".upload-image-button", function () {
+        let fileDialog = $(this).parent().find("input[type='file']");
+        let img = $(this).parent().parent().parent().find(".image-preview").first();
 
-    $("#create-post-upload-button").on("click", function () {
-        let fileDialog = $("#create-post-form input[type='file']");
-        fileDialog.click();
-        fileDialog.on("change", function () {
-            let file = fileDialog.get(0).files[0];
-            let reader = new FileReader();
-
-            reader.onload = function () {
-                $("#create-post-image-preview").attr("src", reader.result).show();
-            }
-            reader.readAsDataURL(file);
-        })
-    })
+        showFileDialogAndPreviewImage(fileDialog, img);
+    });
 
     $("#create-post-form").submit(function (e) {
        e.preventDefault();
 
         let frm = $(this);
         let data = new FormData($(this)[0])
+        let method = frm.attr("method");
 
-       saveData(frm, data);
+       saveData(frm, data, method);
+    });
+
+    $(".create-comment-form").submit(function (e) {
+        e.preventDefault();
+
+        let frm = $(this);
+        let data = new FormData($(this)[0])
+        let method = "PUT";
+
+        saveData(frm, data, method);
     });
 })
 
-function saveData(frm, data) {
+function saveData(frm, data, method) {
     $.ajax({
         enctype : 'multipart/form-data',
         url: frm.attr("action"),
-        type: frm.attr("method"),
+        type: method,
         data : data,
         dataType: "JSON",
         processData : false,
@@ -63,7 +63,7 @@ function loadPosts() {
                         appendPost(post);
                     });
 
-                    if (reactions == null) {
+                    if (reactions != null) {
                         reactions.forEach(function (reaction) {
                             appendReaction(reaction);
                         });
@@ -74,6 +74,19 @@ function loadPosts() {
             });
         }
     });
+}
+
+function showFileDialogAndPreviewImage(fileInput, imgTag) {
+    fileInput.click();
+    fileInput.on("change", function () {
+        let file = fileInput.get(0).files[0];
+        let reader = new FileReader();
+
+        reader.onload = function () {
+            imgTag.attr("src", reader.result).show();
+        }
+        reader.readAsDataURL(file);
+    })
 }
 
 function appendPost(post) {
@@ -118,22 +131,28 @@ function appendPost(post) {
                 '<div class="comments">' +
                 '</div>' +
                 '<div>' +
-                    '<div class="flex justify-between p-2">' +
-                        '<div class="mt-1 mr-2">' +
-                            '<img src="' + post.creator.imagePath + '" class="w-8 rounded-xl mx-2 border" alt="user profile picture">' +
+                    '<form class="create-comment-form" action="/api/comments/post/' + post.id + '" enctype="multipart/form-data">' +
+                        '<div class="flex justify-between p-2">' +
+                            '<div class="mt-1 mr-2">' +
+                                '<img src="' + post.creator.imagePath + '" class="w-8 rounded-xl mx-2 border" alt="user profile picture">' +
+                            '</div>' +
+                            '<div class="flex items-center justify-start text-sm w-full border rounded-xl">' +
+                                '<input name="image" type="file" hidden>' +
+                                '<div class="w-full bg-gray-100 border-r rounded-l-xl p-2">' +
+                                    '<textarea name="content" class="w-full bg-gray-100 resize-y" rows="1" placeholder="Write something..."></textarea>' +
+                                    '<img src="#" alt="comment uploaded image preview" class="image-preview hidden">' +
+                                '</div>' +
+                                '<button type="button" class="upload-image-button mx-1">' +
+                                    '<img src="/images/icons/image-icon.svg" class="w-8" alt="image icon">' +
+                                '</button>' +
+                            '</div>' +
+                            '<div class="flex items-center ml-1">' +
+                                '<button type="submit" class="px-2">' +
+                                    '<img src="/images/icons/arrow-right-icon.svg" class="w-10" alt="send icon">' +
+                                '</button>' +
+                            '</div>' +
                         '</div>' +
-                        '<div class="flex items-center justify-start text-sm w-full border rounded-xl">' +
-                            '<textarea class="w-full bg-gray-100 border-r rounded-l-xl p-2 resize-y" rows="1" placeholder="Write something..."></textarea>' +
-                            '<button type="button" class="mx-1">' +
-                                '<img src="/images/icons/image-icon.svg" class="w-8" alt="image icon">' +
-                            '</button>' +
-                        '</div>' +
-                        '<div class="flex items-center ml-1">' +
-                            '<button type="button" class="px-2">' +
-                                '<img src="/images/icons/arrow-right-icon.svg" class="w-10" alt="send icon">' +
-                            '</button>' +
-                        '</div>' +
-                    '</div>' +
+                    '</form>' +
                 '</div>' +
             '</div>' +
         '</div>'

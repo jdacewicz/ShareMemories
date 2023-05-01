@@ -91,7 +91,7 @@
         </div>
     </div>
     <div class="flex justify-center w-full">
-        <div class="w-1/4 z-10">
+        <div id="main-content" class="w-1/4 z-10">
             <div class="w-full bg-white rounded-xl shadow mb-4">
                 <form id="create-post-form" action="/api/posts" method="POST" enctype="multipart/form-data">
                     <div class="flex justify-start p-2">
@@ -100,13 +100,13 @@
                         </div>
                         <div class="w-full text-sm bg-gray-100 border rounded-xl p-2 resize-y">
                             <textarea name="content" class="w-full bg-gray-100" rows="3" placeholder="Write something..."></textarea>
-                            <img id="create-post-image-preview" src="#" class="hidden">
+                            <img src="#" alt="created post uploaded image preview" class="image-preview hidden">
                         </div>
                     </div>
                     <div class="flex justify-end border-t p-2">
                         <div class="flex items-center">
                             <input name="image" type="file" hidden>
-                            <button id="create-post-upload-button" type="button" class="mx-1">
+                            <button type="button" class="upload-image-button mx-1">
                                 <img src="/images/icons/image-icon.svg" class="w-8" alt="image icon">
                             </button>
                         </div>
