@@ -13,33 +13,62 @@ $(document).ready(function () {
 
         let frm = $(this);
         let data = new FormData($(this)[0])
-        let method = frm.attr("method");
 
-       saveData(frm, data, method);
+       savePost(frm, data);
     });
 
-    $(".create-comment-form").submit(function (e) {
+    $("#posts").on("submit", ".create-comment-form", function (e) {
         e.preventDefault();
 
         let frm = $(this);
+        let method = $(this).attr("action");
         let data = new FormData($(this)[0])
-        let method = "PUT";
 
-        saveData(frm, data, method);
+        saveComment(frm, data, method.substring(method.lastIndexOf('/') + 1));
     });
+
+    $("#posts").on("mouseenter", ".comment-reactions", function () {
+        let reactions = $(this).children(".reactions");
+        $(this).children(".react-button").fadeOut("fast", function () {
+            reactions.fadeIn("fast");
+        });
+    })
+
+    $("#posts").on("mouseleave", ".comment-reactions", function () {
+        let button = $(this).children(".react-button");
+        $(this).children(".reactions").fadeOut("fast", function () {
+            button.fadeIn("fast");
+        });
+    })
 })
 
-function saveData(frm, data, method) {
+function savePost(frm, data) {
     $.ajax({
         enctype : 'multipart/form-data',
         url: frm.attr("action"),
-        type: method,
+        type: "POST",
         data : data,
         dataType: "JSON",
         processData : false,
         contentType : false,
-        success : function() {
-            location.reload();
+        success : function(post) {
+            appendPost(post);
+            $("div[id='post[" + post.id + "]']").insertBefore("#posts div:eq(0)");
+        }
+    });
+}
+
+function saveComment(frm, data, postId) {
+    $.ajax({
+        enctype : 'multipart/form-data',
+        url: frm.attr("action"),
+        type: "PUT",
+        data : data,
+        dataType: "JSON",
+        processData : false,
+        contentType : false,
+        success : function(comment) {
+            appendComment(postId, comment);
         }
     });
 }
@@ -61,6 +90,9 @@ function loadPosts() {
                 success: function (reactions) {
                     posts.forEach(function (post) {
                         appendPost(post);
+                        post.comments.forEach(function (comment) {
+                           appendComment(post.id, comment);
+                        });
                     });
 
                     if (reactions != null) {
@@ -153,6 +185,34 @@ function appendPost(post) {
                             '</div>' +
                         '</div>' +
                     '</form>' +
+                '</div>' +
+            '</div>' +
+        '</div>'
+    );
+}
+
+function appendComment(postId, comment) {
+    $("div[id='post[" + postId + "]'] .comments").append(
+        '<div class="flex justify-between p-2">' +
+            '<div class="flex justify-start">' +
+                '<div class="mt-1 mr-1">' +
+                    '<img src="' + comment.creator.imagePath + '" class="w-8 rounded-xl mx-2 border" alt="user profile picture">' +
+                '</div>' +
+                '<div class="text-sm p-2 mr-1 rounded-xl border bg-gray-100">' +
+                    '<a href="/profile/' + comment.creator.id + '" class="block font-medium hover:underline">' +
+                        '<span>' + comment.creator.capitalizedFirstAndLastName + '</span>' +
+                    '</a>' +
+                    '<span class="block">' + comment.content + '</span>' +
+                    '<span class="block text-gray-400">' + comment.elapsedCreationTimeMessage + '</span>' +
+                '</div>' +
+            '</div>' +
+            '<div>' +
+                '<div class="comment-reactions flex justify-start items-center text-sm font-medium">' +
+                    '<div class="react-button">' +
+                        '<span>React</span>' +
+                        '<img src="/images/icons/arrow-down-icon.svg" class="w-8" alt="show more icon">' +
+                    '</div>' +
+                    '<div class="reactions hidden px-2"></div>' +
                 '</div>' +
             '</div>' +
         '</div>'
