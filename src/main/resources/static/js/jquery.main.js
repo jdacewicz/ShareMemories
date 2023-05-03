@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    let posts = $("#posts");
     loadPosts();
 
     $("#main-content").on("click", ".upload-image-button", function () {
@@ -17,7 +18,7 @@ $(document).ready(function () {
        savePost(frm, data);
     });
 
-    $("#posts").on("submit", ".create-comment-form", function (e) {
+    posts.on("submit", ".create-comment-form", function (e) {
         e.preventDefault();
 
         let frm = $(this);
@@ -27,19 +28,45 @@ $(document).ready(function () {
         saveComment(frm, data, method.substring(method.lastIndexOf('/') + 1));
     });
 
-    $("#posts").on("mouseenter", ".comment-reactions", function () {
+    posts.on("mouseenter", ".comment-reactions", function () {
         let reactions = $(this).children(".reactions");
+
         $(this).children(".react-button").fadeOut("fast", function () {
             reactions.fadeIn("fast");
         });
     })
 
-    $("#posts").on("mouseleave", ".comment-reactions", function () {
+    posts.on("mouseleave", ".comment-reactions", function () {
         let button = $(this).children(".react-button");
+
         $(this).children(".reactions").fadeOut("fast", function () {
             button.fadeIn("fast");
         });
     })
+
+    posts.on("click", ".post-main button[class^='reaction']", function (e) {
+        e.preventDefault();
+
+        let reactionId = getIdFromSquareBracket($(this).attr("class"));
+        let postId = getIdFromSquareBracket($(this).closest("div[id^='post[']").attr("id"));
+
+        updatePost("/api/posts/" + postId + "/react/" + reactionId);
+        let counter = $(this).children("span");
+        counter.text(parseInt(counter.text()) + 1);
+        counter.fadeIn("fast");
+    });
+
+    posts.on("click", ".comment-reactions button[class^='reaction']", function (e) {
+        e.preventDefault();
+
+        let reactionId = getIdFromSquareBracket($(this).attr("class"));
+        let commentId = getIdFromSquareBracket($(this).closest("div[id^='comment[']").attr("id"));
+
+        updatePost("/api/comments/" + commentId + "/react/" + reactionId);
+        let counter = $(this).children("span");
+        counter.text(parseInt(counter.text()) + 1);
+        counter.fadeIn("fast");
+    });
 })
 
 function savePost(frm, data) {
@@ -73,6 +100,20 @@ function saveComment(frm, data, postId) {
     });
 }
 
+function updatePost(url) {
+    $.ajax({
+        enctype : 'multipart/form-data',
+        url: url,
+        type: "PUT",
+        dataType: "JSON",
+        processData : false,
+        contentType : false,
+        success : function(post) {
+
+        }
+    });
+}
+
 function loadPosts() {
     $.ajax({
         type: "GET",
@@ -90,6 +131,7 @@ function loadPosts() {
                 success: function (reactions) {
                     posts.forEach(function (post) {
                         appendPost(post);
+
                         post.comments.forEach(function (comment) {
                            appendComment(post.id, comment);
                         });
@@ -99,6 +141,13 @@ function loadPosts() {
                         reactions.forEach(function (reaction) {
                             appendReaction(reaction);
                         });
+
+                        posts.forEach(function (post) {
+                            updatePostReactionCount(post);
+                            post.comments.forEach(function (comment) {
+                                updateCommentReactionCount(post.id, comment);
+                            });
+                        });
                     }
 
                     $("#posts").fadeIn("fast");
@@ -106,6 +155,10 @@ function loadPosts() {
             });
         }
     });
+}
+
+function getIdFromSquareBracket(str) {
+    return str.substring(str.indexOf('[') + 1, str.indexOf(']'));
 }
 
 function showFileDialogAndPreviewImage(fileInput, imgTag) {
@@ -121,13 +174,25 @@ function showFileDialogAndPreviewImage(fileInput, imgTag) {
     })
 }
 
+function updatePostReactionCount(post) {
+    $.each(post.reactionsCounts, function (key, value) {
+        $("div[id='post[" + post.id + "]'] .post-main button[class^='reaction[" + key + "]'] span").text(value).fadeIn("fast");
+    });
+}
+
+function updateCommentReactionCount(postId, comment) {
+    $.each(comment.reactionsCounts, function (key, value) {
+        $("div[id='post[" + postId + "]'] div[id='comment[" + comment.id + "]'] button[class^='reaction[" + key + "]'] span").text(value).fadeIn("fast");
+    });
+}
+
 function appendPost(post) {
     let postImage = (post.imagePath == null) ? "" :
         '<img src="' + post.imagePath + '" alt="post picture">';
 
     $("#posts").append(
         '<div id="post[' + post.id + ']" class="w-full bg-white rounded-xl shadow mb-4">' +
-            '<div class="w-full">' +
+            '<div class="post-main w-full">' +
                 '<div class="w-full border-b">' +
                     '<div class="flex justify-between p-2">' +
                         '<div class="flex justify-start">' +
@@ -192,17 +257,21 @@ function appendPost(post) {
 }
 
 function appendComment(postId, comment) {
+    let commentImage = (comment.imagePath == null) ? "" :
+        '<img src="' + comment.imagePath + '" class="block py-2" alt="post picture">';
+
     $("div[id='post[" + postId + "]'] .comments").append(
-        '<div class="flex justify-between p-2">' +
+        '<div id="comment[' + comment.id + ']" class="flex justify-between p-2">' +
             '<div class="flex justify-start">' +
                 '<div class="mt-1 mr-1">' +
                     '<img src="' + comment.creator.imagePath + '" class="w-8 rounded-xl mx-2 border" alt="user profile picture">' +
                 '</div>' +
-                '<div class="text-sm p-2 mr-1 rounded-xl border bg-gray-100">' +
+                '<div class="text-sm p-2 mx-1 w-full rounded-xl border bg-gray-100">' +
                     '<a href="/profile/' + comment.creator.id + '" class="block font-medium hover:underline">' +
                         '<span>' + comment.creator.capitalizedFirstAndLastName + '</span>' +
                     '</a>' +
                     '<span class="block">' + comment.content + '</span>' +
+                    commentImage +
                     '<span class="block text-gray-400">' + comment.elapsedCreationTimeMessage + '</span>' +
                 '</div>' +
             '</div>' +
@@ -221,8 +290,9 @@ function appendComment(postId, comment) {
 
 function appendReaction(reaction) {
     $(".reactions").append(
-        '<div class="reaction[' + reaction.id + '] w-8 m-2">' +
+        '<button class="reaction[' + reaction.id + '] flex items-center w-8 m-2">' +
+            '<span class="hidden"></span>' +
             '<img src="' + reaction.imagePath + '" alt="' + reaction.name + ' reaction">' +
-        '</div>'
+        '</button>'
     );
 }
