@@ -44,26 +44,22 @@ $(document).ready(function () {
         });
     })
 
-    posts.on("click", ".post-main button[class^='reaction']", function (e) {
-        e.preventDefault();
-
+    posts.on("click", ".post-main button[class^='reaction'], .comment-reactions button[class^='reaction']", function () {
         let reactionId = getIdFromSquareBracket($(this).attr("class"));
-        let postId = getIdFromSquareBracket($(this).closest("div[id^='post[']").attr("id"));
 
-        updatePost("/api/posts/" + postId + "/react/" + reactionId);
+        if ($(this).closest(".comment-reactions").length > 0) {
+            let commentId = getIdFromSquareBracket($(this).closest("div[id^='comment[']").attr("id"));
+            updatePost("/api/comments/" + commentId + "/react/" + reactionId);
+        } else {
+            let postId = getIdFromSquareBracket($(this).closest("div[id^='post[']").attr("id"));
+            updatePost("/api/posts/" + postId + "/react/" + reactionId);
+        }
+
         let counter = $(this).children("span");
-        counter.text(parseInt(counter.text()) + 1);
-        counter.fadeIn("fast");
-    });
+        if (counter.text().length === 0) {
+            counter.text(0);
+        }
 
-    posts.on("click", ".comment-reactions button[class^='reaction']", function (e) {
-        e.preventDefault();
-
-        let reactionId = getIdFromSquareBracket($(this).attr("class"));
-        let commentId = getIdFromSquareBracket($(this).closest("div[id^='comment[']").attr("id"));
-
-        updatePost("/api/comments/" + commentId + "/react/" + reactionId);
-        let counter = $(this).children("span");
         counter.text(parseInt(counter.text()) + 1);
         counter.fadeIn("fast");
     });
@@ -90,16 +86,13 @@ $(document).ready(function () {
             post.remove();
         });
     });
-    // '<div>' +
-        // '<button class="show-more-button" type="button">' +
-             // '<img src="/images/icons/show-more-icon.svg" class="w-8" alt="show more icon">' +
-        // '</button>' +
-        // '<div class="more-options fixed hidden">' +
-            // '<button class="delete-post-button" type="button">' +
-                 // '<span>Delete post</span>' +
-              // '</button>' +
-        // '</div>' +
-    // '</div>' +
+
+    $("#show-contact-form").click(function () {
+        $("#contact-panel").show();
+        $("#main-content").fadeOut("fast", function () {
+            $("#panels").fadeIn("fast");
+        });
+    });
 })
 
 function savePost(frm, data) {
@@ -251,11 +244,11 @@ function appendPost(post) {
                             '<button class="show-more-button" type="button">' +
                                 '<img src="/images/icons/show-more-icon.svg" class="w-8" alt="show more icon">' +
                             '</button>' +
-                            '<div class="more-options fixed hidden py-2 px-4 bg-white rounded-xl shadow">' +
-                                '<button class="close-window-button block">' +
+                            '<div class="more-options fixed hidden bg-white rounded-xl shadow">' +
+                                '<button class="close-window-button block py-1 px-2">' +
                                     '<img class="w-6" src="/images/icons/close-icon.svg" alt="close icon">' +
                                 '</button>' +
-                                '<button class="delete-post-button block" type="button">' +
+                                '<button class="delete-post-button block text-sm hover:bg-gray-100 py-1 px-4" type="button">' +
                                     '<span>Delete post</span>' +
                                 '</button>' +
                             '</div>' +

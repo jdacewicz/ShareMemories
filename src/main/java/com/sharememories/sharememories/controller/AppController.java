@@ -97,9 +97,10 @@ public class AppController {
     }
 
     @PostMapping("/contact")
-    public String sendMail(@RequestPart String name,
+    public String sendMail(@RequestPart String firstname,
+                           @RequestPart String lastname,
                            @RequestPart String email,
-                           @RequestPart String phone,
+                           @RequestPart(required = false) String phone,
                            @RequestPart String topic,
                            @RequestPart String message,
                            @RequestPart(required = false) MultipartFile file) {
@@ -107,7 +108,7 @@ public class AppController {
                         .getAuthentication()
                         .getName())
                 .get();
-        String content = "Mail: " + user.getUsername() + " | Name: " + name + " | Phone: " + phone + " | Message: " + message;
+        String content = "Username: " + user.getUsername() + " | Name: " + firstname + " " + lastname + " | Phone: " + phone + " | Message: " + message;
         emailService.sendMessage(email, mailReceiver, topic, content);
 
         return "redirect:/";

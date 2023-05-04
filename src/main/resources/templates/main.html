@@ -36,7 +36,7 @@
                             <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
                             <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
                         </a>
-                        <button type="button" class="w-full flex justify-start items-center p-2 text-sm hover:bg-gray-100">
+                        <button id="show-contact-form" type="button" class="w-full flex justify-start items-center p-2 text-sm hover:bg-gray-100">
                             <img src="/images/icons/support-icon.svg" class="w-8 rounded-xl mx-2" alt="reactions icon">
                             <span>Support</span>
                         </button>
@@ -119,6 +119,73 @@
                 </form>
             </div>
             <div id="posts" class="hidden">
+            </div>
+        </div>
+        <div id="panels" class="w-1/4 z-10 hidden">
+            <div id="contact-panel" class="w-full rounded-xl bg-white shadow hidden">
+                <form action="/contact" method="POST" enctype="multipart/form-data" id="contact-form" class="w-full rounded-lg bg-gray-50">
+                    <div class="px-4 py-2 bg-white rounded-xl">
+                        <div class="my-6 text-center text-gray-900">
+                            <span class="block text-lg font-bold">Contact with support.</span>
+                            <span class="block text-md">Fill out this form.</span>
+                        </div>
+                        <div class="block text-center text-md mb-6 text-gray-900">
+                            <span>Note: Fields marked with a red asterisk (</span><span class="text-red-500">*</span><span>) are required.</span>
+                        </div>
+                        <div class="grid md:grid-cols-2 md:gap-6 mb-6">
+                            <div class="relative z-0 w-full group">
+                                <label for="firstname" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Firstname<span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="firstname" id="firstname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                            </div>
+                            <div class="relative z-0 w-full group">
+                                <label for="lastname" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Lastname<span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="lastname" id="lastname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <label for="contact-email" class="block mb-2 text-sm font-medium text-gray-900">
+                                Email address<span class="text-red-500">*</span>
+                            </label>
+                            <input type="email" name="email" id="contact-email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@email.com" required>
+                        </div>
+                        <div class="mb-6">
+                            <label for="contact-phone" class="block mb-2 text-sm font-medium text-gray-900">
+                                Phone<span class="text-red-500"></span>
+                            </label>
+                            <input type="text" name="phone" id="contact-phone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                        </div>
+                        <div class="mb-6">
+                            <label for="contact-topic" class="block mb-2 text-sm font-medium text-gray-900">
+                                Topic<span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="topic" id="contact-topic" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                        </div>
+                        <div class="mb-6">
+                            <label for="contact-topic" class="block mb-2 text-sm font-medium text-gray-900">
+                                Message<span class="text-red-500">*</span>
+                            </label>
+                            <textarea id="contact-message" name="message" rows="5" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required placeholder="Write something..."></textarea>
+                        </div>
+                        <div class="mb-6">
+                            <label for="contact-attachments" class="block mb-2 text-sm font-medium text-gray-900">
+                                Attachments<span class="text-red-500"></span>
+                            </label>
+                            <input type="file" id="contact-attachments" name="files" rows="5" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                        </div>
+                    </div>
+                    <div class="flex items-end justify-between h-1/6">
+                        <div class="w-full">
+                            <button type="submit" class="text-white bg-gradient-to-r bg-gradient-to-r from-pink-400 to-pink-600 hover:from-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300
+                                font-medium text-sm w-full px-5 py-3 text-center rounded-b-xl">
+                                Send Message
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
