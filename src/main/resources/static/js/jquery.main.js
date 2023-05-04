@@ -1,8 +1,12 @@
 $(document).ready(function () {
     let posts = $("#posts");
+    let mainContent = $("#main-content");
+    let adminPanel = $("#admin-panel");
+    let panels = $("#panels");
+
     loadPosts();
 
-    $("#main-content").on("click", ".upload-image-button", function () {
+    mainContent.on("click", ".upload-image-button", function () {
         let fileDialog = $(this).parent().find("input[type='file']");
         let img = $(this).parent().parent().parent().find(".image-preview").first();
 
@@ -88,10 +92,57 @@ $(document).ready(function () {
     });
 
     $("#show-contact-form").click(function () {
-        $("#contact-panel").show();
-        $("#main-content").fadeOut("fast", function () {
-            $("#panels").fadeIn("fast");
-        });
+        if (mainContent.is(":visible")) {
+            mainContent.fadeOut("fast", function () {
+                adminPanel.hide();
+                $("#contact-panel").show();
+                panels.fadeIn("fast");
+            });
+        } else {
+            panels.fadeOut("fast", function () {
+                adminPanel.hide();
+                $("#contact-panel").show();
+                panels.fadeIn("fast");
+            });
+        }
+    });
+
+    $("#show-admin-users-panel").click(function () {
+        if (mainContent.is(":visible")) {
+            mainContent.fadeOut("fast", function () {
+                $("#contact-panel").hide();
+                adminPanel.show();
+                $("#admin-users-panel").show();
+                panels.fadeIn("fast");
+            });
+        } else {
+            panels.fadeOut("fast", function () {
+                $("#contact-panel").hide();
+                adminPanel.show();
+                adminPanel.children().hide();
+                $("#admin-users-panel").fadeIn("fast");
+                panels.fadeIn("fast");
+            });
+        }
+    });
+
+    $("#show-admin-reactions-panel").click(function () {
+        if (mainContent.is(":visible")) {
+            mainContent.fadeOut("fast", function () {
+                $("#contact-panel").hide();
+                adminPanel.show();
+                $("#admin-reactions-panel").show();
+                panels.fadeIn("fast");
+            });
+        } else {
+            panels.fadeOut("fast", function () {
+                $("#contact-panel").hide();
+                adminPanel.show();
+                adminPanel.children().hide();
+                $("#admin-reactions-panel").fadeIn("fast");
+                panels.fadeIn("fast");
+            });
+        }
     });
 })
 

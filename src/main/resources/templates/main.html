@@ -57,11 +57,11 @@
                         <span class="text-md font-medium">Admin Panel</span>
                     </div>
                     <div class="w-full">
-                        <button type="button" class="w-full flex justify-start items-center p-2 text-sm hover:bg-gray-100">
+                        <button id="show-admin-users-panel" type="button" class="w-full flex justify-start items-center p-2 text-sm hover:bg-gray-100">
                             <img src="/images/icons/users-icon.svg" class="w-8 rounded-xl mx-2" alt="users icon">
                             <span>Users</span>
                         </button>
-                        <button type="button" class="w-full flex justify-start items-center p-2 text-sm hover:bg-gray-100">
+                        <button id="show-admin-reactions-panel" type="button" class="w-full flex justify-start items-center p-2 text-sm hover:bg-gray-100">
                             <img src="/images/icons/reactions-icon.svg" class="w-8 rounded-xl mx-2" alt="reactions icon">
                             <span>Reactions</span>
                         </button>
@@ -174,7 +174,7 @@
                             <label for="contact-attachments" class="block mb-2 text-sm font-medium text-gray-900">
                                 Attachments<span class="text-red-500"></span>
                             </label>
-                            <input type="file" id="contact-attachments" name="files" rows="5" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                            <input type="file" id="contact-attachments" name="files" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
                         </div>
                     </div>
                     <div class="flex items-end justify-between h-1/6">
@@ -186,6 +186,14 @@
                         </div>
                     </div>
                 </form>
+            </div>
+            <div id="admin-panel" class="w-full hidden">
+                <div id="admin-users-panel" class="w-full rounded-xl bg-white shadow hidden hidden">
+                    asd
+                </div>
+                <div id="admin-reactions-panel" class="w-full rounded-xl bg-white shadow hidden hidden">
+                    dsa
+                </div>
             </div>
         </div>
     </div>
