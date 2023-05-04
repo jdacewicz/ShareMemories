@@ -67,6 +67,39 @@ $(document).ready(function () {
         counter.text(parseInt(counter.text()) + 1);
         counter.fadeIn("fast");
     });
+
+    posts.on("click", ".show-more-button", function () {
+        $(this).fadeOut("fast", function () {
+            $(this).parent().children(".more-options").fadeIn("fast");
+        });
+    });
+
+    posts.on("click", ".close-window-button", function () {
+        let parent = $(this).parent();
+        parent.fadeOut("fast", function () {
+            parent.parent().children(".show-more-button").fadeIn("fast");
+        });
+    });
+
+    posts.on("click", ".delete-post-button", function () {
+        let postId = getIdFromSquareBracket($(this).closest("div[id^='post[']").attr("id"));
+        let post = $(this).closest("div[id^='post[']");
+
+        deleteObject("/api/posts/" + postId);
+        post.fadeOut("fast", function () {
+            post.remove();
+        });
+    });
+    // '<div>' +
+        // '<button class="show-more-button" type="button">' +
+             // '<img src="/images/icons/show-more-icon.svg" class="w-8" alt="show more icon">' +
+        // '</button>' +
+        // '<div class="more-options fixed hidden">' +
+            // '<button class="delete-post-button" type="button">' +
+                 // '<span>Delete post</span>' +
+              // '</button>' +
+        // '</div>' +
+    // '</div>' +
 })
 
 function savePost(frm, data) {
@@ -107,10 +140,7 @@ function updatePost(url) {
         type: "PUT",
         dataType: "JSON",
         processData : false,
-        contentType : false,
-        success : function(post) {
-
-        }
+        contentType : false
     });
 }
 
@@ -154,6 +184,17 @@ function loadPosts() {
                 }
             });
         }
+    });
+}
+
+function deleteObject(url) {
+    $.ajax({
+        enctype : 'multipart/form-data',
+        url: url,
+        type: "DELETE",
+        dataType: "JSON",
+        processData : false,
+        contentType : false
     });
 }
 
@@ -203,13 +244,21 @@ function appendPost(post) {
                                 '<a href="/profile/' + post.creator.id + '" class="block font-medium hover:underline">' +
                                     '<span>' + post.creator.capitalizedFirstAndLastName + '</span>' +
                                 '</a>' +
-                                '<span class="block text-gray-400">2 hours ago.</span>' +
+                                '<span class="block text-gray-400">' + post.elapsedCreationTimeMessage + '</span>' +
                             '</div>' +
                         '</div>' +
                         '<div>' +
-                            '<button type="button">' +
+                            '<button class="show-more-button" type="button">' +
                                 '<img src="/images/icons/show-more-icon.svg" class="w-8" alt="show more icon">' +
                             '</button>' +
+                            '<div class="more-options fixed hidden py-2 px-4 bg-white rounded-xl shadow">' +
+                                '<button class="close-window-button block">' +
+                                    '<img class="w-6" src="/images/icons/close-icon.svg" alt="close icon">' +
+                                '</button>' +
+                                '<button class="delete-post-button block" type="button">' +
+                                    '<span>Delete post</span>' +
+                                '</button>' +
+                            '</div>' +
                         '</div>' +
                     '</div>' +
                 '</div>' +
