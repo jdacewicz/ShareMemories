@@ -200,7 +200,7 @@
                             </button>
                         </div>
                     </form>
-                    <div id="admin-user-search-results" class="mt-6 rounded-xl bg-white shadow p-2 hidden">
+                    <div id="admin-user-search-results" class="mt-4 rounded-xl bg-white shadow p-2 hidden">
                         <div class="block p-4 text-md font-medium text-center">
                             <span>Search results</span>
                         </div>
@@ -225,11 +225,30 @@
                         </div>
                     </div>
                 </div>
-                <div id="admin-reactions-panel" class="w-full rounded-xl bg-white shadow hidden">
-                    <div>
-                        Reakcje
+                <div id="admin-reactions-panel" class="w-full hidden">
+                    <div class="rounded-xl bg-white shadow p-2 mb-4">
+                        <div class="block p-4 text-md font-medium text-center">
+                            <span>Reactions</span>
+                        </div>
+                        <table id="admin-reactions-list" class="text-sm w-full mb-4">
+                            <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-4 py-2">
+                                    Image
+                                </th>
+                                <th scope="col" class="px-4 py-2">
+                                    Name
+                                </th>
+                                <th scope="col" class="px-4 py-2">
+                                    Actions
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
-                    <div>
+                    <div class="rounded-xl bg-white shadow p-2 hidden">
                         Edycja reakcji
                     </div>
                 </div>

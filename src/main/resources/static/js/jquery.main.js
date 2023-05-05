@@ -128,6 +128,9 @@ $(document).ready(function () {
 
     $("#show-admin-reactions-panel").click(function () {
         if (mainContent.is(":visible")) {
+            $("#admin-reactions-list tbody").empty();
+            loadAdminPanelReactions();
+
             mainContent.fadeOut("fast", function () {
                 $("#contact-panel").hide();
                 adminPanel.show();
@@ -135,6 +138,9 @@ $(document).ready(function () {
                 panels.fadeIn("fast");
             });
         } else {
+            $("#admin-reactions-list tbody").empty();
+            loadAdminPanelReactions();
+
             panels.fadeOut("fast", function () {
                 $("#contact-panel").hide();
                 adminPanel.show();
@@ -151,7 +157,7 @@ $(document).ready(function () {
 
         $("#admin-user-search-results").fadeIn("fast");
         loadUser(userId);
-    })
+    });
 
     $("#admin-user-search-results").on("click", ".delete-user", function () {
         if (confirm('Are you sure you want to delete this user?')) {
@@ -160,10 +166,19 @@ $(document).ready(function () {
             deleteObject("/api/users/" + userId);
             $("#admin-user-search-results tr[class^='user[" + userId + "]']").remove();
         }
-    })
+    });
 
     $("#admin-search-results-clear").click(function () {
         $("#admin-user-search-results table tbody").empty();
+    });
+
+    $("#admin-reactions-list").on("click", ".delete-reaction", function () {
+        if (confirm('Are you sure you want to delete this reaction?')) {
+            let reactionId = getIdFromSquareBracket($(this).closest("tr[class^='reaction[']").attr("class"));
+
+            deleteObject("/api/reactions/" + reactionId);
+            $("#admin-reactions-list tr[class^='reaction[" + reactionId + "]']").remove();
+        }
     });
 })
 
@@ -262,6 +277,22 @@ function loadUser(id) {
         contentType : false,
         success: function (user) {
             appendUserToAdminPanel(user);
+        }
+    });
+}
+
+function loadAdminPanelReactions() {
+    $.ajax({
+        enctype : 'multipart/form-data',
+        url: "/api/reactions",
+        type: "GET",
+        dataType: "JSON",
+        processData : false,
+        contentType : false,
+        success: function (reactions) {
+            reactions.forEach(function (reaction) {
+                appendReactionToAdminPanel(reaction);
+            });
         }
     });
 }
@@ -438,11 +469,37 @@ function appendUserToAdminPanel(user) {
                     '<span>' + user.capitalizedFirstAndLastName + '</span>' +
                 '</a>' +
             '</th>' +
-            '<td class="flex justify-center items-center px-4 py-2">' +
-                '<button class="delete-user" type="button">' +
-                    '<img src="/images/icons/close-icon.svg" class="w-8" alt="delete icon">' +
-                '</button>' +
+            '<td class="px-4 py-2">' +
+                '<div class="flex justify-center items-center">' +
+                    '<button class="delete-user" type="button">' +
+                        '<img src="/images/icons/close-icon.svg" class="w-8" alt="delete icon">' +
+                    '</button>' +
+                '</div>' +
             '</td>' +
         '</tr>'
-    )
+    );
+}
+
+function appendReactionToAdminPanel(reaction) {
+    $("#admin-reactions-list tbody").append(
+        '<tr class="reaction[' + reaction.id +'] border-b">' +
+            '<td class="px-4 py-3">' +
+                '<div class="flex justify-center items-center">' +
+                    '<img src="' + reaction.imagePath + '" class="w-10" alt="reaction image">' +
+                '</div>' +
+            '</td>' +
+            '<td class="px-4 py-3">' +
+                '<div class="flex justify-center items-center text-sm">' +
+                    '<span>' + reaction.name + '</span>' +
+                '</div>' +
+            '</td>' +
+            '<td class="px-4 py-2">' +
+                '<div class="flex justify-center items-center">' +
+                    '<button class="delete-reaction" type="button">' +
+                        '<img src="/images/icons/close-icon.svg" class="w-8" alt="delete icon">' +
+                    '</button>' +
+                '</div>' +
+            '</td>' +
+        '</tr>'
+    );
 }
