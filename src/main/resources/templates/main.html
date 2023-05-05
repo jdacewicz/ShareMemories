@@ -154,7 +154,7 @@
                         </div>
                         <div class="mb-6">
                             <label for="contact-phone" class="block mb-2 text-sm font-medium text-gray-900">
-                                Phone<span class="text-red-500"></span>
+                                Phone
                             </label>
                             <input type="text" name="phone" id="contact-phone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
                         </div>
@@ -172,7 +172,7 @@
                         </div>
                         <div class="mb-6">
                             <label for="contact-attachments" class="block mb-2 text-sm font-medium text-gray-900">
-                                Attachments<span class="text-red-500"></span>
+                                Attachments
                             </label>
                             <input type="file" id="contact-attachments" name="files" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
                         </div>
@@ -188,11 +188,50 @@
                 </form>
             </div>
             <div id="admin-panel" class="w-full hidden">
-                <div id="admin-users-panel" class="w-full rounded-xl bg-white shadow hidden hidden">
-                    asd
+                <div id="admin-users-panel" class="w-full hidden">
+                    <form action="/api/users/" method="GET" id="admin-user-search" class="rounded-xl bg-white p-2 shadow">
+                        <div class="flex items-center bg-gray-50 border border-gray-300 text-sm rounded-lg p-2">
+                            <label for="contact-phone" class="mr-2">
+                                <img src="/images/icons/search-icon.svg" class="w-8" alt="search icon">
+                            </label>
+                            <input type="number" name="id" id="search-user" class="w-full text-gray-900 bg-gray-50 text-sm mr-2" placeholder="Insert user id..." required>
+                            <button type="submit">
+                                <img src="/images/icons/arrow-right-icon.svg" class="w-8" alt="send icon">
+                            </button>
+                        </div>
+                    </form>
+                    <div id="admin-user-search-results" class="mt-6 rounded-xl bg-white shadow p-2 hidden">
+                        <div class="block p-4 text-md font-medium text-center">
+                            <span>Search results</span>
+                        </div>
+                        <table class="text-sm w-full mb-4">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3">
+                                        User
+                                    </th>
+                                    <th scope="col" class="px-4 py-2">
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <div class="flex justify-center items-center p-2">
+                            <button id="admin-search-results-clear" type="button" class="text-sm hover:underline">
+                                <span>Clear.</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div id="admin-reactions-panel" class="w-full rounded-xl bg-white shadow hidden hidden">
-                    dsa
+                <div id="admin-reactions-panel" class="w-full rounded-xl bg-white shadow hidden">
+                    <div>
+                        Reakcje
+                    </div>
+                    <div>
+                        Edycja reakcji
+                    </div>
                 </div>
             </div>
         </div>

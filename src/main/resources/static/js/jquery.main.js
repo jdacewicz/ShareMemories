@@ -144,6 +144,27 @@ $(document).ready(function () {
             });
         }
     });
+
+    $("#admin-user-search").submit(function (e) {
+        e.preventDefault();
+        let userId = $("#admin-user-search input").val();
+
+        $("#admin-user-search-results").fadeIn("fast");
+        loadUser(userId);
+    })
+
+    $("#admin-user-search-results").on("click", ".delete-user", function () {
+        if (confirm('Are you sure you want to delete this user?')) {
+            let userId = getIdFromSquareBracket($(this).closest("tr[class^='user[']").attr("class"));
+
+            deleteObject("/api/users/" + userId);
+            $("#admin-user-search-results tr[class^='user[" + userId + "]']").remove();
+        }
+    })
+
+    $("#admin-search-results-clear").click(function () {
+        $("#admin-user-search-results table tbody").empty();
+    });
 })
 
 function savePost(frm, data) {
@@ -227,6 +248,20 @@ function loadPosts() {
                     $("#posts").fadeIn("fast");
                 }
             });
+        }
+    });
+}
+
+function loadUser(id) {
+    $.ajax({
+        enctype : 'multipart/form-data',
+        url: "/api/users/" + id,
+        type: "GET",
+        dataType: "JSON",
+        processData : false,
+        contentType : false,
+        success: function (user) {
+            appendUserToAdminPanel(user);
         }
     });
 }
@@ -388,4 +423,26 @@ function appendReaction(reaction) {
             '<img src="' + reaction.imagePath + '" alt="' + reaction.name + ' reaction">' +
         '</button>'
     );
+}
+
+function appendUserToAdminPanel(user) {
+    if ($("#admin-user-search-results tr[class^='user[" + user.id + "]']").length > 0) {
+        return;
+    }
+
+    $("#admin-user-search-results tbody").append(
+        '<tr class="user[' + user.id +'] border-b">' +
+            '<th scope="row" class="px-4 py-2">' +
+                '<a href="/profile/' + user.id + '" class="flex justify-center items-center font-medium hover:underline">' +
+                    '<img src="' + user.imagePath + '" class="w-6 rounded-lg mr-2" alt="user profile picture">' +
+                    '<span>' + user.capitalizedFirstAndLastName + '</span>' +
+                '</a>' +
+            '</th>' +
+            '<td class="flex justify-center items-center px-4 py-2">' +
+                '<button class="delete-user" type="button">' +
+                    '<img src="/images/icons/close-icon.svg" class="w-8" alt="delete icon">' +
+                '</button>' +
+            '</td>' +
+        '</tr>'
+    )
 }
