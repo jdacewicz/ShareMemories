@@ -29,12 +29,6 @@ public class Reaction {
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
 
-    @PreRemove
-    private void removeReactionFromRelatedEntities() {
-        posts.remove(this);
-        comments.remove(this);
-    }
-
     public Reaction() {
     }
 

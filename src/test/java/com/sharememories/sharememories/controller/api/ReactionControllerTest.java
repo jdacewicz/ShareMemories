@@ -1,6 +1,5 @@
 package com.sharememories.sharememories.controller.api;
 
-import com.sharememories.sharememories.controller.api.ReactionController;
 import com.sharememories.sharememories.domain.Reaction;
 import com.sharememories.sharememories.service.ReactionService;
 import com.sharememories.sharememories.util.FileUtils;
@@ -52,7 +51,7 @@ class ReactionControllerTest {
         List<Reaction> reactions = List.of(reaction);
         Mockito.when(service.getAllReactions()).thenReturn(reactions);
 
-        ResponseEntity response = controller.getAllReactions();
+        ResponseEntity<?> response = controller.getAllReactions();
         //Then
         assertEquals(ResponseEntity.ok(reactions), response);
     }
@@ -63,7 +62,7 @@ class ReactionControllerTest {
         //When
         Mockito.when(service.getAllReactions()).thenReturn(List.of());
 
-        ResponseEntity response = controller.getAllReactions();
+        ResponseEntity<?> response = controller.getAllReactions();
         //Then
         assertEquals(ResponseEntity.status(HttpStatus.NO_CONTENT).build(), response);
     }
@@ -76,7 +75,7 @@ class ReactionControllerTest {
         Reaction reaction = new Reaction();
         Mockito.when(service.getReaction(id)).thenReturn(Optional.of(reaction));
 
-        ResponseEntity response = controller.getReaction(id);
+        ResponseEntity<?> response = controller.getReaction(id);
         //Then
         assertEquals(ResponseEntity.ok(reaction), response);
     }
@@ -86,7 +85,7 @@ class ReactionControllerTest {
         //Given
         int id = 1;
         //When
-        ResponseEntity response = controller.getReaction(id);
+        ResponseEntity<?> response = controller.getReaction(id);
         //Then
         assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build().getStatusCode(), response.getStatusCode());
     }
@@ -101,7 +100,7 @@ class ReactionControllerTest {
         fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
         Mockito.when(service.createReaction(any(Reaction.class))).thenReturn(reaction);
 
-        ResponseEntity response = controller.createReaction(name, file);
+        ResponseEntity<?> response = controller.createReaction(name, file);
         //Then
         assertEquals(ResponseEntity.status(HttpStatus.CREATED).body(reaction), response);
     }
@@ -115,7 +114,7 @@ class ReactionControllerTest {
         fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
         fileUtils.when(() -> FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, file.getOriginalFilename(), file)).thenThrow(IOException.class);
 
-        ResponseEntity response = controller.createReaction(name, file);
+        ResponseEntity<?> response = controller.createReaction(name, file);
         //Then
         assertEquals(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().getStatusCode(), response.getStatusCode());
     }
@@ -130,7 +129,7 @@ class ReactionControllerTest {
         Reaction reaction = new Reaction(id, name, "image.png");
         Mockito.when(service.replaceReaction(any(Integer.class), any(Reaction.class))).thenReturn(reaction);
 
-        ResponseEntity response = controller.replaceReaction(id, name, file);
+        ResponseEntity<?> response = controller.replaceReaction(id, name, file);
         //Then
         assertEquals(ResponseEntity.ok(reaction), response);
     }
@@ -146,7 +145,7 @@ class ReactionControllerTest {
         fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
         Mockito.when(service.replaceReaction(any(Integer.class), any(Reaction.class))).thenReturn(reaction);
 
-        ResponseEntity response = controller.replaceReaction(id, name, file);
+        ResponseEntity<?> response = controller.replaceReaction(id, name, file);
         //Then
         assertEquals(ResponseEntity.ok(reaction), response);
     }
@@ -161,9 +160,32 @@ class ReactionControllerTest {
         fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
         fileUtils.when(() -> FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, file.getOriginalFilename(), file)).thenThrow(IOException.class);
 
-        ResponseEntity response = controller.replaceReaction(id, name, file);
+        ResponseEntity<?> response = controller.replaceReaction(id, name, file);
         //Then
         assertEquals(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().getStatusCode(), response.getStatusCode());
+    }
+
+    @Test
+    void Given_Id_When_DeletingReactionWithoutImageByProperIdByAPI_Then_ReturnedResponseOk() {
+        //Given
+        int id = 1;
+        //When
+        Reaction reaction = new Reaction();
+        Mockito.when(service.getReaction(id)).thenReturn(Optional.of(reaction));
+
+        ResponseEntity<?> response = controller.deleteReaction(id);
+        //Then
+        assertEquals(ResponseEntity.ok().build(), response);
+    }
+
+    @Test
+    void Given_Id_When_DeletingReactionWithoutImageByWrongIdByAPI_Then_ReturnedResponseOk() {
+        //Given
+        int id = 1;
+        //When
+        ResponseEntity<?> response = controller.deleteReaction(id);
+        //Then
+        assertEquals(ResponseEntity.notFound().build().getStatusCode(), response.getStatusCode());
     }
 
     @Test
@@ -171,19 +193,11 @@ class ReactionControllerTest {
         //Given
         int id = 1;
         //When
-        Mockito.when(service.getReactionImageName(id)).thenReturn(Optional.of("image.png"));
+        Reaction reaction = new Reaction();
+        reaction.setImage("image.png");
 
-        ResponseEntity response = controller.deleteReaction(id);
-        //Then
-        assertEquals(ResponseEntity.ok().build(), response);
-    }
-
-    @Test
-    void Given_Id_When_DeletingReactionWithoutImageByAPI_Then_ReturnedResponseOk() {
-        //Given
-        int id = 1;
-        //When
-        ResponseEntity response = controller.deleteReaction(id);
+        Mockito.when(service.getReaction(id)).thenReturn(Optional.of(reaction));
+        ResponseEntity<?> response = controller.deleteReaction(id);
         //Then
         assertEquals(ResponseEntity.ok().build(), response);
     }
@@ -193,10 +207,13 @@ class ReactionControllerTest {
         //Given
         int id = 1;
         //When
-        Mockito.when(service.getReactionImageName(id)).thenReturn(Optional.of("image.png"));
-        fileUtils.when(() -> FileUtils.deleteFile(Reaction.IMAGES_DIRECTORY_PATH, "image.png")).thenThrow(IOException.class);
+        Reaction reaction = new Reaction();
+        reaction.setImage("image.png");
 
-        ResponseEntity response = controller.deleteReaction(id);
+        Mockito.when(service.getReaction(id)).thenReturn(Optional.of(reaction));
+        fileUtils.when(() -> FileUtils.deleteFile(Reaction.IMAGES_DIRECTORY_PATH, reaction.getImage())).thenThrow(IOException.class);
+
+        ResponseEntity<?> response = controller.deleteReaction(id);
         //Then
         assertEquals(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().getStatusCode(), response.getStatusCode());
     }

@@ -91,10 +91,17 @@ public class ReactionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteReaction(@PathVariable("id") Integer id) {
-        Optional<String> reactionImageName = service.getReactionImageName(id);
-        if (reactionImageName.isPresent()) {
+        Optional<Reaction> reaction = service.getReaction(id);
+        if (!reaction.isPresent()) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("status", HttpStatus.NOT_FOUND.value());
+            map.put("message", "Reaction not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+        }
+
+        if (reaction.get().getImage() != null) {
             try {
-                FileUtils.deleteFile(Reaction.IMAGES_DIRECTORY_PATH, reactionImageName.get());
+                FileUtils.deleteFile(Reaction.IMAGES_DIRECTORY_PATH, reaction.get().getImage());
             } catch (IOException e) {
                 Map<String, Object> map = new LinkedHashMap<>();
                 map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -102,7 +109,8 @@ public class ReactionController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
             }
         }
-        service.deleteReaction(id);
+        service.deleteReaction(reaction.get());
+
         return ResponseEntity.ok().build();
     }
 }

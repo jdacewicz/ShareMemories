@@ -46,7 +46,10 @@ public class ReactionService {
                 }).orElseGet(() -> reactionRepository.save(reaction));
     }
 
-    public void deleteReaction(Integer id) {
-        reactionRepository.deleteById(id);
+    public void deleteReaction(Reaction r) {
+        r.getPosts().remove(r);
+        r.getComments().remove(r);
+
+        reactionRepository.delete(r);
     }
 }
