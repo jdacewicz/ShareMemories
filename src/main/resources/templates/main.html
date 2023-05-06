@@ -226,7 +226,7 @@
                     </div>
                 </div>
                 <div id="admin-reactions-panel" class="w-full hidden">
-                    <div class="rounded-xl bg-white shadow p-2 mb-4">
+                    <div class="rounded-xl bg-white shadow py-2 px-4 mb-4">
                         <div class="block p-4 text-md font-medium text-center">
                             <span>Reactions</span>
                         </div>
@@ -248,9 +248,33 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="rounded-xl bg-white shadow p-2 hidden">
-                        Edycja reakcji
-                    </div>
+                    <form id="edit-reaction-form" action="/api/reactions/" class="rounded-xl bg-white shadow hidden">
+                        <input type="hidden" id="edit-reaction-id" name="id">
+                        <div class="flex items-center justify-center py-2 px-4">
+                            <img class="w-32" id="edit-reaction-image-preview" alt="edited reaction image">
+                        </div>
+                        <div class="grid md:grid-cols-2 md:gap-6 py-2 px-4">
+                            <div class="relative z-0 w-full group">
+                                <label for="edit-reaction-file" class="block mb-2 text-sm font-medium text-gray-900">
+                                    New Image
+                                </label>
+                                <input type="file" id="edit-reaction-file" name="image" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            </div>
+                            <div class="relative z-0 w-full mb-6 group">
+                                <label for="edit-reaction-name" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Name
+                                </label>
+                                <input type="text" name="name" id="edit-reaction-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                            </div>
+                        </div>
+                        <div class="flex items-end justify-between h-1/6">
+                            <div class="w-full">
+                                <button type="submit" class="text-white bg-gradient-to-r bg-gradient-to-r from-pink-400 to-pink-600 hover:from-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium text-sm w-full px-5 py-3 text-center rounded-b-xl">
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

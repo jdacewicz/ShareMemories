@@ -2,7 +2,6 @@ package com.sharememories.sharememories.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;

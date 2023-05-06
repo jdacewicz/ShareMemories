@@ -3,6 +3,7 @@ $(document).ready(function () {
     let mainContent = $("#main-content");
     let adminPanel = $("#admin-panel");
     let panels = $("#panels");
+    let adminReactionsList = $("#admin-reactions-list");
 
     loadPosts();
 
@@ -172,13 +173,53 @@ $(document).ready(function () {
         $("#admin-user-search-results table tbody").empty();
     });
 
-    $("#admin-reactions-list").on("click", ".delete-reaction", function () {
+    adminReactionsList.on("click", ".delete-reaction", function () {
         if (confirm('Are you sure you want to delete this reaction?')) {
             let reactionId = getIdFromSquareBracket($(this).closest("tr[class^='reaction[']").attr("class"));
 
             deleteObject("/api/reactions/" + reactionId);
             $("#admin-reactions-list tr[class^='reaction[" + reactionId + "]']").remove();
         }
+    });
+
+    adminReactionsList.on("click", ".edit-reaction", function () {
+        let reaction = $(this).closest("tr[class^='reaction[']");
+
+        $("#edit-reaction-form").fadeOut("fast", function () {
+            $("#edit-reaction-id").val(getIdFromSquareBracket(reaction.attr("class")));
+            $("#edit-reaction-name").val(reaction.find(".reaction-name").text());
+            $("#edit-reaction-image-preview").attr("src", reaction.find("img[class^='reaction-image']").attr("src"));
+
+            $("#edit-reaction-form").fadeIn("fast");
+        });
+    });
+
+    $("#edit-reaction-form").submit(function (e) {
+        e.preventDefault();
+
+        let data = new FormData($(this)[0])
+        let reactionId = $("#edit-reaction-id").val();
+
+        updateReaction("/api/reactions/" + reactionId, data);
+
+        // let reaction = $("#admin-reactions-list tr[class^='reaction[" + reactionId + "]']");
+        //
+        // reaction.find("img[class^='reaction-image']").src($("#edit-reaction-image-preview").src());
+        // reaction.find(".reaction-name").text($("#edit-reaction-name").val());
+
+        $(this).fadeOut("fast");
+    });
+
+    $("#edit-reaction-file").click(function (){
+        $(this).on("change", function () {
+            let file = $(this).get(0).files[0];
+            let reader = new FileReader();
+
+            reader.onload = function () {
+                $("#edit-reaction-image-preview").attr("src", reader.result).show();
+            }
+            reader.readAsDataURL(file);
+        })
     });
 })
 
@@ -218,6 +259,18 @@ function updatePost(url) {
         enctype : 'multipart/form-data',
         url: url,
         type: "PUT",
+        dataType: "JSON",
+        processData : false,
+        contentType : false
+    });
+}
+
+function updateReaction(url, data) {
+    $.ajax({
+        enctype : 'multipart/form-data',
+        url: url,
+        type: "PUT",
+        data : data,
         dataType: "JSON",
         processData : false,
         contentType : false
@@ -485,18 +538,21 @@ function appendReactionToAdminPanel(reaction) {
         '<tr class="reaction[' + reaction.id +'] border-b">' +
             '<td class="px-4 py-3">' +
                 '<div class="flex justify-center items-center">' +
-                    '<img src="' + reaction.imagePath + '" class="w-10" alt="reaction image">' +
+                    '<img src="' + reaction.imagePath + '" class="reaction-image w-10" alt="reaction image">' +
                 '</div>' +
             '</td>' +
             '<td class="px-4 py-3">' +
                 '<div class="flex justify-center items-center text-sm">' +
-                    '<span>' + reaction.name + '</span>' +
+                    '<span class="reaction-name">' + reaction.name + '</span>' +
                 '</div>' +
             '</td>' +
             '<td class="px-4 py-2">' +
                 '<div class="flex justify-center items-center">' +
                     '<button class="delete-reaction" type="button">' +
                         '<img src="/images/icons/close-icon.svg" class="w-8" alt="delete icon">' +
+                    '</button>' +
+                    '<button class="edit-reaction" type="button">' +
+                        '<img src="/images/icons/edit-icon.svg" class="w-8" alt="edit icon">' +
                     '</button>' +
                 '</div>' +
             '</td>' +
