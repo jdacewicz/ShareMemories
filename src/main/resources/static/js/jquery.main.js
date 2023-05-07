@@ -202,10 +202,9 @@ $(document).ready(function () {
 
         updateReaction("/api/reactions/" + reactionId, data);
 
-        // let reaction = $("#admin-reactions-list tr[class^='reaction[" + reactionId + "]']");
-        //
-        // reaction.find("img[class^='reaction-image']").src($("#edit-reaction-image-preview").src());
-        // reaction.find(".reaction-name").text($("#edit-reaction-name").val());
+        let reaction = $("#admin-reactions-list tr[class^='reaction[" + reactionId + "]']");
+        reaction.find("img[class^='reaction-image']").attr("src", $("#edit-reaction-image-preview").attr("src"));
+        reaction.find(".reaction-name").text($("#edit-reaction-name").val());
 
         $(this).fadeOut("fast");
     });
