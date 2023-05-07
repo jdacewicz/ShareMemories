@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/webjars/tailwindcss/2.1.2/dist/tailwind.min.css}">
     <script th:src="@{/webjars/jquery/3.6.3/jquery.min.js}"></script>
-    <script th:src="@{/js/jquery.save.js}"></script>
-    <script th:src="@{/js/jquery.boot.js}"></script>
+    <script th:src="@{/js/jquery.posts.js}"></script>
     <title>ShareMemories</title>
 </head>
 <body class="bg-gray-100">
@@ -70,9 +69,7 @@
                     </button>
                 </div>
             </div>
-            <div id="user-posts" class="float-right w-2/3">
-                <div id="posts" class="mb-6">
-                </div>
+            <div id="posts" class="float-right w-2/3 pl-4 hidden">
             </div>
         </main>
     </div>
