@@ -146,15 +146,42 @@ $(document).ready(function () {
 
         let userId = getIdFromSquareBracket($(this).attr("name"));
 
-        $("#chat-box-sender").attr("href", "/profile" + userId);
+        $("#chat-box-sender").attr("href", "/profile/" + userId);
         $("#chat-box-sender img").attr("src", $(this).children("img").attr("src"));
         $("#chat-box-sender span").text($(this).children("span").text());
+        $("#send-message-form").children("input[name='id']").val(userId);
 
         loadMessagesWithUser(userId);
 
         $("#chat-box").show();
     });
+
+    $("#send-message-form").submit(function (e) {
+        e.preventDefault();
+
+        let userId = $(this).children("input[name='id']").val();
+        let data = new FormData($(this)[0])
+
+        sendMessage(userId, data);
+        $(this).find("input[type='file'], textarea").val('');
+        $(this).find("img[class^='image-preview']").attr("src", '').hide();
+    });
 })
+
+function sendMessage(userId, data) {
+    $.ajax({
+        enctype : 'multipart/form-data',
+        url: "/api/messages/user/" + userId,
+        type: "POST",
+        data : data,
+        dataType: "JSON",
+        processData : false,
+        contentType : false,
+        success: function (message) {
+            appendMessageToChatBox(message, true);
+        }
+    });
+}
 
 function updateReaction(url, data) {
     $.ajax({
@@ -208,7 +235,11 @@ function loadMessagesWithUser(userId) {
                 return;
             }
             data.forEach(function (message) {
-                appendMessageToChatBox(message);
+                if (message.sender.id === parseInt(userId)) {
+                    appendMessageToChatBox(message, false);
+                } else {
+                    appendMessageToChatBox(message, true)
+                }
             });
         }
     });
@@ -280,17 +311,29 @@ function appendReactionToAdminPanel(reaction) {
     );
 }
 
-function appendMessageToChatBox(message) {
+function appendMessageToChatBox(message, moveToRight) {
     let messageImage = (message.imagePath == null) ? "" :
         '<img src="' + message.imagePath + '" class="w-28 pt-2" alt="message image">';
 
-    $("#chat-box-messages").append(
-        '<div class="block flex items-center justify-start mb-2">' +
-            '<img src="' + message.sender.imagePath + '" class="w-8 rounded-xl mx-2 border" alt="sender profile picture">' +
-            '<div class="border bg-pink-500 rounded-xl p-2 shadow">' +
-                '<span class="block">' + message.content + '</span>' +
-                messageImage +
-            '</div>' +
-        '</div>'
-    );
+    let sender = '<img src="' + message.sender.imagePath + '" class="w-8 rounded-xl mx-2 border" alt="sender profile picture">';
+    let content = '<div class="border bg-pink-500 rounded-xl p-2 shadow">' +
+                    '<span class="block">' + message.content + '</span>' +
+                    messageImage +
+                  '</div>';
+
+    if (moveToRight) {
+        $("#chat-box-messages").append(
+            '<div class="block flex items-center mb-2 justify-end">' +
+                content +
+                sender +
+            '</div>'
+        );
+    } else {
+        $("#chat-box-messages").append(
+            '<div class="block flex items-center mb-2 justify-start">' +
+                sender +
+                content +
+            '</div>'
+        );
+    }
 }

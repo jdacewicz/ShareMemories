@@ -3,7 +3,7 @@ $(document).ready(function () {
 
     loadPosts();
 
-    posts.on("click", ".upload-image-button", function () {
+    $("body").on("click", ".upload-image-button", function () {
         let fileDialog = $(this).parent().find("input[type='file']");
         let img = $(this).parent().parent().parent().find(".image-preview").first();
 
@@ -17,6 +17,8 @@ $(document).ready(function () {
         let data = new FormData($(this)[0])
 
         savePost(frm, data);
+        $(this).find("input[type='file'], textarea").val('');
+        $(this).find("img[class^='image-preview']").attr("src", '').hide();
     });
 
     posts.on("submit", ".create-comment-form", function (e) {
@@ -27,6 +29,8 @@ $(document).ready(function () {
         let data = new FormData($(this)[0])
 
         saveComment(frm, data, method.substring(method.lastIndexOf('/') + 1));
+        $(this).find("input[type='file'], textarea").val('');
+        $(this).find("img[class^='image-preview']").attr("src", '').hide();
     });
 
     posts.on("mouseenter", ".comment-reactions", function () {
@@ -279,11 +283,11 @@ function appendPost(post) {
                                 '<img src="' + createCommentProfilePicture + '" class="w-10 rounded-xl border" alt="user profile picture">' +
                             '</div>' +
                             '<div class="flex items-center justify-start text-sm w-full border bg-gray-100 rounded-xl py-1 px-2">' +
-                                '<input name="image" type="file" hidden>' +
                                 '<textarea name="content" class="w-full bg-gray-100 resize-y" rows="1" placeholder="Write something..."></textarea>' +
-                                '<img src="#" alt="comment uploaded image preview" class="image-preview hidden">' +
+                                '<img src="#" alt="comment uploaded image preview" class="image-preview w-16 ml-2 hidden">' +
                             '</div>' +
                             '<div class="flex items-center ml-1">' +
+                                '<input name="image" type="file" hidden>' +
                                 '<button type="button" class="upload-image-button">' +
                                     '<img src="/images/icons/image-icon.svg" class="w-10" alt="image icon">' +
                                 '</button>' +
@@ -301,7 +305,7 @@ function appendPost(post) {
 
 function appendComment(postId, comment) {
     let commentImage = (comment.imagePath == null) ? "" :
-        '<img src="' + comment.imagePath + '" class="block py-2" alt="post picture">';
+        '<img src="' + comment.imagePath + '" class="w-36 my-2" alt="comment picture">';
 
     $("div[id='post[" + postId + "]'] .comments").append(
         '<div id="comment[' + comment.id + ']" class="flex justify-between p-2">' +
