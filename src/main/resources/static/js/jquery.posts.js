@@ -225,14 +225,16 @@ function appendPost(post) {
     let postImage = (post.imagePath == null) ? "" :
         '<img src="' + post.imagePath + '" alt="post picture">';
 
+    let createCommentProfilePicture = $("#logged-user-profile-picture").attr("src");
+
     $("#posts").append(
         '<div id="post[' + post.id + ']" class="w-full bg-white rounded-xl shadow mb-4">' +
             '<div class="post-main w-full">' +
                 '<div class="w-full border-b">' +
                     '<div class="flex justify-between p-2">' +
                         '<div class="flex justify-start">' +
-                            '<div class="mt-1 mr-1">' +
-                                '<img src="' + post.creator.imagePath + '" class="w-8 rounded-xl mx-2 border" alt="user profile picture">' +
+                            '<div class="mt-1 mx-2">' +
+                                '<img src="' + post.creator.imagePath + '" class="w-8 rounded-xl border" alt="user profile picture">' +
                             '</div>' +
                             '<div class="text-sm">' +
                                 '<a href="/profile/' + post.creator.id + '" class="block font-medium hover:underline">' +
@@ -273,20 +275,18 @@ function appendPost(post) {
                 '<div>' +
                     '<form class="create-comment-form" action="/api/comments/post/' + post.id + '" enctype="multipart/form-data">' +
                         '<div class="flex justify-between p-2">' +
-                            '<div class="mt-1 mr-2">' +
-                                '<img src="' + post.creator.imagePath + '" class="w-8 rounded-xl mx-2 border" alt="user profile picture">' +
+                            '<div class="mt-1 mx-2">' +
+                                '<img src="' + createCommentProfilePicture + '" class="w-10 rounded-xl border" alt="user profile picture">' +
                             '</div>' +
-                            '<div class="flex items-center justify-start text-sm w-full border rounded-xl">' +
+                            '<div class="flex items-center justify-start text-sm w-full border bg-gray-100 rounded-xl py-1 px-2">' +
                                 '<input name="image" type="file" hidden>' +
-                                '<div class="w-full bg-gray-100 border-r rounded-l-xl p-2">' +
-                                    '<textarea name="content" class="w-full bg-gray-100 resize-y" rows="1" placeholder="Write something..."></textarea>' +
-                                    '<img src="#" alt="comment uploaded image preview" class="image-preview hidden">' +
-                                '</div>' +
-                                '<button type="button" class="upload-image-button mx-1">' +
-                                    '<img src="/images/icons/image-icon.svg" class="w-8" alt="image icon">' +
-                                '</button>' +
+                                '<textarea name="content" class="w-full bg-gray-100 resize-y" rows="1" placeholder="Write something..."></textarea>' +
+                                '<img src="#" alt="comment uploaded image preview" class="image-preview hidden">' +
                             '</div>' +
                             '<div class="flex items-center ml-1">' +
+                                '<button type="button" class="upload-image-button">' +
+                                    '<img src="/images/icons/image-icon.svg" class="w-10" alt="image icon">' +
+                                '</button>' +
                                 '<button type="submit" class="px-2">' +
                                     '<img src="/images/icons/arrow-right-icon.svg" class="w-10" alt="send icon">' +
                                 '</button>' +
@@ -306,8 +306,8 @@ function appendComment(postId, comment) {
     $("div[id='post[" + postId + "]'] .comments").append(
         '<div id="comment[' + comment.id + ']" class="flex justify-between p-2">' +
             '<div class="flex justify-start">' +
-                '<div class="mt-1 mr-1">' +
-                    '<img src="' + comment.creator.imagePath + '" class="w-8 rounded-xl mx-2 border" alt="user profile picture">' +
+                '<div class="mt-1 mx-2">' +
+                    '<img src="' + comment.creator.imagePath + '" class="w-10 rounded-xl border" alt="user profile picture">' +
                 '</div>' +
                 '<div class="text-sm p-2 mx-1 w-full rounded-xl border bg-gray-100">' +
                     '<a href="/profile/' + comment.creator.id + '" class="block font-medium hover:underline">' +

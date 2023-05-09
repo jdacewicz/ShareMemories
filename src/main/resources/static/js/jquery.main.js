@@ -132,6 +132,28 @@ $(document).ready(function () {
             reader.readAsDataURL(file);
         })
     });
+
+    $("#full-screen-notifications-box").click(function () {
+        $(this).fadeOut("fast");
+    });
+
+    $(".close-chat-box").click(function () {
+        $("#chat-box").hide();
+    });
+
+    $("button[name^='contact[']").click(function () {
+        $("#chat-box-messages").empty();
+
+        let userId = getIdFromSquareBracket($(this).attr("name"));
+
+        $("#chat-box-sender").attr("href", "/profile" + userId);
+        $("#chat-box-sender img").attr("src", $(this).children("img").attr("src"));
+        $("#chat-box-sender span").text($(this).children("span").text());
+
+        loadMessagesWithUser(userId);
+
+        $("#chat-box").show();
+    });
 })
 
 function updateReaction(url, data) {
@@ -171,6 +193,22 @@ function loadAdminPanelReactions() {
         success: function (reactions) {
             reactions.forEach(function (reaction) {
                 appendReactionToAdminPanel(reaction);
+            });
+        }
+    });
+}
+
+function loadMessagesWithUser(userId) {
+    $.ajax({
+        type: "GET",
+        url: "/api/messages/user/" + userId,
+        dataType: "JSON",
+        success: function (data) {
+            if (data == null) {
+                return;
+            }
+            data.forEach(function (message) {
+                appendMessageToChatBox(message);
             });
         }
     });
@@ -239,5 +277,20 @@ function appendReactionToAdminPanel(reaction) {
                 '</div>' +
             '</td>' +
         '</tr>'
+    );
+}
+
+function appendMessageToChatBox(message) {
+    let messageImage = (message.imagePath == null) ? "" :
+        '<img src="' + message.imagePath + '" class="w-28 pt-2" alt="message image">';
+
+    $("#chat-box-messages").append(
+        '<div class="block flex items-center justify-start mb-2">' +
+            '<img src="' + message.sender.imagePath + '" class="w-8 rounded-xl mx-2 border" alt="sender profile picture">' +
+            '<div class="border bg-pink-500 rounded-xl p-2 shadow">' +
+                '<span class="block">' + message.content + '</span>' +
+                messageImage +
+            '</div>' +
+        '</div>'
     );
 }

@@ -9,6 +9,11 @@
     <title>ShareMemories</title>
 </head>
 <body class="bg-gray-100 w-screen h-screen">
+    <div id="full-screen-notifications-box" class="fixed w-full h-full bg-black bg-opacity-20 z-20 hidden">
+        <div id="notification-box" class="fixed top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 bg-white rounded-xl shadow">
+            Notification
+        </div>
+    </div>
     <div class="flex justify-between mb-4 py-2 w-full bg-gradient-to-r from-purple-100 to-purple-600 shadow">
         <div class="flex justify-center w-1/6 ml-4">
             <a href="/">
@@ -20,7 +25,7 @@
         </div>
         <div class="flex justify-center w-1/6 ml-4">
             <a th:href="'/profile/' + ${loggedUser.getId()}" class="flex items-center hover:underline text-sm font-medium text-white">
-                <img th:src="${loggedUser.getImagePath()}" class="w-6 rounded-xl mx-2 border" alt="logged user profile picture">
+                <img id="logged-user-profile-picture" th:src="${loggedUser.getImagePath()}" class="w-6 rounded-xl mx-2 border" alt="logged user profile picture">
                 <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
             </a>
         </div>
@@ -70,21 +75,53 @@
                 </div>
             </div>
         </div>
-        <div class="float-right w-1/6 bg-white mr-4 rounded-xl shadow">
-            <div class="w-full">
-                <div class="w-full border-b border-t px-4 py-2">
-                    <span class="text-md font-medium">Contacts</span>
-                </div>
-                <div class="w-full">
-                    <div th:if="${loggedUser.getContacts().isEmpty()}">
+        <div class="float-right w-1/4 mr-4">
+            <div class="flex justify-end mb-4">
+                <div class="w-1/2 bg-white rounded-xl shadow">
+                    <div class="w-full border-b border-t px-4 py-2">
+                        <span class="text-md font-medium">Contacts</span>
+                    </div>
+                    <div class="w-full">
+                        <div th:if="${loggedUser.getContacts().isEmpty()}">
                         <span class="w-full flex justify-center items-center p-4 text-sm font-medium">
                             You currently have no contacts.
                         </span>
+                        </div>
+                        <div th:unless="${loggedUser.getContacts().isEmpty()}" th:each="contact : ${loggedUser.getContacts()}">
+                            <button type="button" th:name="'contact[' + ${contact.getId()} + ']'" class="w-full flex justify-start items-center p-2 text-sm font-medium hover:bg-gray-100">
+                                <img th:src="${contact.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
+                                <span th:text="${contact.getCapitalizedFirstAndLastName()}"></span>
+                            </button>
+                        </div>
                     </div>
-                    <div th:unless="${loggedUser.getContacts().isEmpty()}" th:each="contact : ${loggedUser.getContacts()}">
-                        <button type="button" th:name="'contact[' + ${contact.getId()} + ']'" class="w-full flex justify-start items-center p-2 text-sm font-medium hover:bg-gray-100">
-                            <img th:src="${contact.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
-                            <span th:text="${contact.getCapitalizedFirstAndLastName()}"></span>
+                </div>
+            </div>
+            <div id="chat-box" class="w-full bg-white rounded-xl shadow hidden">
+                <div class="flex justify-between w-full border-t px-4 py-2">
+                    <a id="chat-box-sender" class="flex items-center text-md font-medium">
+                        <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
+                        <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
+                    </a>
+                    <button class="close-chat-box" type="button">
+                        <img src="/images/icons/close-icon.svg" class="w-8" alt="delete icon">
+                    </button>
+                </div>
+                <div id="chat-box-messages" class="w-full border-t h-72 p-2 text-sm text-white">
+                </div>
+                <div class="w-full flex justify-end border-t p-2">
+                    <div class="flex items-center w-full text-sm bg-gray-100 border rounded-xl py-1 px-2 resize-y">
+                        <textarea name="content" class="w-full bg-gray-100" rows="1" placeholder="Start chatting"></textarea>
+                        <img src="#" alt="created message uploaded image preview" class="image-preview hidden">
+                    </div>
+                    <div class="flex items-center">
+                        <input name="image" type="file" hidden>
+                        <button type="button" class="upload-image-button">
+                            <img src="/images/icons/image-icon.svg" class="w-10" alt="image icon">
+                        </button>
+                    </div>
+                    <div class="flex items-center ml-1">
+                        <button type="submit" class="px-2">
+                            <img src="/images/icons/arrow-right-icon.svg" class="w-10" alt="send icon">
                         </button>
                     </div>
                 </div>
@@ -96,10 +133,10 @@
             <div class="w-full bg-white rounded-xl shadow mb-4">
                 <form id="create-post-form" action="/api/posts" method="POST" enctype="multipart/form-data">
                     <div class="flex justify-start p-2">
-                        <div class="mt-1 mr-1">
-                            <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl mr-2 border" alt="user profile picture">
+                        <div class="mt-1 mx-2">
+                            <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl border" alt="user profile picture">
                         </div>
-                        <div class="w-full text-sm bg-gray-100 border rounded-xl p-2 resize-y">
+                        <div class="flex items-center w-full text-sm bg-gray-100 border rounded-xl py-1 px-2 resize-y">
                             <textarea name="content" class="w-full bg-gray-100" rows="3" placeholder="Write something..."></textarea>
                             <img src="#" alt="created post uploaded image preview" class="image-preview hidden">
                         </div>
