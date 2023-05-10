@@ -90,7 +90,7 @@
                         <div th:unless="${loggedUser.getContacts().isEmpty()}" th:each="contact : ${loggedUser.getContacts()}">
                             <button type="button" th:name="'contact[' + ${contact.getId()} + ']'" class="w-full flex justify-start items-center p-2 text-sm font-medium hover:bg-gray-100">
                                 <img th:src="${contact.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
-                                <span th:text="${contact.getCapitalizedFirstAndLastName()}"></span>
+                                <span class="name" th:text="${contact.getCapitalizedFirstAndLastName()}"></span>
                             </button>
                         </div>
                     </div>

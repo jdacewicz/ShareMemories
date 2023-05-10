@@ -4,6 +4,8 @@ $(document).ready(function () {
     let panels = $("#panels");
     let adminReactionsList = $("#admin-reactions-list");
 
+    loadUnreadMessagesCount();
+
     $("#show-contact-form").click(function () {
         if (mainContent.is(":visible")) {
             mainContent.fadeOut("fast", function () {
@@ -148,10 +150,12 @@ $(document).ready(function () {
 
         $("#chat-box-sender").attr("href", "/profile/" + userId);
         $("#chat-box-sender img").attr("src", $(this).children("img").attr("src"));
-        $("#chat-box-sender span").text($(this).children("span").text());
+        $("#chat-box-sender span").text($(this).children(".name").text());
         $("#send-message-form").children("input[name='id']").val(userId);
 
         loadMessagesWithUser(userId);
+        setMessagesSeen(userId);
+        $(this).children("span[class^='notification']").remove();
 
         $("#chat-box").show();
     });
@@ -189,6 +193,16 @@ function updateReaction(url, data) {
         url: url,
         type: "PUT",
         data : data,
+        dataType: "JSON",
+        processData : false,
+        contentType : false
+    });
+}
+
+function setMessagesSeen(userId) {
+    $.ajax({
+        url: "/api/messages/user/" + userId + "/show",
+        type: "PUT",
         dataType: "JSON",
         processData : false,
         contentType : false
@@ -241,6 +255,25 @@ function loadMessagesWithUser(userId) {
                     appendMessageToChatBox(message, true)
                 }
             });
+        }
+    });
+}
+
+function loadUnreadMessagesCount() {
+    $.ajax({
+        type: "GET",
+        url: "/api/messages/notify",
+        dataType: "JSON",
+        success: function (data) {
+            // if (data[-1] == 0) {
+            //     $("button[name='unknown-contact[-1]']").parent().remove();
+            // }
+
+            for (let key in data) {
+                let notification = '<span class="notification px-2 ml-2 bg-red-500 text-white rounded-xl">' + data[key] + '</span>';
+
+                $("button[name='contact[" + key + "]']").append(notification);
+            }
         }
     });
 }

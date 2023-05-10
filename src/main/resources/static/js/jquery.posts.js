@@ -36,17 +36,15 @@ $(document).ready(function () {
     posts.on("mouseenter", ".comment-reactions", function () {
         let reactions = $(this).children(".reactions");
 
-        $(this).children(".react-button").fadeOut("fast", function () {
-            reactions.fadeIn("fast");
-        });
+        $(this).children(".react-button").hide();
+        reactions.show();
     })
 
     posts.on("mouseleave", ".comment-reactions", function () {
         let button = $(this).children(".react-button");
 
-        $(this).children(".reactions").fadeOut("fast", function () {
-            button.fadeIn("fast");
-        });
+        $(this).children(".reactions").hide();
+        button.show();
     })
 
     posts.on("click", ".post-main button[class^='reaction'], .comment-reactions button[class^='reaction']", function () {
@@ -71,7 +69,9 @@ $(document).ready(function () {
 
     posts.on("click", ".show-more-button", function () {
         $(this).fadeOut("fast", function () {
-            $(this).parent().children(".more-options").fadeIn("fast");
+            let options = $(this).parent().children(".more-options");
+
+            options.fadeIn("fast");
         });
     });
 
@@ -251,7 +251,7 @@ function appendPost(post) {
                             '<button class="show-more-button" type="button">' +
                                 '<img src="/images/icons/show-more-icon.svg" class="w-8" alt="show more icon">' +
                             '</button>' +
-                            '<div class="more-options fixed hidden bg-white rounded-xl shadow">' +
+                            '<div class="more-options hidden bg-white rounded-xl shadow">' +
                                 '<button class="close-window-button block py-1 px-2">' +
                                     '<img class="w-6" src="/images/icons/close-icon.svg" alt="close icon">' +
                                 '</button>' +
