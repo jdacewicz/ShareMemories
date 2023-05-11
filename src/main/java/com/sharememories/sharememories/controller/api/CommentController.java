@@ -1,7 +1,6 @@
 package com.sharememories.sharememories.controller.api;
 
 import com.sharememories.sharememories.domain.Comment;
-import com.sharememories.sharememories.domain.Post;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.CommentService;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
@@ -23,8 +22,8 @@ import java.util.Optional;
 @RequestMapping(value = "/api/comments", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CommentController {
 
-    private CommentService commentService;
-    private SecurityUserDetailsService userDetailsService;
+    private final CommentService commentService;
+    private final SecurityUserDetailsService userDetailsService;
 
     @Autowired
     public CommentController(CommentService commentService, SecurityUserDetailsService userDetailsService) {
@@ -69,7 +68,7 @@ public class CommentController {
             comment = commentService.commentPost(postId, new Comment(commentContent, user));
         }
 
-        if (!comment.isPresent()) {
+        if (comment.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Could not find referenced Post.");
@@ -100,7 +99,7 @@ public class CommentController {
     public ResponseEntity<?> reactToComment(@PathVariable int reactionId,
                                          @PathVariable long commentId) {
         Optional<Comment> comment = commentService.reactToComment(reactionId, commentId);
-        if (!comment.isPresent()) {
+        if (comment.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Could not find referenced Comment or Reaction.");

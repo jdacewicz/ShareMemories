@@ -20,7 +20,7 @@ import java.util.Optional;
 @RequestMapping(value = "/api/reactions", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ReactionController {
 
-    private ReactionService service;
+    private final ReactionService service;
 
     @Autowired
     public ReactionController(ReactionService service) {
@@ -38,7 +38,7 @@ public class ReactionController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getReaction(@PathVariable Integer id) {
         Optional<Reaction> reaction = service.getReaction(id);
-        if (!reaction.isPresent()) {
+        if (reaction.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Reaction not found.");
@@ -72,8 +72,7 @@ public class ReactionController {
         Reaction reaction;
         if (!file.isEmpty()) {
             Optional<String> reactionImageName = service.getReactionImageName(id);
-            String fileName = (reactionImageName.isPresent()) ?
-                    reactionImageName.get() : FileUtils.generateUniqueName(file.getOriginalFilename());
+            String fileName = reactionImageName.orElseGet(() -> FileUtils.generateUniqueName(file.getOriginalFilename()));
             try {
                     FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, fileName, file);
             } catch (IOException e) {
@@ -92,7 +91,7 @@ public class ReactionController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteReaction(@PathVariable("id") Integer id) {
         Optional<Reaction> reaction = service.getReaction(id);
-        if (!reaction.isPresent()) {
+        if (reaction.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Reaction not found.");

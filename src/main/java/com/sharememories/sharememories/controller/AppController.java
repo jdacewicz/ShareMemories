@@ -18,16 +18,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.Set;
 
 @Controller
 public class AppController {
 
     @Value("${contact.mail.receiver}")
     private String mailReceiver;
-    private SecurityUserDetailsService userDetailsService;
-    private PasswordEncoder passwordEncoder;
-    private EmailServiceImpl emailService;
+    private final SecurityUserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailServiceImpl emailService;
 
     @Autowired
     public AppController(SecurityUserDetailsService userDetailsService, PasswordEncoder passwordEncoder, EmailServiceImpl emailService) {

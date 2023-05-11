@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class ReactionService {
 
-    private ReactionRepository reactionRepository;
+    private final ReactionRepository reactionRepository;
 
     @Autowired
     public ReactionService(ReactionRepository reactionRepository) {
@@ -28,7 +28,7 @@ public class ReactionService {
 
     public Optional<String> getReactionImageName(int id) {
         return reactionRepository.findById(id)
-                .map(r -> r.getImage());
+                .map(Reaction::getImage);
     }
 
     public Reaction createReaction(Reaction reaction) {

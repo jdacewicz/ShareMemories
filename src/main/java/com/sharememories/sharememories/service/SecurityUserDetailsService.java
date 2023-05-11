@@ -9,15 +9,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class SecurityUserDetailsService implements UserDetailsService {
 
-    private UserRepository userRepository;
-    private MessageRepository messageRepository;
+    private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
 
     @Autowired
     public SecurityUserDetailsService(UserRepository userRepository, MessageRepository messageRepository) {
@@ -27,9 +26,8 @@ public class SecurityUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not present"));
-        return user;
     }
 
     public Optional<User> getUserByUsername(String username) {
@@ -42,7 +40,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
 
     public Optional<String> getUserImageName(long id) {
         return userRepository.findById(id)
-                .map(u -> u.getProfileImage());
+                .map(User::getProfileImage);
     }
 
     public void creatUser(UserDetails user) {
@@ -54,7 +52,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
     }
 
     public Optional<Set<User>> getAllContacts(long userId) {
-        return userRepository.findById(userId).map(u -> u.getContacts());
+        return userRepository.findById(userId).map(User::getContacts);
     }
 
     public Set<User> getAllUnknownMessageSenders(User receiver, boolean messageSeen) {

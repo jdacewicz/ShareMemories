@@ -23,8 +23,8 @@ import java.util.Optional;
 @RequestMapping(value = "/api/posts", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PostController {
 
-    private PostService postService;
-    private SecurityUserDetailsService userDetailsService;
+    private final PostService postService;
+    private final SecurityUserDetailsService userDetailsService;
 
     @Autowired
     public PostController(PostService postService, SecurityUserDetailsService userDetailsService) {
@@ -92,7 +92,7 @@ public class PostController {
     public ResponseEntity<?> reactToPost(@PathVariable int reactionId,
                                          @PathVariable long postId) {
         Optional<Post> post = postService.reactToPost(reactionId, postId);
-        if (!post.isPresent()) {
+        if (post.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Could not find referenced Post or Reaction.");

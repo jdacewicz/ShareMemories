@@ -14,9 +14,9 @@ import java.util.Optional;
 @Service
 public class CommentService {
 
-    private CommentRepository commentRepository;
-    private PostRepository postRepository;
-    private ReactionRepository reactionRepository;
+    private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
+    private final ReactionRepository reactionRepository;
 
     @Autowired
     public CommentService(CommentRepository commentRepository, PostRepository postRepository, ReactionRepository reactionRepository) {
@@ -31,15 +31,13 @@ public class CommentService {
 
     public Optional<String> getCommentImageName(long id) {
         return commentRepository.findById(id)
-                .map(c -> c.getImage());
+                .map(Comment::getImage);
     }
 
     public void deletePostComment(long postId, long commentId) {
         postRepository.findById(postId).map(post -> {
             Optional<Comment> comment = commentRepository.findById(commentId);
-            if (comment.isPresent()) {
-                post.getComments().remove(comment.get());
-            }
+            comment.ifPresent(value -> post.getComments().remove(value));
             return postRepository.save(post);
         });
         commentRepository.deleteById(commentId);

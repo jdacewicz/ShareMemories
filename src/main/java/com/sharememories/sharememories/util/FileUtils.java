@@ -16,7 +16,7 @@ public class FileUtils {
         int dotIndex = fileName.lastIndexOf('.');
 
         int startIndex = (dotIndex == -1) ? fileName.length() : dotIndex;
-        String fileExtension = fileName.substring(startIndex, fileName.length());
+        String fileExtension = fileName.substring(startIndex);
 
         return String.format("%s%s", RandomStringUtils.randomAlphanumeric(8), fileExtension);
     }

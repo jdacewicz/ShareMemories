@@ -1,6 +1,5 @@
 package com.sharememories.sharememories.service;
 
-import com.sharememories.sharememories.domain.Comment;
 import com.sharememories.sharememories.domain.Post;
 import com.sharememories.sharememories.domain.Reaction;
 import com.sharememories.sharememories.repository.PostRepository;
@@ -13,8 +12,8 @@ import java.util.Optional;
 
 @Service
 public class PostService {
-    private PostRepository postRepository;
-    private ReactionRepository reactionRepository;
+    private final PostRepository postRepository;
+    private final ReactionRepository reactionRepository;
 
     @Autowired
     public PostService(PostRepository postRepository, ReactionRepository reactionRepository) {
@@ -36,7 +35,7 @@ public class PostService {
 
     public Optional<String> getPostImageName(long id) {
         return postRepository.findById(id)
-                .map(p -> p.getImage());
+                .map(Post::getImage);
     }
 
     public Post createPost(Post post) {

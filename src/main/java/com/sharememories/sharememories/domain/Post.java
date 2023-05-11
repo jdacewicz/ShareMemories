@@ -68,7 +68,7 @@ public class Post {
 
     public Map<Integer, Long> getReactionsCounts() {
         return reactions.stream()
-                .collect(Collectors.groupingBy(e -> e.getId(), Collectors.counting()));
+                .collect(Collectors.groupingBy(Reaction::getId, Collectors.counting()));
     }
 
     public String getElapsedCreationTimeMessage() {

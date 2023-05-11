@@ -17,11 +17,11 @@ import java.util.Optional;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = "/api/posts/groups/", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/posts/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PostGroupController {
 
-    private PostGroupService groupService;
-    private SecurityUserDetailsService detailsService;
+    private final PostGroupService groupService;
+    private final SecurityUserDetailsService detailsService;
 
     @Autowired
     public PostGroupController(PostGroupService groupService, SecurityUserDetailsService detailsService) {

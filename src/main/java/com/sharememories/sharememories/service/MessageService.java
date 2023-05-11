@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public class MessageService {
 
-    private MessageRepository repository;
+    private final MessageRepository repository;
 
     @Autowired
     public MessageService(MessageRepository repository) {

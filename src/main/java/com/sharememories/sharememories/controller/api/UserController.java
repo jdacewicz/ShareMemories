@@ -20,7 +20,7 @@ import java.util.Set;
 @RequestMapping(value = "/api/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
-    private SecurityUserDetailsService userDetailsService;
+    private final SecurityUserDetailsService userDetailsService;
 
     @Autowired
     public UserController(SecurityUserDetailsService userDetailsService) {
@@ -60,7 +60,7 @@ public class UserController {
                         .getName())
                 .get();
         Optional<Set<User>> contacts = userDetailsService.getAllContacts(loggedUser.getId());
-        if (!contacts.isPresent()) {
+        if (contacts.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Could not find User.");
@@ -79,7 +79,7 @@ public class UserController {
                         .getName())
                 .get();
         Optional<User> output = userDetailsService.addUserToFriendsList(user, addedUserId);
-        if (!output.isPresent()) {
+        if (output.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Could not find User or You're trying to add yourself to friends.");

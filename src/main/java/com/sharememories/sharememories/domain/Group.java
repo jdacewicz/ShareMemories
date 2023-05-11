@@ -73,8 +73,7 @@ public class Group {
     public void addMembers(Set<User> users) {
         this.members.addAll(users);
 
-        users.stream()
-                .forEach(u -> u.getGroupsMember().add(this));
+        users.forEach(u -> u.getGroupsMember().add(this));
     }
 
     public long getId() {

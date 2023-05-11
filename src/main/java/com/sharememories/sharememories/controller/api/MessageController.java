@@ -20,8 +20,8 @@ import java.util.*;
 @RequestMapping(value = "/api/messages", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MessageController {
 
-    private MessageService messageService;
-    private SecurityUserDetailsService userDetailsService;
+    private final MessageService messageService;
+    private final SecurityUserDetailsService userDetailsService;
 
     @Autowired
     public MessageController(MessageService messageService, SecurityUserDetailsService userDetailsService) {
@@ -49,7 +49,7 @@ public class MessageController {
                 .getName())
                 .get();
         Optional<User> contact = userDetailsService.getUserById(contactId);
-        if (!contact.isPresent()) {
+        if (contact.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Contact not found.");
@@ -99,7 +99,7 @@ public class MessageController {
                 .get();
         Optional<User> contact = userDetailsService.getUserById(contactId);
         Message message;
-        if (!contact.isPresent()) {
+        if (contact.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Contact not found.");
@@ -130,7 +130,7 @@ public class MessageController {
                         .getName())
                 .get();
         Optional<User> contact = userDetailsService.getUserById(contactId);
-        if (!contact.isPresent()) {
+        if (contact.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());
             map.put("message", "Contact not found.");
