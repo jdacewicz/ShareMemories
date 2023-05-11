@@ -75,8 +75,8 @@
                 </div>
             </div>
         </div>
-        <div class="float-right w-1/4 mr-4">
-            <div class="flex justify-end mb-4">
+        <div id="right-panels" class="float-right w-1/4 mr-4">
+            <div class="flex justify-end mb-2">
                 <div class="w-1/2 bg-white rounded-xl shadow">
                     <div class="w-full border-b border-t px-4 py-2">
                         <span class="text-md font-medium">Contacts</span>
@@ -87,7 +87,7 @@
                             You currently have no contacts.
                         </span>
                         </div>
-                        <div th:unless="${loggedUser.getContacts().isEmpty()}" th:each="contact : ${loggedUser.getContacts()}">
+                        <div id="contacts" th:unless="${loggedUser.getContacts().isEmpty()}" th:each="contact : ${loggedUser.getContacts()}">
                             <button type="button" th:name="'contact[' + ${contact.getId()} + ']'" class="w-full flex justify-start items-center p-2 text-sm font-medium hover:bg-gray-100">
                                 <img th:src="${contact.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
                                 <span class="name" th:text="${contact.getCapitalizedFirstAndLastName()}"></span>
@@ -96,11 +96,11 @@
                     </div>
                 </div>
             </div>
-            <div id="chat-box" class="w-full bg-white rounded-xl shadow hidden">
+            <div id="chat-box" class="w-full bg-white rounded-xl shadow my-4 hidden">
                 <div class="flex justify-between w-full border-t px-4 py-2">
                     <a id="chat-box-sender" class="flex items-center text-sm font-medium hover:underline">
-                        <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
-                        <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
+                        <img class="w-8 rounded-xl mx-2 border" alt="sender profile picture">
+                        <span></span>
                     </a>
                     <button class="close-chat-box" type="button">
                         <img src="/images/icons/close-icon.svg" class="w-8" alt="delete icon">
@@ -126,6 +126,16 @@
                         </button>
                     </div>
                 </form>
+            </div>
+            <div id="unknown-contacts" class="w-full bg-white rounded-xl shadow my-4 hidden">
+                <div class="flex justify-between w-full border-b px-4 py-2">
+                    <span class="flex items-center text-md font-medium">Unknown Contacts</span>
+                    <button id="close-unknown-contacts-box" type="button">
+                        <img src="/images/icons/close-icon.svg" class="w-8" alt="delete icon">
+                    </button>
+                </div>
+                <div id="unknown-contacts-list">
+                </div>
             </div>
         </div>
     </div>

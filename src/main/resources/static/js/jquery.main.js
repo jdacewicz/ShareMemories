@@ -143,7 +143,7 @@ $(document).ready(function () {
         $("#chat-box").hide();
     });
 
-    $("button[name^='contact[']").click(function () {
+    $("#right-panels").on("click", "button[name^='contact[']" ,function () {
         $("#chat-box-messages").empty();
 
         let userId = getIdFromSquareBracket($(this).attr("name"));
@@ -155,9 +155,29 @@ $(document).ready(function () {
 
         loadMessagesWithUser(userId);
         setMessagesSeen(userId);
-        $(this).children("span[class^='notification']").remove();
+        let notification = $(this).children("span[class^='notification']");
+
+        if ($(this).parent("#unknown-contacts-list").length) {
+            let unknownNotifications = $("#contacts button[name='unknown-contacts'] span[class^='notification']");
+            let subtract = parseInt(unknownNotifications.text()) - parseInt(notification.text());
+
+            if (subtract === 0) {
+                unknownNotifications.parent().remove();
+            } else {
+                unknownNotifications.text(subtract);
+            }
+        }
+        notification.remove();
 
         $("#chat-box").show();
+    });
+
+    $("#contacts").on("click", "button[name='unknown-contacts']", function () {
+        $("#unknown-contacts-list").empty();
+
+        loadUnknownContacts();
+
+        $("#unknown-contacts").show();
     });
 
     $("#send-message-form").submit(function (e) {
@@ -169,6 +189,10 @@ $(document).ready(function () {
         sendMessage(userId, data);
         $(this).find("input[type='file'], textarea").val('');
         $(this).find("img[class^='image-preview']").attr("src", '').hide();
+    });
+
+    $("#close-unknown-contacts-box").click(function () {
+       $("#unknown-contacts").hide();
     });
 })
 
@@ -265,15 +289,51 @@ function loadUnreadMessagesCount() {
         url: "/api/messages/notify",
         dataType: "JSON",
         success: function (data) {
-            // if (data[-1] == 0) {
-            //     $("button[name='unknown-contact[-1]']").parent().remove();
-            // }
-
             for (let key in data) {
                 let notification = '<span class="notification px-2 ml-2 bg-red-500 text-white rounded-xl">' + data[key] + '</span>';
 
-                $("button[name='contact[" + key + "]']").append(notification);
+                if (parseInt(key) !== -1) {
+                    let contact = $("button[name='contact[" + key + "]']");
+
+                    contact.append(notification);
+                    contact.prependTo("#contacts");
+                } else if (parseInt(key) === -1 && data[key] > 0) {
+                    $("#contacts").prepend(
+                        '<button type="button" name="unknown-contacts" class="w-full flex justify-start items-center p-2 text-sm font-medium hover:bg-gray-100">' +
+                            '<span class="name">Unknown contacts</span>' +
+                            notification +
+                        '</button>'
+                    );
+                }
             }
+        }
+    });
+}
+
+function loadUnknownContacts() {
+    $.ajax({
+        type: "GET",
+        url: "/api/users/contacts/unknown",
+        dataType: "JSON",
+        success: function (contacts) {
+            if (contacts == null) {
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/api/messages/notify/unknown",
+                dataType: "JSON",
+                success: function (notifies) {
+                    if (notifies == null) {
+                        return;
+                    }
+
+                    contacts.forEach(function (contact) {
+                        appendUnknownContact(contact, notifies[contact.id]);
+                    });
+                }
+            });
         }
     });
 }
@@ -369,4 +429,14 @@ function appendMessageToChatBox(message, moveToRight) {
             '</div>'
         );
     }
+}
+
+function appendUnknownContact(user, notifyCount) {
+    $("#unknown-contacts-list").append(
+        '<button type="button" name="contact[' + user.id +']" class="w-full flex justify-start items-center p-2 text-sm font-medium hover:bg-gray-100">' +
+            '<img src="' + user.imagePath + '" class="w-8 rounded-xl mx-2 border" alt="unknown contact profile picture">' +
+            '<span class="name">' + user.capitalizedFirstAndLastName + '</span>' +
+            '<span class="notification px-2 ml-2 bg-red-500 text-white rounded-xl">' + notifyCount + '</span>' +
+        '</button>'
+    );
 }
