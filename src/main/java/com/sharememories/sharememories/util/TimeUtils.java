@@ -6,7 +6,6 @@ import java.time.temporal.ChronoUnit;
 public class TimeUtils {
 
     public static String getElapsedTimeMessage(LocalDateTime fromDateTime , LocalDateTime toDateTime) {
-        //TODO Maybe add some languages.
         long minutes =  ChronoUnit.MINUTES.between(fromDateTime, toDateTime);
         long hours =  ChronoUnit.HOURS.between(fromDateTime, toDateTime);
         long days = ChronoUnit.DAYS.between(fromDateTime, toDateTime);
