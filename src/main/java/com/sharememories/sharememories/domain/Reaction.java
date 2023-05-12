@@ -2,22 +2,32 @@ package com.sharememories.sharememories.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "reactions")
+@NoArgsConstructor
+@Getter @Setter
+@EqualsAndHashCode
 public class Reaction {
 
     @Transient
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     public static String IMAGES_DIRECTORY_PATH = "uploads/pictures/reactions";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "reactionId")
     private int id;
+
+    @NotBlank
+    @Size(min = 2, max = 34)
     private String name;
     private String image;
     @ManyToMany(mappedBy = "reactions")
@@ -27,9 +37,6 @@ public class Reaction {
     @ManyToMany(mappedBy = "reactions")
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
-
-    public Reaction() {
-    }
 
     public Reaction(int id) {
         this.id = id;
@@ -55,58 +62,5 @@ public class Reaction {
         if (image == null) return null;
 
         return "/" + IMAGES_DIRECTORY_PATH + "/" + image;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Reaction reaction = (Reaction) o;
-        return Objects.equals(name, reaction.name) && Objects.equals(image, reaction.image);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, image);
     }
 }

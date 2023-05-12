@@ -2,6 +2,11 @@ package com.sharememories.sharememories.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,20 +18,33 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
+@Getter @Setter
 public class User implements UserDetails {
 
     @Transient
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     public static final String IMAGES_DIRECTORY_PATH = "uploads/pictures/profiles";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "userId")
     private Long id;
+    @Email
+    @NotBlank
+    @Size(min = 8, max = 34)
     @JsonIgnore
     private String username;
+    @NotBlank
+    @Size(min = 8, max = 24)
     @JsonIgnore
     private String password;
+    @NotBlank
+    @Size(min = 2, max = 16)
     private String firstname;
+    @NotBlank
+    @Size(min = 2, max = 24)
     private String lastname;
     private String profileImage;
     private LocalDate creationDate = LocalDate.now();
@@ -53,9 +71,6 @@ public class User implements UserDetails {
     @JsonIgnore
     private Set<Group> groupsAdmin;
 
-    public User() {
-    }
-
     public User(String username) {
         this.username = username;
     }
@@ -79,44 +94,16 @@ public class User implements UserDetails {
                 this.lastname.substring(0, 1).toUpperCase() + this.lastname.substring(1);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
     @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(() -> "read");
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public boolean isAccountNonLocked() {
-        return accountNonLocked;
     }
 
     @JsonIgnore
@@ -129,89 +116,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public void setAccountNonLocked(boolean accountNonLocked) {
-        this.accountNonLocked = accountNonLocked;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public Set<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
-
-    public Set<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public LocalDate getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Set<User> getContacts() {
-        return contacts;
-    }
-
-    public void setContacts(Set<User> contacts) {
-        this.contacts = contacts;
-    }
-
-    public Set<Group> getGroupsMember() {
-        return groupsMember;
-    }
-
-    public void setGroupsMember(Set<Group> groupsMember) {
-        this.groupsMember = groupsMember;
-    }
-
-    public Set<Group> getGroupsAdmin() {
-        return groupsAdmin;
-    }
-
-    public void setGroupsAdmin(Set<Group> groupsAdmin) {
-        this.groupsAdmin = groupsAdmin;
     }
 }

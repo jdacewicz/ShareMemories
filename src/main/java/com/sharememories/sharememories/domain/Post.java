@@ -3,6 +3,11 @@ package com.sharememories.sharememories.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sharememories.sharememories.util.TimeUtils;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "posts")
+@NoArgsConstructor
+@Getter @Setter
 public class Post {
 
     @Transient
@@ -21,6 +28,8 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "postId")
     private long id;
+    @NotBlank
+    @Size(max = 255)
     private String content;
     private String image;
     private LocalTime creationTime = LocalTime.now();
@@ -42,9 +51,6 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "group_id")
     private PostGroup group;
-
-    public Post() {
-    }
 
     public Post(List<Reaction> reactions) {
         this.reactions = reactions;
@@ -81,77 +87,5 @@ public class Post {
         if (image == null) return null;
 
         return "/" + IMAGES_DIRECTORY_PATH + "/" + image;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public LocalTime getCreationTime() {
-        return creationTime;
-    }
-
-    public void setCreationTime(LocalTime creationTime) {
-        this.creationTime = creationTime;
-    }
-
-    public LocalDate getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public List<Reaction> getReactions() {
-        return reactions;
-    }
-
-    public void setReactions(List<Reaction> reactions) {
-        this.reactions = reactions;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public User getCreator() {
-        return creator;
-    }
-
-    public void setCreator(User creator) {
-        this.creator = creator;
-    }
-
-    public PostGroup getGroup() {
-        return group;
-    }
-
-    public void setGroup(PostGroup group) {
-        this.group = group;
     }
 }
