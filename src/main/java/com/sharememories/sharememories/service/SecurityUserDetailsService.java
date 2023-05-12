@@ -3,6 +3,7 @@ package com.sharememories.sharememories.service;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.repository.MessageRepository;
 import com.sharememories.sharememories.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,16 +14,12 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SecurityUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
 
-    @Autowired
-    public SecurityUserDetailsService(UserRepository userRepository, MessageRepository messageRepository) {
-        this.userRepository = userRepository;
-        this.messageRepository = messageRepository;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

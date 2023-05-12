@@ -6,24 +6,20 @@ import com.sharememories.sharememories.domain.Reaction;
 import com.sharememories.sharememories.repository.CommentRepository;
 import com.sharememories.sharememories.repository.PostRepository;
 import com.sharememories.sharememories.repository.ReactionRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final ReactionRepository reactionRepository;
 
-    @Autowired
-    public CommentService(CommentRepository commentRepository, PostRepository postRepository, ReactionRepository reactionRepository) {
-        this.commentRepository = commentRepository;
-        this.postRepository = postRepository;
-        this.reactionRepository = reactionRepository;
-    }
 
     public Optional<Comment> getComment(Long id) {
         return commentRepository.findById(id);

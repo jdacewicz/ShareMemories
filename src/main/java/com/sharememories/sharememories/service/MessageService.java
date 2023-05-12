@@ -4,6 +4,7 @@ import com.sharememories.sharememories.domain.Message;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.repository.MessageRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +14,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class MessageService {
 
     private final MessageRepository repository;
 
-    @Autowired
-    public MessageService(MessageRepository repository) {
-        this.repository = repository;
-    }
 
     public Optional<Message> getMessage(long id) {
         return repository.findById(id);

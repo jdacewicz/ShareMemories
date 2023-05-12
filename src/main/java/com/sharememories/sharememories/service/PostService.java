@@ -4,6 +4,7 @@ import com.sharememories.sharememories.domain.Post;
 import com.sharememories.sharememories.domain.Reaction;
 import com.sharememories.sharememories.repository.PostRepository;
 import com.sharememories.sharememories.repository.ReactionRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,15 +12,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PostService {
     private final PostRepository postRepository;
     private final ReactionRepository reactionRepository;
 
-    @Autowired
-    public PostService(PostRepository postRepository, ReactionRepository reactionRepository) {
-        this.postRepository = postRepository;
-        this.reactionRepository = reactionRepository;
-    }
 
     public Optional<Post> getPost(Long id) {
         return postRepository.findById(id);
