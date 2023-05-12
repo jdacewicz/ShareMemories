@@ -72,13 +72,13 @@ public class UserController {
             return ResponseEntity.ok(contacts);
     }
 
-    @PutMapping("/invite/{addedUserId}")
-    public ResponseEntity<?> addUserToFriends(@PathVariable long addedUserId) {
+    @PutMapping("/invite/{invitedUserId}")
+    public ResponseEntity<?> addUserToFriends(@PathVariable long invitedUserId) {
         User user = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
                         .getAuthentication()
                         .getName())
                 .get();
-        Optional<User> output = userDetailsService.addUserToFriendsList(user, addedUserId);
+        Optional<User> output = userDetailsService.addUserToFriendsList(user, invitedUserId);
         if (output.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("status", HttpStatus.NOT_FOUND.value());

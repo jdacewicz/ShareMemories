@@ -123,7 +123,7 @@ public class MessageController {
         }
     }
 
-    @PutMapping("/user/{contactId}/show")
+    @PutMapping("/user/{contactId}/mark-seen")
     public ResponseEntity<?> setMessagesSeen(@PathVariable long contactId) {
         User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
                         .getAuthentication()

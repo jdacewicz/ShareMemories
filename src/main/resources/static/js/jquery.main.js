@@ -225,7 +225,7 @@ function updateReaction(url, data) {
 
 function setMessagesSeen(userId) {
     $.ajax({
-        url: "/api/messages/user/" + userId + "/show",
+        url: "/api/messages/user/" + userId + "/mark-seen",
         type: "PUT",
         dataType: "JSON",
         processData : false,
