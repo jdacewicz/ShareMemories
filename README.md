@@ -5,9 +5,9 @@ Social media platform similar to Facebook and Twitter.
 
 ## Tech Stack
 
-**Client:** jQuery, TailwindCSS
+**Client:** jQuery, TailwindCSS, Swagger
 
-**Server:** Spring, Gradle, PostgreSQL, Hibernate and REST
+**Server:** Spring, Gradle, PostgreSQL, Hibernate, Lombok and REST
 
 
 ## Authors
