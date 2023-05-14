@@ -30,13 +30,12 @@ public class CommentService {
                 .map(Comment::getImage);
     }
 
-    public void deletePostComment(long postId, long commentId) {
+    public void deletePostComment(long postId, Comment comment) {
         postRepository.findById(postId).map(post -> {
-            Optional<Comment> comment = commentRepository.findById(commentId);
-            comment.ifPresent(value -> post.getComments().remove(value));
+            post.getComments().remove(comment);
             return postRepository.save(post);
         });
-        commentRepository.deleteById(commentId);
+        commentRepository.delete(comment);
     }
 
     public Optional<Comment> reactToComment(int reactionId, long commentId) {
