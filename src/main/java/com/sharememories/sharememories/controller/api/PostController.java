@@ -35,29 +35,27 @@ public class PostController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getPost(@PathVariable long id) {
         Optional<Post> post = postService.getPost(id);
-        if (post.isEmpty())
+        if (post.isEmpty()) {
             throw new NotFoundException("Post not found.");
-
+        }
         return ResponseEntity.ok(post.get());
     }
 
     @GetMapping("/random")
     public ResponseEntity<?> getRandomPosts() {
         List<Post> posts = postService.getRandomPosts();
-        if (posts.isEmpty())
-            return ResponseEntity.noContent()
-                    .build();
-
+        if (posts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(posts);
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getPostsByUserId(@PathVariable long userId) {
         List<Post> posts = postService.getAllByCreatorId(userId);
-        if (posts.isEmpty())
-            return ResponseEntity.noContent()
-                    .build();
-
+        if (posts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(posts);
     }
 
@@ -65,7 +63,6 @@ public class PostController {
     public ResponseEntity<?> createPost(@RequestPart("content") String content,
                                         @ValidFile @RequestPart(value = "image", required = false) MultipartFile file) throws IOException {
         User loggedUser = getLoggedUser(userDetailsService);
-
         Post post = new Post(content, loggedUser);
         if(!file.isEmpty() && file.getOriginalFilename() != null) {
             String image = FileUtils.generateUniqueName(file.getOriginalFilename());
@@ -73,17 +70,16 @@ public class PostController {
 
             FileUtils.saveFile(Post.IMAGES_DIRECTORY_PATH, image, file);
         }
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(postService.createPost(post));
+        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(post));
     }
 
     @PutMapping("/{postId}/react/{reactionId}")
     public ResponseEntity<?> reactToPost(@PathVariable int reactionId,
                                          @PathVariable long postId) {
         Optional<Post> post = postService.reactToPost(reactionId, postId);
-        if (post.isEmpty())
+        if (post.isEmpty()) {
             throw new NotFoundException("Could not find post or reaction.");
-
+        }
         return ResponseEntity.ok(post.get());
     }
 
@@ -98,8 +94,8 @@ public class PostController {
         if (image != null) {
             FileUtils.deleteFile(Post.IMAGES_DIRECTORY_PATH, image);
         }
-        postService.deletePost(post.get());
 
+        postService.deletePost(post.get());
         return ResponseEntity.ok().build();
     }
 }

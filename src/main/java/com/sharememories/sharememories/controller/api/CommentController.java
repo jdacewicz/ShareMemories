@@ -33,7 +33,6 @@ public class CommentController {
         if (comment.isEmpty()) {
             throw new NotFoundException("Comment not found.");
         }
-
         return ResponseEntity.ok(comment.get());
     }
 
@@ -42,7 +41,6 @@ public class CommentController {
                                            @RequestPart(value = "content") String commentContent,
                                            @RequestPart(value = "image", required = false) MultipartFile file) throws IOException {
         User loggedUser = getLoggedUser(userDetailsService);
-
         Comment comment = new Comment(commentContent, loggedUser);
         if (!file.isEmpty() && file.getOriginalFilename() != null) {
             String image = FileUtils.generateUniqueName(file.getOriginalFilename());
@@ -52,9 +50,9 @@ public class CommentController {
         }
 
         Optional<Comment> savedComment = commentService.commentPost(postId, comment);
-        if (savedComment.isEmpty())
+        if (savedComment.isEmpty()) {
             throw new NotFoundException("Post not found.");
-
+        }
         return ResponseEntity.ok(savedComment.get());
     }
 
@@ -70,8 +68,8 @@ public class CommentController {
         if (image != null) {
             FileUtils.deleteFile(Comment.IMAGES_DIRECTORY_PATH, image);
         }
-        commentService.deletePostComment(postId, comment.get());
 
+        commentService.deletePostComment(postId, comment.get());
         return ResponseEntity.ok().build();
     }
 
@@ -82,7 +80,6 @@ public class CommentController {
         if (comment.isEmpty()) {
             throw new NotFoundException("Could not find comment or reaction.");
         }
-
         return ResponseEntity.ok(comment);
     }
 }

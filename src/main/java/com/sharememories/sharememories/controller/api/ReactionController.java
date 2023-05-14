@@ -3,12 +3,14 @@ package com.sharememories.sharememories.controller.api;
 import com.sharememories.sharememories.domain.Reaction;
 import com.sharememories.sharememories.service.ReactionService;
 import com.sharememories.sharememories.util.FileUtils;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.webjars.NotFoundException;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -17,49 +19,36 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping(value = "/api/reactions", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ReactionController {
 
     private final ReactionService service;
 
-    @Autowired
-    public ReactionController(ReactionService service) {
-        this.service = service;
-    }
 
     @GetMapping()
     public ResponseEntity<?> getAllReactions() {
         List<Reaction> reaction = service.getAllReactions();
-
-        return (reaction.isEmpty()) ?
-                ResponseEntity.noContent().build() : ResponseEntity.ok(reaction);
+        if (reaction.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(reaction);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getReaction(@PathVariable Integer id) {
         Optional<Reaction> reaction = service.getReaction(id);
         if (reaction.isEmpty()) {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("status", HttpStatus.NOT_FOUND.value());
-            map.put("message", "Reaction not found.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
-        } else {
-            return ResponseEntity.ok(reaction.get());
+            throw new NotFoundException("Reaction not found.");
         }
+        return ResponseEntity.ok(reaction.get());
     }
 
     @PostMapping()
     public ResponseEntity<?> createReaction(@RequestPart("name") String name,
-                                            @RequestPart("image") MultipartFile file) {
+                                            @RequestPart("image") MultipartFile file) throws IOException {
         String imageName = FileUtils.generateUniqueName(file.getOriginalFilename());
-        try {
-            FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, imageName, file);
-        } catch (IOException e) {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-            map.put("message", "Error while uploading Reaction image.");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
-        }
+        FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, imageName, file);
 
         Reaction reaction = service.createReaction(new Reaction(name, imageName));
         return ResponseEntity.status(HttpStatus.CREATED).body(reaction);
@@ -68,45 +57,33 @@ public class ReactionController {
     @PutMapping("/{id}")
     public ResponseEntity<?> replaceReaction(@PathVariable(value = "id") int id,
                                              @RequestPart(value = "name") String name,
-                                             @RequestPart(value = "image", required = false) MultipartFile file) {
-        Reaction reaction;
-        if (!file.isEmpty()) {
-            Optional<String> reactionImageName = service.getReactionImageName(id);
-            String fileName = reactionImageName.orElseGet(() -> FileUtils.generateUniqueName(file.getOriginalFilename()));
-            try {
-                    FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, fileName, file);
-            } catch (IOException e) {
-                Map<String, Object> map = new LinkedHashMap<>();
-                map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-                map.put("message", "Error while replacing Reaction image.");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
-            }
-            reaction = service.replaceReaction(id, new Reaction(name, fileName));
-        } else {
-            reaction = service.replaceReaction(id, new Reaction(name));
+                                             @RequestPart(value = "image", required = false) MultipartFile file) throws IOException {
+        Optional<Reaction> reaction = service.getReaction(id);
+        if (reaction.isEmpty()) {
+            throw new NotFoundException("Reaction not found.");
         }
-        return ResponseEntity.ok(reaction);
+        reaction.get().setName(name);
+
+        if (!file.isEmpty() && file.getOriginalFilename() != null) {
+            String image = reaction.get().getImage();
+            if (image == null) {
+                image = FileUtils.generateUniqueName(file.getOriginalFilename());
+                reaction.get().setImage(image);
+            }
+            FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, image, file);
+        }
+        return ResponseEntity.ok(service.replaceReaction(id, reaction.get()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteReaction(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> deleteReaction(@PathVariable("id") Integer id) throws IOException {
         Optional<Reaction> reaction = service.getReaction(id);
         if (reaction.isEmpty()) {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("status", HttpStatus.NOT_FOUND.value());
-            map.put("message", "Reaction not found.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+            throw new NotFoundException("Reaction not found.");
         }
 
         if (reaction.get().getImage() != null) {
-            try {
-                FileUtils.deleteFile(Reaction.IMAGES_DIRECTORY_PATH, reaction.get().getImage());
-            } catch (IOException e) {
-                Map<String, Object> map = new LinkedHashMap<>();
-                map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-                map.put("message", "Error while deleting Reaction image.");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
-            }
+            FileUtils.deleteFile(Reaction.IMAGES_DIRECTORY_PATH, reaction.get().getImage());
         }
         service.deleteReaction(reaction.get());
 
