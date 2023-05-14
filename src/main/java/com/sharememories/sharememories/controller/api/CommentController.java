@@ -6,6 +6,7 @@ import com.sharememories.sharememories.service.CommentService;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ import java.util.Optional;
 import static com.sharememories.sharememories.util.UserUtils.getLoggedUser;
 
 @RestController
-@AllArgsConstructor
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping(value = "/api/comments", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CommentController {
 
