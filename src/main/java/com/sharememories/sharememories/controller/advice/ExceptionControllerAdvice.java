@@ -1,15 +1,16 @@
 package com.sharememories.sharememories.controller.advice;
 
 
+import com.sharememories.sharememories.util.ResponseEntityUtils;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.webjars.NotFoundException;
 
-import java.util.LinkedHashMap;
+import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -18,16 +19,21 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> handleConstraintViolationException(ConstraintViolationException ex) {
-        Map<String, Object> output = new LinkedHashMap<>();
-        output.put("status", HttpStatus.BAD_REQUEST.value());
-        output.put("messages", ex.getConstraintViolations()
+        Map<String, Object> messages = ex.getConstraintViolations()
                 .stream()
                 .collect(Collectors.toMap(e -> e.getPropertyPath().toString(),
-                        ConstraintViolation::getMessage)));
+                        ConstraintViolation::getMessage));
 
-        return ResponseEntity
-               .status(HttpStatus.BAD_REQUEST)
-               .headers(new HttpHeaders())
-               .body(output);
+        return ResponseEntityUtils.generateResponse(HttpStatus.BAD_REQUEST, messages);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<?> handleNotFoundException(NotFoundException ex) {
+        return ResponseEntityUtils.generateResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<?> handleIOException(IOException ex) {
+        return ResponseEntityUtils.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 }

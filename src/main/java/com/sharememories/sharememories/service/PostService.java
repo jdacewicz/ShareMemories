@@ -30,17 +30,12 @@ public class PostService {
         return postRepository.findByCreatorId(creatorId);
     }
 
-    public Optional<String> getPostImageName(long id) {
-        return postRepository.findById(id)
-                .map(Post::getImage);
-    }
-
     public Post createPost(Post post) {
         return postRepository.save(post);
     }
 
-    public void deletePost(long id) {
-        postRepository.deleteById(id);
+    public void deletePost(Post post) {
+        postRepository.delete(post);
     }
 
     public Optional<Post> reactToPost(int reactionId, long postId) {
