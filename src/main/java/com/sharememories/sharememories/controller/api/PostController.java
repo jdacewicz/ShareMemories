@@ -2,7 +2,6 @@ package com.sharememories.sharememories.controller.api;
 
 import com.sharememories.sharememories.domain.Post;
 import com.sharememories.sharememories.domain.User;
-import com.sharememories.sharememories.exception.NotAuthenticatedException;
 import com.sharememories.sharememories.service.PostService;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +19,8 @@ import org.webjars.NotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import static com.sharememories.sharememories.util.UserUtils.getLoggedUser;
 
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -64,7 +64,7 @@ public class PostController {
     @PostMapping()
     public ResponseEntity<?> createPost(@RequestPart("content") String content,
                                         @ValidFile @RequestPart(value = "image", required = false) MultipartFile file) throws IOException {
-        User loggedUser = getLoggedUser();
+        User loggedUser = getLoggedUser(userDetailsService);
 
         Post post = new Post(content, loggedUser);
         if(!file.isEmpty() && file.getOriginalFilename() != null) {
@@ -101,13 +101,5 @@ public class PostController {
         postService.deletePost(post.get());
 
         return ResponseEntity.ok().build();
-    }
-
-    private User getLoggedUser() {
-        Optional<User> user = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName());
-
-        return user.orElseThrow(NotAuthenticatedException::new);
     }
 }
