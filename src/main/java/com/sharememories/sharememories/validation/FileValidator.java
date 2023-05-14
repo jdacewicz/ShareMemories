@@ -15,9 +15,13 @@ public class FileValidator implements ConstraintValidator<ValidFile, MultipartFi
 
     @Override
     public boolean isValid(MultipartFile multipartFile, ConstraintValidatorContext context) {
+        if (multipartFile.isEmpty())
+            return true;
+
         Optional<String> contentType = Optional.ofNullable(multipartFile.getContentType());
 
-        return contentType.filter(this::isSupportedContentType).isPresent();
+        return contentType.filter(this::isSupportedContentType)
+                .isPresent();
 
     }
 
