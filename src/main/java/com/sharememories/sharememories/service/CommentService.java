@@ -25,11 +25,6 @@ public class CommentService {
         return commentRepository.findById(id);
     }
 
-    public Optional<String> getCommentImageName(long id) {
-        return commentRepository.findById(id)
-                .map(Comment::getImage);
-    }
-
     public void deletePostComment(long postId, Comment comment) {
         postRepository.findById(postId).map(post -> {
             post.getComments().remove(comment);

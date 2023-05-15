@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sharememories.sharememories.util.TimeUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -41,6 +42,7 @@ public class Comment {
     private LocalDate creationDate = LocalDate.now();
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @NotNull
     private User creator;
     @ManyToMany
     @JoinTable(
@@ -53,6 +55,7 @@ public class Comment {
     private List<Reaction> reactions = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @NotNull
     @JsonIgnore
     private Post post;
 

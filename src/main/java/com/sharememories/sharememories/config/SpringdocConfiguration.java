@@ -14,7 +14,7 @@ public class SpringdocConfiguration {
     public OpenAPI baseOpenAPI() {
         return new OpenAPI().info(new Info()
                 .title("ShareMemories Doc")
-                .version("1.0.0")
+                .version("1.0.1")
                 .description("API Documentation"));
     }
 }
