@@ -34,16 +34,20 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "commentId")
     private long id;
+
     @NotBlank
     @Size(max = 255)
     private String content;
+
     private String image;
     private LocalTime creationTime = LocalTime.now();
     private LocalDate creationDate = LocalDate.now();
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull
     private User creator;
+
     @ManyToMany
     @JoinTable(
             name = "reactions_comments",
@@ -53,6 +57,7 @@ public class Comment {
     @OrderBy("id ASC")
     @JsonIgnore
     private List<Reaction> reactions = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "post_id")
     @NotNull
@@ -68,6 +73,14 @@ public class Comment {
         this.content = content;
         this.image = image;
         this.creator = creator;
+    }
+
+    public Comment(long id, String content, String image, User creator, Post post) {
+        this.id = id;
+        this.content = content;
+        this.image = image;
+        this.creator = creator;
+        this.post = post;
     }
 
     public void addReaction(Reaction reaction) {
