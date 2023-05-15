@@ -35,21 +35,12 @@ public class SecurityUserDetailsService implements UserDetailsService {
         return userRepository.findById(id);
     }
 
-    public Optional<String> getUserImageName(long id) {
-        return userRepository.findById(id)
-                .map(User::getProfileImage);
-    }
-
     public void creatUser(UserDetails user) {
         userRepository.save((User) user);
     }
 
     public void deleteUser(long id) {
         userRepository.deleteById(id);
-    }
-
-    public Optional<Set<User>> getAllContacts(long userId) {
-        return userRepository.findById(userId).map(User::getContacts);
     }
 
     public Set<User> getAllUnknownMessageSenders(User receiver, boolean messageSeen) {

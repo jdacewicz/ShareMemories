@@ -5,139 +5,102 @@ import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.MessageService;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.webjars.NotFoundException;
 
 import java.io.IOException;
 import java.util.*;
 
+import static com.sharememories.sharememories.util.UserUtils.getLoggedUser;
+
 @RestController
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping(value = "/api/messages", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MessageController {
 
     private final MessageService messageService;
     private final SecurityUserDetailsService userDetailsService;
 
-    @Autowired
-    public MessageController(MessageService messageService, SecurityUserDetailsService userDetailsService) {
-        this.messageService = messageService;
-        this.userDetailsService = userDetailsService;
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getMessage(@PathVariable long id) {
         Optional<Message> message = messageService.getMessage(id);
-        if (message.isPresent()) {
-            return ResponseEntity.ok(message.get());
-        } else {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("status", HttpStatus.NOT_FOUND.value());
-            map.put("message", "Message not found.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+        if (message.isEmpty()) {
+            throw new NotFoundException("Message not found.");
         }
+        return ResponseEntity.ok(message.get());
     }
 
     @GetMapping("/user/{contactId}")
     public ResponseEntity<?> getAllMessagesWithUser(@PathVariable long contactId) {
-        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName())
-                .get();
         Optional<User> contact = userDetailsService.getUserById(contactId);
         if (contact.isEmpty()) {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("status", HttpStatus.NOT_FOUND.value());
-            map.put("message", "Contact not found.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
-        } else {
-            List<Message> messages = messageService.getAllMessagesBySenderAndReceiver(loggedUser, contact.get());
-            if (messages.isEmpty())
-                return ResponseEntity.noContent().build();
-            else
-                return ResponseEntity.ok(messages);
+            throw new NotFoundException("User not found.");
         }
+
+        User loggedUser = getLoggedUser(userDetailsService);
+        List<Message> messages = messageService.getAllMessagesBySenderAndReceiver(loggedUser, contact.get());
+        if (messages.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(messages);
     }
 
     @GetMapping("/notify")
     public ResponseEntity<?> getAllNotificationsCount() {
-        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName())
-                .get();
+        User loggedUser = getLoggedUser(userDetailsService);
         Map<Long, Long> notifyCounts = messageService.getAllNotificationsCount(loggedUser);
-        if (notifyCounts.isEmpty())
+        if (notifyCounts.isEmpty()) {
             return ResponseEntity.noContent().build();
-        else
-            return ResponseEntity.ok(notifyCounts);
+        }
+        return ResponseEntity.ok(notifyCounts);
     }
 
     @GetMapping("/notify/unknown")
     public ResponseEntity<?> getAllNotificationsFromUnknownSenderCount() {
-        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName())
-                .get();
+        User loggedUser = getLoggedUser(userDetailsService);
         Map<Long, Long> notifyCounts = messageService.getUnknownSenderNotificationsCount(loggedUser);
-        if (notifyCounts.isEmpty())
+        if (notifyCounts.isEmpty()) {
             return ResponseEntity.noContent().build();
-        else
-            return ResponseEntity.ok(notifyCounts);
+        }
+        return ResponseEntity.ok(notifyCounts);
     }
 
     @PostMapping("/user/{contactId}")
     public ResponseEntity<?> sendMessageToUser(@PathVariable long contactId,
                                                @RequestPart String content,
-                                               @RequestPart(value = "image", required = false) MultipartFile file) {
-        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName())
-                .get();
+                                               @RequestPart(value = "image", required = false) MultipartFile file) throws IOException {
+        User loggedUser = getLoggedUser(userDetailsService);
         Optional<User> contact = userDetailsService.getUserById(contactId);
-        Message message;
-        if (contact.isEmpty()) {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("status", HttpStatus.NOT_FOUND.value());
-            map.put("message", "Contact not found.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
-        } else {
-            if (!file.isEmpty()) {
-                String imageName = FileUtils.generateUniqueName(file.getOriginalFilename());
-                try {
-                    FileUtils.saveFile(Message.IMAGES_DIRECTORY_PATH, imageName, file);
-                } catch (IOException e) {
-                    Map<String, Object> map = new LinkedHashMap<>();
-                    map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-                    map.put("message", "Error while uploading Message image.");
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
-                }
-                message = messageService.createMessage(new Message(loggedUser, contact.get(), content, imageName));
-            } else {
-                message = messageService.createMessage(new Message(loggedUser, contact.get(), content));
-            }
-            return ResponseEntity.ok(message);
+        if(contact.isEmpty()) {
+            throw new NotFoundException("User not found.");
         }
+
+        Message message = new Message(loggedUser, contact.get(), content);
+        if(!file.isEmpty() && file.getOriginalFilename() != null) {
+            String image = FileUtils.generateUniqueName(file.getOriginalFilename());
+            message.setImage(image);
+
+            FileUtils.saveFile(Message.IMAGES_DIRECTORY_PATH, image, file);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageService.createMessage(message));
     }
 
     @PutMapping("/user/{contactId}/mark-seen")
     public ResponseEntity<?> setMessagesSeen(@PathVariable long contactId) {
-        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName())
-                .get();
         Optional<User> contact = userDetailsService.getUserById(contactId);
+        User loggedUser = getLoggedUser(userDetailsService);
         if (contact.isEmpty()) {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("status", HttpStatus.NOT_FOUND.value());
-            map.put("message", "Contact not found.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
-        } else {
-            messageService.setMessagesSeen(contact.get(), loggedUser);
-            return ResponseEntity.ok().build();
+            throw new NotFoundException("User not found.");
         }
+
+        messageService.setMessagesSeen(contact.get(), loggedUser);
+        return ResponseEntity.ok().build();
     }
 }
