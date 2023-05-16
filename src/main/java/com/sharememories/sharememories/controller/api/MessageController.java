@@ -5,6 +5,12 @@ import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.MessageService;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,19 +21,30 @@ import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.sharememories.sharememories.util.UserUtils.getLoggedUser;
 
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping(value = "/api/messages", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Message Controller")
 public class MessageController {
 
     private final MessageService messageService;
     private final SecurityUserDetailsService userDetailsService;
 
 
+    @Operation(summary = "Get a message by it's id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the message",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Message.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid id supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Message not found",
+                    content = @Content)})
     @GetMapping("/{id}")
     public ResponseEntity<?> getMessage(@PathVariable long id) {
         Optional<Message> message = messageService.getMessage(id);
@@ -37,6 +54,18 @@ public class MessageController {
         return ResponseEntity.ok(message.get());
     }
 
+    @Operation(summary = "Get all messages with user by it's id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found messages",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Message.class)) }),
+            @ApiResponse(responseCode = "204", description = "No messages found",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid id supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "User not logged",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content)})
     @GetMapping("/user/{contactId}")
     public ResponseEntity<?> getAllMessagesWithUser(@PathVariable long contactId) {
         Optional<User> contact = userDetailsService.getUserById(contactId);
@@ -52,6 +81,17 @@ public class MessageController {
         return ResponseEntity.ok(messages);
     }
 
+    @Operation(summary = "Get notifications counts",
+            description = "Get counts of all unread messages by contacts")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found messages",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Message.class)) }),
+            @ApiResponse(responseCode = "204", description = "No messages found",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid request",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "User not logged",
+                    content = @Content)})
     @GetMapping("/notify")
     public ResponseEntity<?> getAllNotificationsCount() {
         User loggedUser = getLoggedUser(userDetailsService);
@@ -62,6 +102,17 @@ public class MessageController {
         return ResponseEntity.ok(notifyCounts);
     }
 
+    @Operation(summary = "Get unknown notifications counts",
+            description = "Get counts of all unread messages by users not in contacts")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found messages",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Message.class)) }),
+            @ApiResponse(responseCode = "204", description = "No messages found",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid request",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "User not logged",
+                    content = @Content)})
     @GetMapping("/notify/unknown")
     public ResponseEntity<?> getAllNotificationsFromUnknownSenderCount() {
         User loggedUser = getLoggedUser(userDetailsService);
@@ -72,6 +123,18 @@ public class MessageController {
         return ResponseEntity.ok(notifyCounts);
     }
 
+    @Operation(summary = "Send message to user by it's id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Message created",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Message.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid data supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "User not logged",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "An error occurred while saving image",
+                    content = @Content)})
     @PostMapping("/user/{contactId}")
     public ResponseEntity<?> sendMessageToUser(@PathVariable long contactId,
                                                @RequestPart String content,
@@ -92,6 +155,16 @@ public class MessageController {
         return ResponseEntity.status(HttpStatus.CREATED).body(messageService.createMessage(message));
     }
 
+    @Operation(summary = "Mark messages as seen by user's id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated messages",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid id supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "User not logged",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content)})
     @PutMapping("/user/{contactId}/mark-seen")
     public ResponseEntity<?> setMessagesSeen(@PathVariable long contactId) {
         Optional<User> contact = userDetailsService.getUserById(contactId);
