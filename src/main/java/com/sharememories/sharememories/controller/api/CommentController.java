@@ -113,7 +113,7 @@ public class CommentController {
 
     @Operation(summary = "Add reaction to comment by comment's and reaction's ids.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Reaction appended",
+            @ApiResponse(responseCode = "200", description = "Reaction added",
                     content = @Content),
             @ApiResponse(responseCode = "400", description = "Invalid comment's or reaction's id supplied",
                     content = @Content),
