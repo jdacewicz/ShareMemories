@@ -1,13 +1,13 @@
 package com.sharememories.sharememories.controller.advice;
 
 
+import com.sharememories.sharememories.exception.NotAuthenticatedException;
 import com.sharememories.sharememories.util.ResponseEntityUtils;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.webjars.NotFoundException;
 
@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class ExceptionControllerAdvice {
 
     @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<?> handleConstraintViolationException(ConstraintViolationException ex) {
         Map<String, Object> messages = ex.getConstraintViolations()
                 .stream()
@@ -30,14 +29,17 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> handleNotFoundException(NotFoundException ex) {
         return ResponseEntityUtils.generateResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(IOException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<?> handleIOException(IOException ex) {
         return ResponseEntityUtils.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler(NotAuthenticatedException.class)
+    public ResponseEntity<?> handleNotAuthenticatedException(NotAuthenticatedException ex) {
+        return ResponseEntityUtils.generateResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 }

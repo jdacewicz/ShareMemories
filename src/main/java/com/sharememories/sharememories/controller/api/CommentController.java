@@ -35,15 +35,13 @@ public class CommentController {
     private final SecurityUserDetailsService userDetailsService;
 
 
-    @Operation(summary = "Get a comment by its id")
+    @Operation(summary = "Get a comment by it's id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found the book",
+            @ApiResponse(responseCode = "200", description = "Found the comment",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Comment.class)) }),
             @ApiResponse(responseCode = "400", description = "Invalid id supplied",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Comment not found",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)})
     @GetMapping("/{id}")
     public ResponseEntity<?> getComment(@PathVariable Long id) {
@@ -56,9 +54,11 @@ public class CommentController {
 
     @Operation(summary = "Create a comment on the post")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Comment created.",
+            @ApiResponse(responseCode = "201", description = "Comment created",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Comment.class)) }),
             @ApiResponse(responseCode = "400", description = "Invalid data supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "User not logged",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Post not found",
                     content = @Content),
@@ -86,7 +86,7 @@ public class CommentController {
 
     @Operation(summary = "Delete comment by comment's and post's ids.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Comment deleted.",
+            @ApiResponse(responseCode = "200", description = "Comment deleted",
                     content = @Content),
             @ApiResponse(responseCode = "400", description = "Invalid comment's or post's id supplied",
                     content = @Content),
@@ -111,15 +111,13 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Append reaction to comment by comment's and reaction's ids.")
+    @Operation(summary = "Add reaction to comment by comment's and reaction's ids.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Reaction appended.",
+            @ApiResponse(responseCode = "200", description = "Reaction appended",
                     content = @Content),
             @ApiResponse(responseCode = "400", description = "Invalid comment's or reaction's id supplied",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Comment or reaction not found",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)})
     @PutMapping("/{commentId}/react/{reactionId}")
     public ResponseEntity<?> reactToComment(@PathVariable int reactionId,
