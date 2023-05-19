@@ -75,7 +75,7 @@ public class Comment {
         this.creator = creator;
     }
 
-    public Comment(long id, String content, String image, User creator, Post post) {
+    public Comment(long id, String content, String image, User creator) {
         this.id = id;
         this.content = content;
         this.image = image;
