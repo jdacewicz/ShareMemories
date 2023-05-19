@@ -69,20 +69,6 @@ public class Comment {
         this.creator = creator;
     }
 
-    public Comment(String content, String image, User creator) {
-        this.content = content;
-        this.image = image;
-        this.creator = creator;
-    }
-
-    public Comment(long id, String content, String image, User creator) {
-        this.id = id;
-        this.content = content;
-        this.image = image;
-        this.creator = creator;
-        this.post = post;
-    }
-
     public void addReaction(Reaction reaction) {
         this.reactions.add(reaction);
         reaction.getComments().add(this);
