@@ -62,7 +62,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given valid post id " +
             "When getting existing post by api " +
-            "Then should return ok")
+            "Then should return response ok")
     void getExistingPostByValidId() throws Exception {
         long id = 1;
 
@@ -77,7 +77,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given valid post id " +
             "When getting non existing post by api " +
-            "Then should return not found")
+            "Then should return response not found")
     void getNonExistingPostByValidId() throws Exception {
         long id = 1;
 
@@ -90,7 +90,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given invalid post id " +
             "When getting post by api " +
-            "Then should return bad request")
+            "Then should return response bad request")
     void getPostByInvalidId() throws Exception {
         float id = 1.2f;
 
@@ -103,7 +103,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given " +
             "When getting random posts by api returns not empty list " +
-            "Then should return ok")
+            "Then should return response ok")
     void getNotEmptyRandomPosts() throws Exception {
         long id = 1;
 
@@ -118,7 +118,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given " +
             "When getting random posts by api returns empty list " +
-            "Then should return no content")
+            "Then should return response no content")
     void getEmptyRandomPosts() throws Exception {
         long id = 1;
 
@@ -131,7 +131,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given valid user id " +
             "When getting all posts by api returns not empty list " +
-            "Then should return ok")
+            "Then should return response ok")
     void getAllPostsByValidUserIdReturnsNotEmptyList() throws Exception {
         long id = 1;
 
@@ -146,7 +146,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given valid user id " +
             "When getting all posts by api returns empty list " +
-            "Then should return no content")
+            "Then should return response no content")
     void getAllPostsByValidUserIdReturnsEmptyList() throws Exception {
         long id = 1;
 
@@ -159,7 +159,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given invalid user id " +
             "When getting all posts by api " +
-            "Then should return bad request")
+            "Then should return response bad request")
     void getAllPostsByInvalidUserId() throws Exception {
         float id = 1.2f;
 
@@ -172,7 +172,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given valid content and image " +
             "When creating post by api " +
-            "Then should return created")
+            "Then should return response created")
     void createPostWithValidData() throws Exception {
         MockPart content = new MockPart("content", "content".getBytes());
         MockMultipartFile image = new MockMultipartFile("image" , "".getBytes());
@@ -191,7 +191,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given content and image " +
             "When creating post by api throws file error " +
-            "Then should return internal server error")
+            "Then should return response internal server error")
     void createPostWithFileError() throws Exception {
         MockPart content = new MockPart("content", "content".getBytes());
         MockMultipartFile image = new MockMultipartFile("image", "file.png", "image/png" , "file".getBytes());
@@ -210,7 +210,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given valid post and reaction ids " +
             "When reacting to existing post by api " +
-            "Then should return ok")
+            "Then should return response ok")
     void reactToExistingPostByItsAndReactionValidId() throws Exception {
         long postId = 1;
         int reactionId = 1;
@@ -225,7 +225,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given valid post and reaction ids " +
             "When reacting to existing post by api " +
-            "Then should return ok")
+            "Then should return response ok")
     void reactToNonExistingPostByItsAndReactionValidId() throws Exception {
         long postId = 1;
         int reactionId = 1;
@@ -238,7 +238,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given invalid post and reaction ids " +
             "When reacting to post by api " +
-            "Then should return bad request")
+            "Then should return response bad request")
     void reactToPostByItsAndReactionInvalidId() throws Exception {
         float postId = 1.2f;
         float reactionId = 1.2f;
@@ -251,7 +251,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given valid post id " +
             "When deleting existing post by api " +
-            "Then should return ok")
+            "Then should return response ok")
     void deleteExistingPostByItsValidId() throws Exception {
         long id = 1;
 
@@ -265,7 +265,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given valid post id " +
             "When deleting non existing post by api " +
-            "Then should return not found")
+            "Then should return response not found")
     void deleteNonExistingPostByValidId() throws Exception {
         long id = 1;
 
@@ -277,7 +277,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given invalid post id " +
             "When deleting post by api " +
-            "Then should return bad request")
+            "Then should return response bad request")
     void deletePostByInvalidId() throws Exception {
         float id = 1.2f;
 
@@ -289,7 +289,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Given valid post id " +
             "When deleting existing post by api throws file error" +
-            "Then should return internal server error")
+            "Then should return response internal server error")
     void deleteExistingPostByValidIdThrowsFileError() throws Exception {
         long id = 1;
 

@@ -3,218 +3,312 @@ package com.sharememories.sharememories.controller.api;
 import com.sharememories.sharememories.domain.Reaction;
 import com.sharememories.sharememories.service.ReactionService;
 import com.sharememories.sharememories.util.FileUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.sharememories.sharememories.util.UserUtils;
+import org.junit.jupiter.api.*;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockPart;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(ReactionController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class ReactionControllerTest {
 
-    @InjectMocks
-    private ReactionController controller;
-    @Mock
+    @Autowired
+    private MockMvc mvc;
+
+    @MockBean
     private ReactionService service;
-    static MockedStatic<FileUtils> fileUtils;
+
+    private static MockedStatic<FileUtils> fileUtils;
+    private static MockedStatic<UserUtils> userUtils;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         fileUtils.reset();
     }
 
     @BeforeAll
     static void init() {
         fileUtils = Mockito.mockStatic(FileUtils.class);
+        userUtils = Mockito.mockStatic(UserUtils.class);
     }
 
     @AfterAll
     static void close() {
         fileUtils.close();
+        userUtils.close();
     }
 
     @Test
-    void Given__When_GettingAllReactionsByAPIReturnsReactions_Then_ReturnedResponseOKWithReactionsList() {
-        //Given
-        //When
-        Reaction reaction = new Reaction();
-        List<Reaction> reactions = List.of(reaction);
-        Mockito.when(service.getAllReactions()).thenReturn(reactions);
+    @DisplayName("Given " +
+            "When getting all reactions by api returns not empty list " +
+            "Then should return response ok")
+    void getAllReactionsReturnsNotEmptyList() throws Exception {
+        when(service.getAllReactions()).thenReturn(List.of(new Reaction()));
 
-        ResponseEntity<?> response = controller.getAllReactions();
-        //Then
-        assertEquals(ResponseEntity.ok(reactions), response);
+        this.mvc.perform( get("/api/reactions")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    void Given__When_GettingAllReactionsByAPIReturnsNoReactions_Then_ReturnedResponseNoContent(){
-        //Given
-        //When
-        Mockito.when(service.getAllReactions()).thenReturn(List.of());
-
-        ResponseEntity<?> response = controller.getAllReactions();
-        //Then
-        assertEquals(ResponseEntity.status(HttpStatus.NO_CONTENT).build(), response);
+    @DisplayName("Given " +
+            "When getting all reactions by api returns empty list " +
+            "Then should return response no content")
+    void getAllReactionsReturnsEmptyList() throws Exception {
+        this.mvc.perform( get("/api/reactions")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    void Given_Id_When_GettingReactionByIdByAPI_Then_ReturnedResponseOkWithReaction() {
-        //Given
+    @DisplayName("Given valid reaction id " +
+            "When getting existing reaction by api " +
+            "Then should return response ok")
+    void getExistingReactionByItsValidId() throws Exception {
         int id = 1;
-        //When
-        Reaction reaction = new Reaction();
-        Mockito.when(service.getReaction(id)).thenReturn(Optional.of(reaction));
+        when(service.getReaction(id)).thenReturn(Optional.of(new Reaction()));
 
-        ResponseEntity<?> response = controller.getReaction(id);
-        //Then
-        assertEquals(ResponseEntity.ok(reaction), response);
+        this.mvc.perform( get("/api/reactions/{id}", id)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    void Given_Id_When_GettingReactionByWrongIdByAPI_Then_ReturnedResponseNotFound() {
-        //Given
+    @DisplayName("Given valid reaction id " +
+            "When getting non existing reaction by api " +
+            "Then should return response not found")
+    void getNonExistingReactionByValidId() throws Exception {
         int id = 1;
-        //When
-        ResponseEntity<?> response = controller.getReaction(id);
-        //Then
-        assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build().getStatusCode(), response.getStatusCode());
+
+        this.mvc.perform( get("/api/reactions/{id}", id)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void Given_NameAndFile_When_CreatingReactionByAPI_Then_ReturnedResponseCreated() {
-        //Given
-        String name = "name";
-        MockMultipartFile file = new MockMultipartFile("image.png", "test".getBytes());
-        //When
-        Reaction reaction = new Reaction(name, file.getOriginalFilename());
-        fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
-        Mockito.when(service.createReaction(any(Reaction.class))).thenReturn(reaction);
+    @DisplayName("Given invalid reaction id " +
+            "When getting reaction by api " +
+            "Then should return response bad request")
+    void getReactionByInvalidId() throws Exception {
+        float id = 1.2f;
 
-        ResponseEntity<?> response = controller.createReaction(name, file);
-        //Then
-        assertEquals(ResponseEntity.status(HttpStatus.CREATED).body(reaction), response);
+        this.mvc.perform( get("/api/reactions/{id}", id)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void Given_NameAndFile_When_ErrorWhileCreatingReactionByAPI_Then_ReturnedResponseInternalServerError() {
-        //Given
-        String name = "name";
-        MockMultipartFile file = new MockMultipartFile("image.png", "test".getBytes());
-        //When
-        fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
-        fileUtils.when(() -> FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, file.getOriginalFilename(), file)).thenThrow(IOException.class);
+    @DisplayName("Given name and image " +
+            "When creating reaction by api " +
+            "Then should return response ok")
+    void createReaction() throws Exception {
+        MockPart name = new MockPart("name", "name".getBytes());
+        MockMultipartFile image = new MockMultipartFile("image", "file.png", "image/png" , "file".getBytes());
 
-        ResponseEntity<?> response = controller.createReaction(name, file);
-        //Then
-        assertEquals(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().getStatusCode(), response.getStatusCode());
+        when(service.createReaction(any(Reaction.class))).thenReturn(new Reaction());
+        fileUtils.when(() -> FileUtils.generateUniqueName(any(String.class))).thenReturn(image.getOriginalFilename());
+
+        this.mvc.perform( multipart("/api/reactions")
+                        .file(image)
+                        .part(name))
+                .andDo(print())
+                .andExpect(status().isCreated());
     }
 
     @Test
-    void Given_NameAndId_When_ReplacingReactionByIdByAPI_Then_ReturnedResponseOkWithReaction() {
-        //Given
+    @DisplayName("Given name and image " +
+            "When creating reaction by api throws file error" +
+            "Then should return response internal server error")
+    void createReactionWithFileError() throws Exception {
+        MockPart name = new MockPart("name", "name".getBytes());
+        MockMultipartFile image = new MockMultipartFile("image" , "".getBytes());
+
+        when(service.createReaction(any(Reaction.class))).thenReturn(new Reaction());
+        fileUtils.when(() -> FileUtils.saveFile(any(), any(), any())).thenThrow(IOException.class);
+
+        this.mvc.perform( multipart("/api/reactions")
+                        .file(image)
+                        .part(name))
+                .andDo(print())
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("Given name, image and valid id " +
+            "When updating existing reaction by api " +
+            "Then should return response ok")
+    void updateExistingReactionByValidId() throws Exception {
         int id = 1;
-        String name = "name";
-        MockMultipartFile file = new MockMultipartFile("name", null, null, new byte[0]);
-        //When
-        Reaction reaction = new Reaction(id, name, "image.png");
-        Mockito.when(service.replaceReaction(any(Integer.class), any(Reaction.class))).thenReturn(reaction);
+        MockPart name = new MockPart("name", "name".getBytes());
+        MockMultipartFile image = new MockMultipartFile("image" , "".getBytes());
 
-        ResponseEntity<?> response = controller.replaceReaction(id, name, file);
-        //Then
-        assertEquals(ResponseEntity.ok(reaction), response);
+        when(service.getReaction(id)).thenReturn(Optional.of(new Reaction()));
+        when(service.replaceReaction(any(Integer.class), any(Reaction.class))).thenReturn(new Reaction());
+
+        MockMultipartHttpServletRequestBuilder builder =
+                MockMvcRequestBuilders.multipart("/api/reactions/{id}", id);
+
+        builder.with(request -> {
+            request.setMethod("PUT");
+            return request;
+        });
+
+        this.mvc.perform( builder
+                        .file(image)
+                        .part(name))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    void Given_NameAndFileAndId_When_ReplacingReactionByIdByAPI_Then_ReturnedResponseOkWithReaction() {
-        //Given
+    @DisplayName("Given name, image and valid id " +
+            "When updating non existing reaction by api " +
+            "Then should return response not found")
+    void updateNonExistingReactionByValidId() throws Exception {
         int id = 1;
-        String name = "name";
-        MockMultipartFile file = new MockMultipartFile("image2.png", "content".getBytes());
-        //When
-        Reaction reaction = new Reaction(id, name, file.getOriginalFilename());
-        fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
-        Mockito.when(service.replaceReaction(any(Integer.class), any(Reaction.class))).thenReturn(reaction);
+        MockPart name = new MockPart("name", "name".getBytes());
+        MockMultipartFile image = new MockMultipartFile("image" , "".getBytes());
 
-        ResponseEntity<?> response = controller.replaceReaction(id, name, file);
-        //Then
-        assertEquals(ResponseEntity.ok(reaction), response);
+        MockMultipartHttpServletRequestBuilder builder =
+                MockMvcRequestBuilders.multipart("/api/reactions/{id}", id);
+
+        builder.with(request -> {
+            request.setMethod("PUT");
+            return request;
+        });
+
+        this.mvc.perform( builder
+                        .file(image)
+                        .part(name))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void Given_NameAndFileAndId_When_ErrorWhileReplacingReactionByAPI_Then_ReturnedResponseInternalServerError() {
-        //Given
-        int id = 1;
-        String name = "name";
-        MockMultipartFile file = new MockMultipartFile("image2.png", "content".getBytes());
-        //When
-        fileUtils.when(() -> FileUtils.generateUniqueName(file.getOriginalFilename())).thenReturn(file.getOriginalFilename());
-        fileUtils.when(() -> FileUtils.saveFile(Reaction.IMAGES_DIRECTORY_PATH, file.getOriginalFilename(), file)).thenThrow(IOException.class);
+    @DisplayName("Given name, image and invalid id " +
+            "When updating reaction by api " +
+            "Then should return response bad request")
+    void updateReactionByInvalidId() throws Exception {
+        float id = 1.2f;
 
-        ResponseEntity<?> response = controller.replaceReaction(id, name, file);
-        //Then
-        assertEquals(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().getStatusCode(), response.getStatusCode());
+        MockMultipartHttpServletRequestBuilder builder =
+                MockMvcRequestBuilders.multipart("/api/reactions/{id}", id);
+
+        builder.with(request -> {
+            request.setMethod("PUT");
+            return request;
+        });
+
+        this.mvc.perform(builder)
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void Given_Id_When_DeletingReactionWithoutImageByProperIdByAPI_Then_ReturnedResponseOk() {
-        //Given
+    @DisplayName("Given name, image and valid id " +
+            "When updating existing reaction by api throws file error " +
+            "Then should return response internal server error")
+    void updateExistingReactionByValidIdThrowsFileError() throws Exception {
         int id = 1;
-        //When
-        Reaction reaction = new Reaction();
-        Mockito.when(service.getReaction(id)).thenReturn(Optional.of(reaction));
+        MockPart name = new MockPart("name", "name".getBytes());
+        MockMultipartFile image = new MockMultipartFile("image" , "image.png", "image/png", "image".getBytes());
 
-        ResponseEntity<?> response = controller.deleteReaction(id);
-        //Then
-        assertEquals(ResponseEntity.ok().build(), response);
+        when(service.getReaction(id)).thenReturn(Optional.of(new Reaction()));
+        fileUtils.when(() -> FileUtils.generateUniqueName(any(String.class))).thenReturn(image.getOriginalFilename());
+        fileUtils.when(() -> FileUtils.saveFile(any(), any(), any())).thenThrow(IOException.class);
+
+        MockMultipartHttpServletRequestBuilder builder =
+                MockMvcRequestBuilders.multipart("/api/reactions/{id}", id);
+
+        builder.with(request -> {
+            request.setMethod("PUT");
+            return request;
+        });
+
+        this.mvc.perform( builder
+                        .file(image)
+                        .part(name))
+                .andDo(print())
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
-    void Given_Id_When_DeletingReactionWithoutImageByWrongIdByAPI_Then_ReturnedResponseOk() {
-        //Given
+    @DisplayName("Given valid reaction id " +
+            "When deleting existing reaction by api " +
+            "Then should return response ok")
+    void deleteExistingReactionByValidId() throws Exception {
         int id = 1;
-        //When
-        ResponseEntity<?> response = controller.deleteReaction(id);
-        //Then
-        assertEquals(ResponseEntity.notFound().build().getStatusCode(), response.getStatusCode());
+
+        when(service.getReaction(id)).thenReturn(Optional.of(new Reaction()));
+
+        this.mvc.perform( delete("/api/reactions/{id}", id))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    void Given_Id_When_DeletingReactionWithImageByAPI_Then_ReturnedResponseOk() {
-        //Given
+    @DisplayName("Given valid reaction id " +
+            "When deleting non existing reaction by api " +
+            "Then should return response not found")
+    void deleteNonExistingReactionByValidId() throws Exception {
         int id = 1;
-        //When
+
+        this.mvc.perform( delete("/api/reactions/{id}", id))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Given invalid reaction id " +
+            "When deleting reaction by api " +
+            "Then should return response bad request")
+    void deleteReactionByInvalidId() throws Exception {
+        float id = 1.2f;
+
+        this.mvc.perform( delete("/api/reactions/{id}", id))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Given valid reaction id " +
+            "When deleting existing reaction by api throws file error" +
+            "Then should return response internal server error")
+    void deleteExistingReactionByValidIdThrowsFileError() throws Exception {
+        int id = 1;
+
         Reaction reaction = new Reaction();
         reaction.setImage("image.png");
+        when(service.getReaction(id)).thenReturn(Optional.of(reaction));
+        fileUtils.when(() -> FileUtils.deleteFile(any(), any())).thenThrow(IOException.class);
 
-        Mockito.when(service.getReaction(id)).thenReturn(Optional.of(reaction));
-        ResponseEntity<?> response = controller.deleteReaction(id);
-        //Then
-        assertEquals(ResponseEntity.ok().build(), response);
-    }
-
-    @Test
-    void Given_Id_When_ErrorWhileDeletingReactionWithImageByAPI_Then_ReturnedResponseInternalServerError() {
-        //Given
-        int id = 1;
-        //When
-        Reaction reaction = new Reaction();
-        reaction.setImage("image.png");
-
-        Mockito.when(service.getReaction(id)).thenReturn(Optional.of(reaction));
-        fileUtils.when(() -> FileUtils.deleteFile(Reaction.IMAGES_DIRECTORY_PATH, reaction.getImage())).thenThrow(IOException.class);
-
-        ResponseEntity<?> response = controller.deleteReaction(id);
-        //Then
-        assertEquals(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().getStatusCode(), response.getStatusCode());
+        this.mvc.perform( delete("/api/reactions/{id}", id))
+                .andDo(print())
+                .andExpect(status().isInternalServerError());
     }
 }
