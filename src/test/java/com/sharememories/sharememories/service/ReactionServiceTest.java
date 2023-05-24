@@ -3,6 +3,7 @@ package com.sharememories.sharememories.service;
 import com.sharememories.sharememories.domain.Reaction;
 import com.sharememories.sharememories.repository.ReactionRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -17,6 +18,7 @@ class ReactionServiceTest {
 
     @InjectMocks
     private ReactionService service;
+
     @Mock
     private ReactionRepository repository;
 
@@ -26,11 +28,13 @@ class ReactionServiceTest {
     }
 
     @Test
-    void Given_IdAndReaction_When_ReplacingReactionByProperId_Then_ReactionDataIsReplaced() {
-        //Given
+    @DisplayName("Given reaction id and reaction " +
+            "When updating existing reaction " +
+            "Then reaction should be updated")
+    void updateExistingReactionByReactionIdAndReaction() {
         int reactionId = 1;
         Reaction reaction = new Reaction("test");
-        //When
+
         Reaction reactionSaved = new Reaction("test2");
 
         when(repository.findById(reactionId)).thenReturn(Optional.of(reactionSaved));
@@ -38,21 +42,21 @@ class ReactionServiceTest {
                 .thenAnswer(i -> i.getArguments()[0]);
 
         Reaction output = service.replaceReaction(reactionId, reaction);
-        //Then
         assertEquals(reaction, output);
     }
 
     @Test
-    void Given_IdAndReaction_When_ReplacingReactionByWrongId_Then_NewReactionIsCreated() {
-        //Given
+    @DisplayName("Given reaction id and reaction " +
+            "When updating non existing reaction " +
+            "Then new reaction should be created")
+    void updateNonExistingReactionByReactionIdAndReaction() {
         int reactionId = 1;
         Reaction reaction = new Reaction("test");
-        //When
+
         when(repository.save(reaction))
                 .thenAnswer(i -> i.getArguments()[0]);
 
         Reaction output = service.replaceReaction(reactionId, reaction);
-        //Then
         assertEquals(reaction, output);
     }
 }
