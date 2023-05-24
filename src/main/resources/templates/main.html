@@ -25,7 +25,7 @@
         </div>
         <div class="flex justify-center w-1/6 ml-4">
             <a th:href="'/profile/' + ${loggedUser.getId()}" class="flex items-center hover:underline text-sm font-medium text-white">
-                <img id="logged-user-profile-picture" th:src="${loggedUser.getImagePath()}" class="w-6 rounded-xl mx-2 border" alt="logged user profile picture">
+                <img id="logged-user-profile-picture" th:src="${loggedUser.getImagePath()}" class="w-6 rounded-xl mx-2 border" alt="logged user profile picture" src="">
                 <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
             </a>
         </div>
@@ -39,7 +39,7 @@
                     </div>
                     <div class="w-full">
                         <a th:href="'/profile/' + ${loggedUser.getId()}" class="w-full flex justify-start items-center p-2 text-sm font-medium hover:bg-gray-100">
-                            <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
+                            <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture" src="">
                             <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
                         </a>
                         <button id="show-contact-form" type="button" class="w-full flex justify-start items-center p-2 text-sm hover:bg-gray-100">
@@ -89,7 +89,7 @@
                         </div>
                         <div id="contacts" th:unless="${loggedUser.getContacts().isEmpty()}" th:each="contact : ${loggedUser.getContacts()}">
                             <button type="button" th:name="'contact[' + ${contact.getId()} + ']'" class="w-full flex justify-start items-center p-2 text-sm font-medium hover:bg-gray-100">
-                                <img th:src="${contact.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture">
+                                <img th:src="${contact.getImagePath()}" class="w-8 rounded-xl mx-2 border" alt="logged user profile picture" src="">
                                 <span class="name" th:text="${contact.getCapitalizedFirstAndLastName()}"></span>
                             </button>
                         </div>
@@ -99,7 +99,7 @@
             <div id="chat-box" class="w-full bg-white rounded-xl shadow my-4 hidden">
                 <div class="flex justify-between w-full border-t px-4 py-2">
                     <a id="chat-box-sender" class="flex items-center text-sm font-medium hover:underline">
-                        <img class="w-8 rounded-xl mx-2 border" alt="sender profile picture">
+                        <img src="#" class="w-8 rounded-xl mx-2 border" alt="sender profile picture">
                         <span></span>
                     </a>
                     <button class="close-chat-box" type="button">
@@ -109,16 +109,18 @@
                 <div id="chat-box-messages" class="overflow-auto w-full border-t h-72 p-2 text-sm text-white">
                 </div>
                 <form id="send-message-form" method="POST" enctype="multipart/form-data" class="w-full flex justify-end border-t p-2">
-                    <input name="id" type="number" hidden>
+                    <input name="id" type="hidden" hidden>
                     <div class="flex items-center w-full text-sm bg-gray-100 border rounded-xl py-1 px-2 resize-y">
                         <textarea name="content" class="w-full bg-gray-100" rows="1" placeholder="Start chatting"></textarea>
                         <img src="#" alt="created message uploaded image preview" class="image-preview w-16 hidden">
                     </div>
                     <div class="flex items-center">
-                        <input name="image" type="file" hidden>
-                        <button type="button" class="upload-image-button">
-                            <img src="/images/icons/image-icon.svg" class="w-10" alt="image icon">
-                        </button>
+                        <input id="send-message-file-input" name="image" type="file" hidden>
+                        <label for="send-message-file-input">
+                            <button type="button" class="upload-image-button">
+                                <img src="/images/icons/image-icon.svg" class="w-10" alt="image icon">
+                            </button>
+                        </label>
                     </div>
                     <div class="flex items-center ml-1">
                         <button type="submit" class="px-2">
@@ -145,7 +147,7 @@
                 <form id="create-post-form" action="/api/posts" method="POST" enctype="multipart/form-data">
                     <div class="flex justify-start p-2">
                         <div class="mt-1 mx-2">
-                            <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl border" alt="user profile picture">
+                            <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl border" alt="user profile picture" src="">
                         </div>
                         <div class="w-full text-sm bg-gray-100 border rounded-xl py-1 px-2 resize-y">
                             <textarea name="content" class="w-full bg-gray-100" rows="3" placeholder="Write something..."></textarea>
@@ -214,7 +216,7 @@
                             <input type="text" name="topic" id="contact-topic" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
                         </div>
                         <div class="mb-6">
-                            <label for="contact-topic" class="block mb-2 text-sm font-medium text-gray-900">
+                            <label for="contact-message" class="block mb-2 text-sm font-medium text-gray-900">
                                 Message<span class="text-red-500">*</span>
                             </label>
                             <textarea id="contact-message" name="message" rows="5" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required placeholder="Write something..."></textarea>
@@ -300,7 +302,7 @@
                     <form id="edit-reaction-form" action="/api/reactions/" class="rounded-xl bg-white shadow hidden">
                         <input type="hidden" id="edit-reaction-id" name="id">
                         <div class="flex items-center justify-center py-2 px-4">
-                            <img class="w-32" id="edit-reaction-image-preview" alt="edited reaction image">
+                            <img src="#" class="w-32" id="edit-reaction-image-preview" alt="edited reaction image">
                         </div>
                         <div class="grid md:grid-cols-2 md:gap-6 py-2 px-4">
                             <div class="relative z-0 w-full group">

@@ -89,7 +89,7 @@ public class AppController {
                 FileUtils.saveFile(User.IMAGES_DIRECTORY_PATH, fileName, file);
                 user.setProfileImage(fileName);
             } catch (IOException e) {
-                System.out.println(e);
+
             }
         }
         userDetailsService.creatUser(user);

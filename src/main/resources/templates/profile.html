@@ -27,7 +27,7 @@
                 </div>
                 <div class="w-1/3 flex justify-center">
                     <a th:href="'/profile/' + ${loggedUser.getId()}" class="flex items-center hover:underline text-sm font-medium">
-                        <img th:src="${loggedUser.getImagePath()}" class="w-6 rounded-xl mx-2 border" alt="logged user profile picture">
+                        <img th:src="${loggedUser.getImagePath()}" class="w-6 rounded-xl mx-2 border" alt="logged user profile picture" src="">
                         <span th:text="${loggedUser.getCapitalizedFirstAndLastName()}"></span>
                     </a>
                 </div>
@@ -38,7 +38,7 @@
                         <span>Profile</span>
                     </div>
                     <div class="mb-6 rounded-xl bg-gray-100 border">
-                        <img th:src="${profileUser.getImagePath()}" alt="user profile picture">
+                        <img th:src="${profileUser.getImagePath()}" alt="user profile picture" src="">
                     </div>
                     <div class="mb-6 p-2 text-lg font-medium text-gray-900 text-center">
                         <span class="font-bold p-2" th:text="${profileUser.getCapitalizedFirstAndLastName()}"></span>
