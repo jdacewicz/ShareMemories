@@ -26,17 +26,21 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "postId")
+    @Column(name = "post_Id")
     private long id;
+
     @NotBlank
     @Size(max = 255)
     private String content;
+
     private String image;
     private LocalTime creationTime = LocalTime.now();
     private LocalDate creationDate = LocalDate.now();
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User creator;
+
     @ManyToMany
     @JsonIgnore
     @JoinTable(
@@ -44,10 +48,13 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "reaction_id")
     )
+
     @OrderBy("id ASC")
     private List<Reaction> reactions = new ArrayList<>();
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "group_id")
     private PostGroup group;
@@ -70,6 +77,11 @@ public class Post {
     public void addReaction(Reaction reaction) {
         this.reactions.add(reaction);
         reaction.getPosts().add(this);
+    }
+
+    public void removeReaction(Reaction reaction) {
+        this.reactions.remove(reaction);
+        reaction.getPosts().remove(this);
     }
 
     public Map<Integer, Long> getReactionsCounts() {

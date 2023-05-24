@@ -24,11 +24,6 @@ public class ReactionService {
         return reactionRepository.findAll();
     }
 
-    public Optional<String> getReactionImageName(int id) {
-        return reactionRepository.findById(id)
-                .map(Reaction::getImage);
-    }
-
     public Reaction createReaction(Reaction reaction) {
         return reactionRepository.save(reaction);
     }
@@ -45,8 +40,8 @@ public class ReactionService {
     }
 
     public void deleteReaction(Reaction r) {
-        r.getPosts().remove(r);
-        r.getComments().remove(r);
+        r.getPosts().removeIf(p -> p.getReactions().contains(r));
+        r.getComments().removeIf(c -> c.getReactions().contains(r));
 
         reactionRepository.delete(r);
     }

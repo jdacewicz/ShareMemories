@@ -24,14 +24,6 @@ public class MessageService {
         return repository.findById(id);
     }
 
-    public List<Message> getAllMessagesBySender(User sender) {
-        return repository.getAllBySender(sender);
-    }
-
-    public List<Message> getAllMessagesByReceiver(User receiver) {
-        return repository.getAllByReceiver(receiver);
-    }
-
     public List<Message> getAllMessagesBySenderAndReceiver(User sender, User receiver) {
         return repository.findAllBySenderAndReceiver(sender, receiver);
     }

@@ -23,13 +23,15 @@ public class Reaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "reactionId")
+    @Column(name = "reaction_Id")
     private int id;
 
     @NotBlank
     @Size(min = 2, max = 34)
     private String name;
+
     private String image;
+
     @ManyToMany(mappedBy = "reactions")
     @JsonIgnore
     private List<Post> posts = new ArrayList<>();

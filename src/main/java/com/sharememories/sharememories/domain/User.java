@@ -29,34 +29,43 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "userId")
+    @Column(name = "user_Id")
     private Long id;
+
     @Email
     @NotBlank
     @Size(min = 8, max = 34)
     @JsonIgnore
     private String username;
+
     @NotBlank
     @Size(min = 8, max = 24)
     @JsonIgnore
     private String password;
+
     @NotBlank
     @Size(min = 2, max = 16)
     private String firstname;
+
     @NotBlank
     @Size(min = 2, max = 24)
     private String lastname;
+
     private String profileImage;
     private LocalDate creationDate = LocalDate.now();
     private boolean accountNonLocked = true;
+
     @JsonIgnore
     private String role = "ROLE_USER";
+
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Post> posts;
+
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Comment> comments;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "contacts", joinColumns = {
             @JoinColumn(name = "idA")}, inverseJoinColumns = {
@@ -64,9 +73,11 @@ public class User implements UserDetails {
     })
     @JsonIgnore
     private Set<User> contacts = new HashSet<>();
+
     @ManyToMany(mappedBy = "members")
     @JsonIgnore
     private Set<Group> groupsMember;
+
     @ManyToMany(mappedBy = "admins")
     @JsonIgnore
     private Set<Group> groupsAdmin;

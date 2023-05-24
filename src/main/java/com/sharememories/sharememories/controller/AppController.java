@@ -24,6 +24,7 @@ public class AppController {
 
     @Value("${contact.mail.receiver}")
     private String mailReceiver;
+
     private final SecurityUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final EmailServiceImpl emailService;

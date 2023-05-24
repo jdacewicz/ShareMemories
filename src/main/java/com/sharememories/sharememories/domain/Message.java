@@ -21,17 +21,22 @@ public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "messageId")
+    @Column(name = "message_Id")
     private long id;
+
     @OneToOne
     private User sender;
+
     @OneToOne
     private User receiver;
+
     @NotBlank
     @Size(max = 255)
     private String content;
+
     private String image;
     private boolean messageSeen = false;
+
     @ManyToOne
     @JoinColumn(name = "group_id")
     private MessageGroup group;

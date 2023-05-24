@@ -13,14 +13,19 @@ public class EmailConfiguration {
 
     @Value("${spring.mail.host}")
     private String mailServerHost;
+
     @Value("${spring.mail.port}")
     private Integer mailServerPort;
+
     @Value("${spring.mail.username}")
     private String mailServerUsername;
+
     @Value("${spring.mail.password}")
     private String mailServerPassword;
+
     @Value("${spring.mail.properties.mail.smtp.auth}")
     private String mailServerAuth;
+
     @Value("${spring.mail.properties.mail.smtp.starttls.enable}")
     private String mailServerStartTls;
 

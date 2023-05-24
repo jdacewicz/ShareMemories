@@ -14,6 +14,8 @@ import java.lang.annotation.*;
 public @interface ValidFile {
 
     String message() default "Only PNG, JPG or JPEG images are allowed.";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

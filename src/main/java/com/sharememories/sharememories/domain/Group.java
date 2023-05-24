@@ -20,15 +20,18 @@ public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "groupId")
+    @Column(name = "group_Id")
     private long id;
+
     @NotBlank
     @Size(max = 34)
     private String name;
+
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "user_id")
     private User owner;
+
     @ManyToMany
     @JoinTable(
             name = "users_group_admins",
@@ -36,6 +39,7 @@ public class Group {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> admins = new HashSet<>();
+
     @ManyToMany
     @JoinTable(
             name = "users_group_members",
