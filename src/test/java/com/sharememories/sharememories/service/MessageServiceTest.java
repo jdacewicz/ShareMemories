@@ -4,6 +4,7 @@ import com.sharememories.sharememories.domain.Message;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.repository.MessageRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,6 +20,7 @@ class MessageServiceTest {
 
     @InjectMocks
     private MessageService service;
+
     @Mock
     private MessageRepository repository;
 
@@ -28,11 +30,13 @@ class MessageServiceTest {
     }
 
     @Test
-    void Given_User_When_GettingNotificationsCountByProperMessageReceiver_Then_ReturnedProperMapOfCountsOfMessagesFromContacts() {
-        //Given
+    @DisplayName("Given user " +
+            "When getting all counts of unread messages sent to existing user " +
+            "Then should return proper map containing contacts ids with counts")
+    void getAllCountsOfMessagesWithProperContactsCountsByExistingUser() {
         User receiver = new User();
         receiver.setId((long) 1);
-        //When
+
         User sender = new User();
         receiver.getContacts().add(sender);
         sender.setId((long) 2);
@@ -43,16 +47,17 @@ class MessageServiceTest {
         when(repository.getAllByReceiverAndMessageSeen(receiver, false)).thenReturn(messageList);
 
         Map<Long, Long> output = service.getAllNotificationsCount(receiver);
-        //Then
         assertEquals(2, output.get((long) 2));
     }
 
     @Test
-    void Given_User_When_GettingNotificationsCountByProperMessageReceiver_Then_ReturnedProperMapOfCountsOfMessagesNotFromContacts() {
-        //Given
+    @DisplayName("Given user " +
+            "When getting all counts of unread messages sent to existing user " +
+            "Then should return proper map containing -1 id with unknown senders messages count")
+    void getAllCountsOfMessagesWithProperUnknownSendersMessagesCountByNonExistingUser() {
         User receiver = new User();
         receiver.setId((long) 1);
-        //When
+
         User sender = new User();
         sender.setId((long) 2);
 
@@ -62,25 +67,28 @@ class MessageServiceTest {
         when(repository.getAllByReceiverAndMessageSeen(receiver, false)).thenReturn(messageList);
 
         Map<Long, Long> output = service.getAllNotificationsCount(receiver);
-        //Then
         assertEquals(2, output.get((long) -1));
     }
 
     @Test
-    void Given_User_When_GettingNotificationsCountByWrongMessageReceiver_Then_ReturnedEmptyMap() {
-        //Given
+    @DisplayName("Given user " +
+            "When getting all counts of unread messages sent to non existing user " +
+            "Then should return empty map")
+    void getAllCountsOfUnreadMessagesByNonExistingUser() {
         User receiver = new User();
-        //When
+
         Map<Long, Long> output = service.getAllNotificationsCount(receiver);
-        //Then
+
         assert(output.isEmpty());
     }
 
     @Test
-    void Given_User_When_GettingUnknownSenderNotificationsCountByProperMessageReceiver_Then_ReturnedProperMapOfCountsOfMessages() {
-        //Given
+    @DisplayName("Given user " +
+            "When getting unknown senders counts of unread messages sent to existing user" +
+            "Then should return map containing senders ids with counts ")
+    void getUnknownSendersCountsOfMessagesWithProperCountsByExistingUser() {
         User receiver = new User();
-        //When
+
         User sender = new User();
         sender.setId((long) 1);
 
@@ -91,17 +99,18 @@ class MessageServiceTest {
                 .thenReturn(messageList);
 
         Map<Long, Long> output = service.getUnknownSenderNotificationsCount(receiver);
-        //Then
         assertFalse(output.isEmpty());
     }
 
     @Test
-    void Given_User_When_GettingUnknownSenderNotificationsCountByWrongMessageReceiver_Then_ReturnedEmptyMap() {
-        //Given
+    @DisplayName("Given user " +
+            "When getting unknown senders counts of unread messages sent to non existing user" +
+            "Then should return empty map ")
+    void getUnknownSendersCountsOfUnreadMessagesByNonExistingUser() {
         User receiver = new User();
-        //When
+
         Map<Long, Long> output = service.getUnknownSenderNotificationsCount(receiver);
-        //Then
+
         assert(output.isEmpty());
     }
 }
