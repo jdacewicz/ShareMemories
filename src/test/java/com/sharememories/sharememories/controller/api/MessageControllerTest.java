@@ -63,7 +63,7 @@ class MessageControllerTest {
     @Test
     @DisplayName("Given valid message id " +
             "When getting existing message by api " +
-            "Then should return not found")
+            "Then should return response not found")
     void getExistingMessageByValidId() throws Exception {
         long id = 1;
         Message message = new Message();

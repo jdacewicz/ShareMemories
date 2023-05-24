@@ -1,183 +1,268 @@
 package com.sharememories.sharememories.controller.api;
 
-import com.sharememories.sharememories.controller.api.UserController;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.sharememories.sharememories.util.UserUtils;
+import org.junit.jupiter.api.*;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(UserController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class UserControllerTest {
 
-    @InjectMocks
-    private UserController controller;
-    @Mock
-    private SecurityUserDetailsService service;
-    static MockedStatic<FileUtils> fileUtils;
+    @Autowired
+    private MockMvc mvc;
+
+    @MockBean
+    private SecurityUserDetailsService detailsService;
+
+    private static MockedStatic<FileUtils> fileUtils;
+    private static MockedStatic<UserUtils> userUtils;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        fileUtils.reset();
+        userUtils.reset();
     }
 
     @BeforeAll
     static void init() {
         fileUtils = Mockito.mockStatic(FileUtils.class);
+        userUtils = Mockito.mockStatic(UserUtils.class);
     }
 
     @AfterAll
     static void close() {
         fileUtils.close();
+        userUtils.close();
     }
 
     @Test
-    void Given_Id_When_GettingUserByIdByAPI_Then_ReturnedResponseOkWithUser() {
-        //Given
+    @DisplayName("Given valid user id " +
+            "When getting existing user by api " +
+            "Then should return response ok")
+    void getExistingUserByValidId() throws Exception {
         long id = 1;
-        //When
         User user = new User();
-        Mockito.when(service.getUserById(id)).thenReturn(Optional.of(user));
+        user.setFirstname("Test");
+        user.setLastname("Test");
 
-        ResponseEntity response = controller.getUser(id);
-        //Then
-        assertEquals(ResponseEntity.ok(user), response);
+        when(detailsService.getUserById(id)).thenReturn(Optional.of(user));
+
+        this.mvc.perform( get("/api/users/{id}", id))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    void Given_Id_When_GettingUserByWrongIdByAPI_Then_ReturnedResponseNotFound() {
-        //Given
+    @DisplayName("Given valid user id " +
+            "When getting non existing user by api " +
+            "Then should return response not found")
+    void getNonExistingUserByValidId() throws Exception {
         long id = 1;
-        //When
-        ResponseEntity response = controller.getUser(id);
-        //Then
-        assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build().getStatusCode(), response.getStatusCode());
+
+        this.mvc.perform( get("/api/users/{id}", id)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void Given_Id_When_DeletingUserByIdByAPI_Then_ReturnedResponseOk() {
-        //Given
+    @DisplayName("Given invalid user id " +
+            "When getting user by api " +
+            "Then should return response bad request")
+    void getUserByInvalidId() throws Exception {
+        float id = 1.2f;
+
+        this.mvc.perform( get("/api/users/{id}", id)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Given " +
+            "When getting all unknown message senders by api returns not empty list " +
+            "Then should return response ok")
+    void getAllUnknownMessageSendersReturnsNotEmptyList() throws Exception {
+        User user = new User();
+        user.setFirstname("Test");
+        user.setLastname("Test");
+
+        User user2 = new User();
+        user2.setFirstname("Test");
+        user2.setLastname("Test");
+
+        userUtils.when(() -> UserUtils.getLoggedUser(any(SecurityUserDetailsService.class))).thenReturn(user);
+        when(detailsService.getAllUnknownMessageSenders(user, false)).thenReturn(Set.of(user2));
+
+        this.mvc.perform( get("/api/users/contacts/unknown"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Given " +
+            "When getting all unknown message senders by api returns empty list " +
+            "Then should return response no content")
+    void getAllUnknownMessageSendersReturnsEmptyList() throws Exception {
+        userUtils.when(() -> UserUtils.getLoggedUser(any(SecurityUserDetailsService.class))).thenReturn(new User());
+
+        this.mvc.perform( get("/api/users/contacts/unknown")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Given " +
+            "When getting all known message senders by api returns not empty list " +
+            "Then should return response ok")
+    void getAllKnownMessageSendersReturnsNotEmptyList() throws Exception {
+        User user = new User();
+        user.setFirstname("Test");
+        user.setLastname("Test");
+
+        User user2 = new User();
+        user2.setFirstname("Test");
+        user2.setLastname("Test");
+
+        user.setContacts(Set.of(user2));
+        userUtils.when(() -> UserUtils.getLoggedUser(any(SecurityUserDetailsService.class))).thenReturn(user);
+
+        this.mvc.perform( get("/api/users/contacts"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Given " +
+            "When getting all known message senders by api returns empty list " +
+            "Then should return response no content")
+    void getAllKnownMessageSendersReturnsEmptyList() throws Exception {
+        userUtils.when(() -> UserUtils.getLoggedUser(any(SecurityUserDetailsService.class))).thenReturn(new User());
+
+        this.mvc.perform( get("/api/users/contacts")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Given valid user id " +
+            "When adding existing user to logged user's contacts by api " +
+            "Then should return response ok")
+    void addExistingUserToContactsByValidId() throws Exception {
         long id = 1;
-        //When
-        String imageName = "name.png";
-        Mockito.when(service.getUserImageName(id)).thenReturn(Optional.of(imageName));
+        User user = new User();
 
-        ResponseEntity response = controller.deleteUser(id);
-        //Then
-        assertEquals(ResponseEntity.ok().build(), response);
+        userUtils.when(() -> UserUtils.getLoggedUser(any(SecurityUserDetailsService.class))).thenReturn(user);
+        when(detailsService.addUserToFriendsList(user, id)).thenReturn(Optional.of(new User()));
+
+        this.mvc.perform( put("/api/users/invite/{id}", id)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    void Given_Id_When_ErrorWhileDeletingUserByIdByAPI_Then_ReturnedResponseInternalServerError() {
-        //Given
+    @DisplayName("Given valid user id " +
+            "When adding non existing user to logged user's contacts by api " +
+            "Then should return response not found")
+    void addNonExistingUserToContactsByValidId() throws Exception {
         long id = 1;
-        //When
-        String imageName = "name.png";
-        Mockito.when(service.getUserImageName(id)).thenReturn(Optional.of(imageName));
-        fileUtils.when(() -> FileUtils.deleteFile(User.IMAGES_DIRECTORY_PATH, imageName)).thenThrow(IOException.class);
+        User user = new User();
 
-        ResponseEntity response = controller.deleteUser(id);
-        //Then
-        assertEquals(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().getStatusCode(), response.getStatusCode());
+        userUtils.when(() -> UserUtils.getLoggedUser(any(SecurityUserDetailsService.class))).thenReturn(user);
+
+        this.mvc.perform( put("/api/users/invite/{id}", id)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void Given_UserId_When_AddingUserToFriendsByProperAddedUserId_Then_ReturnedResponseOkWithUserLogged() {
-        //Given
-        long addedUserId = 1;
-        //When
-        User loggedUser = new User("user");
-        User addedUser = new User("user2");
+    @DisplayName("Given invalid user id " +
+            "When adding user to logged user's contacts by api " +
+            "Then should return response bad request")
+    void addUserToContactsByInvalidId() throws Exception {
+        float id = 1.2f;
 
-        Authentication authentication = mock(Authentication.class);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
-
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        when(service.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
-        when(service.addUserToFriendsList(loggedUser, addedUserId)).thenReturn(Optional.of(loggedUser));
-
-        ResponseEntity response = controller.addUserToFriends(addedUserId);
-        //Then
-        assertEquals(ResponseEntity.ok(loggedUser), response);
+        this.mvc.perform( put("/api/users/invite/{id}", id)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void Given_UserId_When_AddingUserToFriendsByWrongAddedUserId_Then_ReturnedResponseNotFound() {
-        //Given
-        long addedUserId = 1;
-        //When
-        User loggedUser = new User("user");
+    @DisplayName("Given valid user id " +
+            "When deleting existing user by api " +
+            "Then should return response ok")
+    void deleteExistingUserByValidId() throws Exception {
+        long id = 1;
 
-        Authentication authentication = mock(Authentication.class);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
+        when(detailsService.getUserById(id)).thenReturn(Optional.of(new User()));
 
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        when(service.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
-
-        ResponseEntity response = controller.addUserToFriends(addedUserId);
-        //Then
-        assertEquals(ResponseEntity.status(HttpStatus.NOT_FOUND).build().getStatusCode(), response.getStatusCode());
+        this.mvc.perform( delete("/api/users/{id}", id))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    void Given__When_GettingAllUnknownMessageSenders_Then_ReturnedResponseOkWithSendersIfNotEmpty() {
-        //Given
-        //When
-        User loggedUser = new User("user");
-        User unknownUser = new User("user2");
-        Set<User> userSet = Set.of(unknownUser);
+    @DisplayName("Given valid user id " +
+            "When deleting non existing user by api " +
+            "Then should return response not found")
+    void deleteNonExistingUserByValidId() throws Exception {
+        long id = 1;
 
-        Authentication authentication = mock(Authentication.class);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
-
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        when(service.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
-        when(service.getAllUnknownMessageSenders(loggedUser, false)).thenReturn(userSet);
-
-        ResponseEntity response = controller.getAllUnknownMessageSenders();
-        //Then
-        assertEquals(ResponseEntity.ok(userSet), response);
+        this.mvc.perform( delete("/api/users/{id}", id))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void Given__When_GettingAllUnknownMessageSenders_Then_ReturnedResponseNoContentIfEmpty() {
-        //Given
-        //When
-        User loggedUser = new User("user");
+    @DisplayName("Given invalid user id " +
+            "When deleting user by api " +
+            "Then should return response bad request")
+    void deleteUserByInvalidId() throws Exception {
+        float id = 1.2f;
 
-        Authentication authentication = mock(Authentication.class);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
+        this.mvc.perform( delete("/api/users/{id}", id))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(securityContext.getAuthentication().getName()).thenReturn(loggedUser.getUsername());
-        when(service.getUserByUsername(any(String.class))).thenReturn(Optional.of(loggedUser));
+    @Test
+    @DisplayName("Given valid user id " +
+            "When deleting existing user by api throws file error " +
+            "Then should return response internal server error")
+    void deleteUserByValidIdThrowsFileError() throws Exception {
+        long id = 1;
+        User user = new User();
+        user.setProfileImage("image.png");
 
-        ResponseEntity response = controller.getAllUnknownMessageSenders();
-        //Then
-        assertEquals(ResponseEntity.noContent().build(), response);
+        when(detailsService.getUserById(id)).thenReturn(Optional.of(user));
+        fileUtils.when(() -> FileUtils.deleteFile(any(), any())).thenThrow(IOException.class);
+
+        this.mvc.perform( delete("/api/users/{id}", id))
+                .andDo(print())
+                .andExpect(status().isInternalServerError());
     }
 }
