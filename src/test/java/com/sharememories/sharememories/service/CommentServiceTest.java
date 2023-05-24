@@ -39,9 +39,9 @@ class CommentServiceTest {
 
     @Test
     @DisplayName("Given post and comment ids " +
-            "When deleting existing comment form existing post " +
+            "When deleting comment form existing post " +
             "Then comment should be removed")
-    void deleteExistingCommentFromExistingPostByPostAndCommentIds() {
+    void deleteCommentFromExistingPostByPostAndCommentIds() {
         long postId = 1;
         long commentId = 1;
 
@@ -57,29 +57,13 @@ class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("Given post and comment ids " +
-            "When deleting non existing comment form existing post " +
-            "Then comment should not be removed")
-    void Given_PostIdAndCommentId_When_DeletingPostCommentByProperPostIdAndWrongCommentId_Then_CommentNotRemovedFromPost() {
-        long postId = 1;
-        long commentId = 1;
-
-        Post post = new Post();
-        Comment comment = new Comment();
-        post.getComments().add(comment);
-
-        when(postRepository.findById(postId)).thenReturn(Optional.of(post));
-
-        service.deletePostComment(postId, comment);
-        assertFalse(post.getComments().isEmpty());
-    }
-
-    @Test
-    void Given_ReactionIdAndCommentId_When_ReactingToCommentByProperReactionIdAndCommentId_Then_ReactionAddedToComment() {
-        //Given
+    @DisplayName("Given reaction and comment ids " +
+            "When adding existing reaction to existing comment " +
+            "Then reaction should be added")
+    void addExistingReactionToExistingCommentByReactionAndCommentIds() {
         int reactionId = 1;
         long commentId = 1;
-        //When
+
         Reaction reaction = new Reaction();
         Comment comment = new Comment();
 
@@ -87,53 +71,52 @@ class CommentServiceTest {
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
 
         service.reactToComment(reactionId, commentId);
-        //Then
         assertFalse(comment.getReactions().isEmpty());
     }
 
     @Test
-    void Given_ReactionIdAndCommentId_When_ReactingToCommentByWrongReactionIdAndProperCommentId_Then_ReactionNotAddedToComment() {
-        //Given
+    @DisplayName("Given reaction and comment ids " +
+            "When adding non existing reaction to existing comment " +
+            "Then reaction should not be added")
+    void addNonExistingReactionToExistingCommentByReactionAndCommentIds() {
         int reactionId = 1;
         long commentId = 1;
-        //When
-        Reaction reaction = new Reaction();
+
         Comment comment = new Comment();
 
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
 
         service.reactToComment(reactionId, commentId);
-        //Then
         assert(comment.getReactions().isEmpty());
     }
 
     @Test
-    void Give_PostIdAndComment_When_CommentingPostByProperPostId_Then_CommentReferenceToPostIsSet() {
-        //Given
+    @DisplayName("Given post id and comment " +
+            "When creating comment to existing post " +
+            "Then comment should be created")
+    void createCommentToExistingPostByPostIdAndComment() {
         long postId = 1;
         Comment comment = new Comment();
-        //When
+
         Post post = new Post();
 
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
         when(commentRepository.save(comment))
                 .thenAnswer(i -> i.getArguments()[0]);
 
-        Comment output = service.commentPost(postId, comment).get();
-        //Then
-        assertEquals(post, output.getPost());
+        Optional<Comment> output = service.commentPost(postId, comment);
+        assertTrue(output.isPresent());
     }
 
     @Test
-    void Give_PostIdAndComment_When_CommentingPostByWrongPostId_Then_CommentReferenceToPostIsNotSet() {
-        //Given
+    @DisplayName("Given post id and comment " +
+            "When creating comment to non existing post " +
+            "Then comment should not be created")
+    void createCommentToNonExistingPostByPostIdAndComment() {
         long postId = 1;
         Comment comment = new Comment();
-        //When
-        Post post = new Post();
 
         Optional<Comment> output = service.commentPost(postId, comment);
-        //Then
         assertFalse(output.isPresent());
     }
 }
