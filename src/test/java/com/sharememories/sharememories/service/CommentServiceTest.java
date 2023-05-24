@@ -7,6 +7,7 @@ import com.sharememories.sharememories.repository.CommentRepository;
 import com.sharememories.sharememories.repository.PostRepository;
 import com.sharememories.sharememories.repository.ReactionRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -21,10 +22,13 @@ class CommentServiceTest {
 
     @InjectMocks
     private CommentService service;
+
     @Mock
     private CommentRepository commentRepository;
+
     @Mock
     private PostRepository postRepository;
+
     @Mock
     private ReactionRepository reactionRepository;
 
@@ -34,11 +38,13 @@ class CommentServiceTest {
     }
 
     @Test
-    void Given_PostIdAndCommentId_When_DeletingPostCommentByProperPostIdAndCommentId_Then_CommentRemovedFromPost() {
-        //Given
+    @DisplayName("Given post and comment ids " +
+            "When deleting existing comment form existing post " +
+            "Then comment should be removed")
+    void deleteExistingCommentFromExistingPostByPostAndCommentIds() {
         long postId = 1;
         long commentId = 1;
-        //When
+
         Post post = new Post();
         Comment comment = new Comment();
         post.getComments().add(comment);
@@ -46,25 +52,25 @@ class CommentServiceTest {
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
 
-        service.deletePostComment(postId, commentId);
-        //Then
+        service.deletePostComment(postId, comment);
         assert(post.getComments().isEmpty());
     }
 
     @Test
+    @DisplayName("Given post and comment ids " +
+            "When deleting non existing comment form existing post " +
+            "Then comment should not be removed")
     void Given_PostIdAndCommentId_When_DeletingPostCommentByProperPostIdAndWrongCommentId_Then_CommentNotRemovedFromPost() {
-        //Given
         long postId = 1;
         long commentId = 1;
-        //When
+
         Post post = new Post();
         Comment comment = new Comment();
         post.getComments().add(comment);
 
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
 
-        service.deletePostComment(postId, commentId);
-        //Then
+        service.deletePostComment(postId, comment);
         assertFalse(post.getComments().isEmpty());
     }
 
