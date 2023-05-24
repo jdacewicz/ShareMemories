@@ -106,6 +106,7 @@ class CommentServiceTest {
 
         Optional<Comment> output = service.commentPost(postId, comment);
         assertTrue(output.isPresent());
+        assertTrue(output.get().getPost().equals(post));
     }
 
     @Test

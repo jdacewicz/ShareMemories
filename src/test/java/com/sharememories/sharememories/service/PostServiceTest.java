@@ -50,6 +50,7 @@ class PostServiceTest {
 
         Optional<Post> output = service.reactToPost(reactionId, postId);
         assertTrue(output.isPresent());
+        assertTrue(output.get().getReactions().contains(reaction));
     }
 
     @Test
