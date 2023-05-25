@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 
+import static jdk.jshell.spi.ExecutionControl.NotImplementedException;
+
 @Controller
 public class AppController {
 
@@ -37,28 +39,29 @@ public class AppController {
     }
 
     @GetMapping("/")
-    public String showMainPage(Model model) {
-        User user = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName())
-                .get();
+    public String showMainPage(Model model) throws NotImplementedException {
+        Optional<User> user = getLoggedUser();
+        if (user.isEmpty()) {
+            throw new NotImplementedException("User not logged");
+        }
         model.addAttribute("loggedUser", user);
         return "main";
     }
 
     @GetMapping("/profile/{id}")
-    private String showProfilePage(@PathVariable long id, Model model) {
-        User loggedUser = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName())
-                .get();
+    private String showProfilePage(@PathVariable long id, Model model) throws NotImplementedException {
+        Optional<User> loggedUser = getLoggedUser();
+        if (loggedUser.isEmpty()) {
+            throw new NotImplementedException("User not logged");
+        }
+
         Optional<User> user = userDetailsService.getUserById(id);
         if (user.isPresent()) {
             model.addAttribute("profileUser", user.get());
             model.addAttribute("loggedUser", loggedUser);
             return "profile";
         }
-        return "error";
+        throw new NotImplementedException("User " + id + " not found.");
     }
 
     @GetMapping("/login")
@@ -76,20 +79,20 @@ public class AppController {
                              @RequestPart String password,
                              @RequestPart String firstname,
                              @RequestPart String lastname,
-                             @RequestPart(value = "image", required = false) MultipartFile file) {
+                             @RequestPart(value = "image", required = false) MultipartFile file) throws NotImplementedException {
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setFirstname(firstname);
         user.setLastname(lastname);
 
-        if (!file.isEmpty()) {
+        if (!file.isEmpty() && file.getOriginalFilename() != null) {
             try {
                 String fileName = FileUtils.generateUniqueName(file.getOriginalFilename());
                 FileUtils.saveFile(User.IMAGES_DIRECTORY_PATH, fileName, file);
                 user.setProfileImage(fileName);
             } catch (IOException e) {
-
+                throw new NotImplementedException("User not logged");
             }
         }
         userDetailsService.creatUser(user);
@@ -102,15 +105,22 @@ public class AppController {
                            @RequestPart String email,
                            @RequestPart(required = false) String phone,
                            @RequestPart String topic,
-                           @RequestPart String message,
-                           @RequestPart(required = false) MultipartFile file) {
-        User user = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName())
-                .get();
-        String content = "Username: " + user.getUsername() + " | Name: " + firstname + " " + lastname + " | Phone: " + phone + " | Message: " + message;
+                           @RequestPart String message) throws NotImplementedException {
+                          // @RequestPart(required = false) MultipartFile file) {
+        Optional<User> user = getLoggedUser();
+        if (user.isEmpty()) {
+            throw new NotImplementedException("User not logged");
+        }
+
+        String content = "Username: " + user.get().getUsername() + " | Name: " + firstname + " " + lastname + " | Phone: " + phone + " | Message: " + message;
         emailService.sendMessage(email, mailReceiver, topic, content);
 
         return "redirect:/";
+    }
+
+    private Optional<User> getLoggedUser() {
+        return  userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName());
     }
 }
