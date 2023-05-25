@@ -65,20 +65,20 @@ public class Group {
         user.getGroupsAdmin().add(this);
     }
 
-    public void removeAdmin(User user) {
-        this.admins.remove(user);
-        user.getGroupsAdmin().remove(user);
-    }
-
-    public void addMember(User user) {
-        this.members.add(user);
-        user.getGroupsMember().add(this);
-    }
-
-    public void removeMember(User user) {
-        this.members.remove(user);
-        user.getGroupsMember().remove(this);
-    }
+//    public void removeAdmin(User user) {
+//        this.admins.remove(user);
+//        user.getGroupsAdmin().remove(user);
+//    }
+//
+//    public void addMember(User user) {
+//        this.members.add(user);
+//        user.getGroupsMember().add(this);
+//    }
+//
+//    public void removeMember(User user) {
+//        this.members.remove(user);
+//        user.getGroupsMember().remove(this);
+//    }
 
     public void addMembers(Set<User> users) {
         this.members.addAll(users);
