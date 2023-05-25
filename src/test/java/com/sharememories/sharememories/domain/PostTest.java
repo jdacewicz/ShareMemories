@@ -10,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PostTest {
 
-    Reaction reactionOne = new Reaction(1);
-    Reaction reactionTwo = new Reaction(2);
+    private final Reaction reactionOne = new Reaction(1);
+    private final Reaction reactionTwo = new Reaction(2);
 
     @Test
     @DisplayName("Given post with 2 different reactions " +
