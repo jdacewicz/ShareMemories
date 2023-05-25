@@ -17,4 +17,4 @@ Social media platform similar to Facebook and Twitter.
 
 ## Lessons Learned
 
-Creating this project gave me experience in the pratical use of Spring Framework and RESTful API.
+Creating this project gave me experience in the practical use of Spring Framework and RESTful API.

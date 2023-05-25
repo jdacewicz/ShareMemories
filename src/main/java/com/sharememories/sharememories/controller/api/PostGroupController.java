@@ -4,11 +4,12 @@ import com.sharememories.sharememories.domain.PostGroup;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.PostGroupService;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
+import com.sharememories.sharememories.util.UserUtils;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
@@ -18,16 +19,12 @@ import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/api/posts/groups", produces = MediaType.APPLICATION_JSON_VALUE)
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PostGroupController {
 
     private final PostGroupService groupService;
     private final SecurityUserDetailsService detailsService;
 
-    @Autowired
-    public PostGroupController(PostGroupService groupService, SecurityUserDetailsService detailsService) {
-        this.groupService = groupService;
-        this.detailsService = detailsService;
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getGroup(@PathVariable long id) {
@@ -45,10 +42,7 @@ public class PostGroupController {
     @PostMapping()
     public ResponseEntity<?> createGroup(@RequestPart("name") String name,
                                          @RequestPart("members") Set<User> members) {
-        User user = detailsService.getUserByUsername(SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName())
-                .get();
+        User user = UserUtils.getLoggedUser(detailsService);
         PostGroup group = groupService.createGroup(new PostGroup(name, user, members));
         return ResponseEntity.status(HttpStatus.CREATED).body(group);
     }

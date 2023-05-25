@@ -4,28 +4,27 @@ import com.sharememories.sharememories.domain.MessageGroup;
 import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.MessageGroupService;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
+import com.sharememories.sharememories.util.UserUtils;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/api/messages/groups", produces = MediaType.APPLICATION_JSON_VALUE)
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class MessageGroupController {
 
-    private MessageGroupService groupService;
-    private SecurityUserDetailsService userDetailsService;
+    private final MessageGroupService groupService;
+    private final SecurityUserDetailsService userDetailsService;
 
-    @Autowired
-    public MessageGroupController(MessageGroupService groupService, SecurityUserDetailsService userDetailsService) {
-        this.groupService = groupService;
-        this.userDetailsService = userDetailsService;
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getGroup(@PathVariable long id) {
@@ -51,12 +50,9 @@ public class MessageGroupController {
 
     @PostMapping()
     public ResponseEntity<?> createGroup(@RequestPart("name") String name,
-                                         @RequestPart("members") long[] ids,
-                                         @RequestPart(value = "image", required = false) MultipartFile file) {
-        User user = userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName())
-                .get();
+                                         @RequestPart("members") long[] ids) {
+                                         // @RequestPart(value = "image", required = false) MultipartFile file) {
+        User user = UserUtils.getLoggedUser(userDetailsService);
         Set<User> members = userDetailsService.getUsers(ids);
         if (members.isEmpty()) {
             Map<String, Object> map = new LinkedHashMap<>();

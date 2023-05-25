@@ -74,22 +74,25 @@ public class Comment {
         reaction.getComments().add(this);
     }
 
-    public void removeReaction(Reaction reaction) {
-        this.reactions.remove(reaction);
-        reaction.getComments().remove(this);
-    }
+//    public void removeReaction(Reaction reaction) {
+//        this.reactions.remove(reaction);
+//        reaction.getComments().remove(this);
+//    }
 
+    @SuppressWarnings("unused")
     public String getElapsedCreationTimeMessage() {
         LocalDateTime creationDateTime = LocalDateTime.of(creationDate, creationTime);
 
         return TimeUtils.getElapsedTimeMessage(creationDateTime, LocalDateTime.now());
     }
 
+    @SuppressWarnings("unused")
     public Map<Integer, Long> getReactionsCounts() {
         return reactions.stream()
                 .collect(Collectors.groupingBy(Reaction::getId, Collectors.counting()));
     }
 
+    @SuppressWarnings("unused")
     public String getImagePath() {
         if (image == null) return null;
 

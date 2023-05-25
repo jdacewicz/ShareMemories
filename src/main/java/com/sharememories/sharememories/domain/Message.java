@@ -54,6 +54,7 @@ public class Message {
         this.image = image;
     }
 
+    @SuppressWarnings("unused")
     public String getImagePath() {
         if (image == null) return null;
 
