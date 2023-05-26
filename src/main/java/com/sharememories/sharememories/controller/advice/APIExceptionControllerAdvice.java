@@ -1,6 +1,7 @@
 package com.sharememories.sharememories.controller.advice;
 
 
+import com.sharememories.sharememories.controller.api.*;
 import com.sharememories.sharememories.exception.NotAuthenticatedException;
 import com.sharememories.sharememories.util.ResponseEntityUtils;
 import jakarta.validation.ConstraintViolation;
@@ -15,8 +16,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@RestControllerAdvice
-public class ExceptionControllerAdvice {
+@RestControllerAdvice(assignableTypes = {CommentController.class, MessageController.class, PostController.class, ReactionController.class,
+    UserController.class})
+public class APIExceptionControllerAdvice {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> handleConstraintViolationException(ConstraintViolationException ex) {
