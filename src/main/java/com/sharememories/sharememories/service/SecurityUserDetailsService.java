@@ -35,7 +35,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
         return userRepository.findById(id);
     }
 
-    public void creatUser(UserDetails user) {
+    public void createUser(UserDetails user) {
         userRepository.save((User) user);
     }
 

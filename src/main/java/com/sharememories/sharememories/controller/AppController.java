@@ -100,7 +100,7 @@ public class AppController {
                 throw new NotImplementedException("User not logged");
             }
         }
-        userDetailsService.creatUser(user);
+        userDetailsService.createUser(user);
         return "redirect:/login";
     }
 
