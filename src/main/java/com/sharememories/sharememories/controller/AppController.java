@@ -86,7 +86,8 @@ public class AppController {
                              @RequestPart @Size(min = 8, max = 24) String repeatPassword,
                              @RequestPart String firstname,
                              @RequestPart String lastname,
-                             @ValidFile @RequestPart(value = "image", required = false) MultipartFile file) throws IOException {
+                             @ValidFile @RequestPart(value = "image", required = false) MultipartFile file,
+                             Model model) throws IOException {
         if (!userDetailsService.isUsernameUnique(username)) {
             throw new NotUniqueException("This email is already taken. Please choose another one.");
         }
@@ -106,7 +107,9 @@ public class AppController {
             user.setProfileImage(fileName);
         }
         userDetailsService.createUser(user);
-        return "redirect:/login";
+        model.addAttribute("successMessage",
+                "You have successfully created account! You can now log in.");
+        return "login";
     }
 
     @PostMapping("/contact")
