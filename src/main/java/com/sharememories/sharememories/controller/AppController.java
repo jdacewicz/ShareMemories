@@ -1,9 +1,12 @@
 package com.sharememories.sharememories.controller;
 
 import com.sharememories.sharememories.domain.User;
+import com.sharememories.sharememories.exception.NotMatchException;
+import com.sharememories.sharememories.exception.NotUniqueException;
 import com.sharememories.sharememories.service.EmailServiceImpl;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
+import com.sharememories.sharememories.validation.annotations.ValidFile;
 import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +27,7 @@ import java.util.Optional;
 import static jdk.jshell.spi.ExecutionControl.NotImplementedException;
 
 @Controller
+@Validated
 public class AppController {
 
     @Value("${contact.mail.receiver}")
@@ -78,11 +83,15 @@ public class AppController {
     @PostMapping("/register")
     public String createUser(@RequestPart String username,
                              @RequestPart @Size(min = 8, max = 24) String password,
+                             @RequestPart @Size(min = 8, max = 24) String repeatPassword,
                              @RequestPart String firstname,
                              @RequestPart String lastname,
-                             @RequestPart(value = "image", required = false) MultipartFile file) throws NotImplementedException {
+                             @ValidFile @RequestPart(value = "image", required = false) MultipartFile file) throws IOException {
         if (!userDetailsService.isUsernameUnique(username)) {
-            throw new NotImplementedException("Username " + username + " is already taken.");
+            throw new NotUniqueException("This email is already taken. Please choose another one.");
+        }
+        if (!password.equals(repeatPassword)) {
+            throw new NotMatchException("Passwords don't match. Try again.");
         }
 
         User user = new User();
@@ -92,13 +101,9 @@ public class AppController {
         user.setLastname(lastname);
 
         if (!file.isEmpty() && file.getOriginalFilename() != null) {
-            try {
-                String fileName = FileUtils.generateUniqueName(file.getOriginalFilename());
-                FileUtils.saveFile(User.IMAGES_DIRECTORY_PATH, fileName, file);
-                user.setProfileImage(fileName);
-            } catch (IOException e) {
-                throw new NotImplementedException("User not logged");
-            }
+            String fileName = FileUtils.generateUniqueName(file.getOriginalFilename());
+            FileUtils.saveFile(User.IMAGES_DIRECTORY_PATH, fileName, file);
+            user.setProfileImage(fileName);
         }
         userDetailsService.createUser(user);
         return "redirect:/login";
