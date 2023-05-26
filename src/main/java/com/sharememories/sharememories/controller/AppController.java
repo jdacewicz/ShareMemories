@@ -4,6 +4,7 @@ import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.EmailServiceImpl;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -76,7 +77,7 @@ public class AppController {
 
     @PostMapping("/register")
     public String createUser(@RequestPart String username,
-                             @RequestPart String password,
+                             @RequestPart @Size(min = 8, max = 24) String password,
                              @RequestPart String firstname,
                              @RequestPart String lastname,
                              @RequestPart(value = "image", required = false) MultipartFile file) throws NotImplementedException {

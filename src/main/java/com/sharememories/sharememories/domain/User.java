@@ -39,7 +39,6 @@ public class User implements UserDetails {
     private String username;
 
     @NotBlank
-    @Size(min = 8, max = 24)
     @JsonIgnore
     private String password;
 
