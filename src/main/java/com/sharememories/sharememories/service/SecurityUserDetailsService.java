@@ -60,4 +60,9 @@ public class SecurityUserDetailsService implements UserDetailsService {
         }
         return Optional.empty();
     }
+
+    public boolean isUsernameUnique(String username) {
+        return userRepository.findFirstByUsername(username)
+                .isEmpty();
+    }
 }

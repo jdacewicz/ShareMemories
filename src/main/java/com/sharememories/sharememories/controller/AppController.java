@@ -81,6 +81,10 @@ public class AppController {
                              @RequestPart String firstname,
                              @RequestPart String lastname,
                              @RequestPart(value = "image", required = false) MultipartFile file) throws NotImplementedException {
+        if (!userDetailsService.isUsernameUnique(username)) {
+            throw new NotImplementedException("Username " + username + " is already taken.");
+        }
+
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));

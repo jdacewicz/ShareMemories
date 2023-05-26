@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
 
+    Optional<User> findFirstByUsername(String username);
+
     @Query("SELECT u FROM User u WHERE u.id IN ?1")
     Set<User> getAllByIdInList(long[] ids);
 }
