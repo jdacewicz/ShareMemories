@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 
+import static com.sharememories.sharememories.util.UserUtils.getLoggedUser;
 import static jdk.jshell.spi.ExecutionControl.NotImplementedException;
 
 @Controller
@@ -45,21 +46,16 @@ public class AppController {
     }
 
     @GetMapping("/")
-    public String showMainPage(Model model) throws NotImplementedException {
-        Optional<User> user = getLoggedUser();
-        if (user.isEmpty()) {
-            throw new NotImplementedException("User not logged");
-        }
-        model.addAttribute("loggedUser", user.get());
+    public String showMainPage(Model model) {
+        User user = getLoggedUser(userDetailsService);
+        model.addAttribute("loggedUser", user);
+
         return "main";
     }
 
     @GetMapping("/profile/{id}")
     private String showProfilePage(@PathVariable long id, Model model) throws NotImplementedException {
-        Optional<User> loggedUser = getLoggedUser();
-        if (loggedUser.isEmpty()) {
-            throw new NotImplementedException("User not logged");
-        }
+        User loggedUser = getLoggedUser(userDetailsService);
 
         Optional<User> user = userDetailsService.getUserById(id);
         if (user.isPresent()) {
@@ -118,22 +114,13 @@ public class AppController {
                            @RequestPart String email,
                            @RequestPart(required = false) String phone,
                            @RequestPart String topic,
-                           @RequestPart String message) throws NotImplementedException {
+                           @RequestPart String message) {
                           // @RequestPart(required = false) MultipartFile file) {
-        Optional<User> user = getLoggedUser();
-        if (user.isEmpty()) {
-            throw new NotImplementedException("User not logged");
-        }
+        User user = getLoggedUser(userDetailsService);
 
-        String content = "Username: " + user.get().getUsername() + " | Name: " + firstname + " " + lastname + " | Phone: " + phone + " | Message: " + message;
+        String content = "Username: " + user.getUsername() + " | Name: " + firstname + " " + lastname + " | Phone: " + phone + " | Message: " + message;
         emailService.sendMessage(email, mailReceiver, topic, content);
 
         return "redirect:/";
-    }
-
-    private Optional<User> getLoggedUser() {
-        return userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName());
     }
 }
