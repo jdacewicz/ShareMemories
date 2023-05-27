@@ -50,7 +50,7 @@ public class AppController {
         if (user.isEmpty()) {
             throw new NotImplementedException("User not logged");
         }
-        model.addAttribute("loggedUser", user);
+        model.addAttribute("loggedUser", user.get());
         return "main";
     }
 
@@ -132,7 +132,7 @@ public class AppController {
     }
 
     private Optional<User> getLoggedUser() {
-        return  userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
+        return userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
                         .getAuthentication()
                         .getName());
     }
