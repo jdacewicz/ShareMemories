@@ -44,32 +44,32 @@
                                 <label for="username" class="block mb-2 text-sm font-medium text-gray-900">
                                     Email address<span class="text-red-500">*</span>
                                 </label>
-                                <input type="email" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@email.com" required>
+                                <input type="email" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" minlength="8" maxlength="34" placeholder="name@email.com" required>
                             </div>
                             <div class="mb-6">
                                 <label for="password" class="block mb-2 text-sm font-medium text-gray-900">
                                     Password<span class="text-red-500">*</span>
                                 </label>
-                                <input type="password" name="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                <input type="password" name="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" minlength="8" maxlength="24" required>
                             </div>
                             <div class="mb-6">
                                 <label for="repeat-password" class="block mb-2 text-sm font-medium text-gray-900">
                                     Repeat password<span class="text-red-500">*</span>
                                 </label>
-                                <input type="password" name="repeatPassword" id="repeat-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                <input type="password" name="repeatPassword" id="repeat-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" minlength="8" maxlength="24" required>
                             </div>
                             <div class="grid md:grid-cols-2 md:gap-6 mb-6">
                                 <div class="relative z-0 w-full mb-6 group">
                                     <label for="firstname" class="block mb-2 text-sm font-medium text-gray-900">
                                         Firstname<span class="text-red-500">*</span>
                                     </label>
-                                    <input type="text" name="firstname" id="firstname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                    <input type="text" name="firstname" id="firstname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" minlength="2" maxlength="16" required>
                                 </div>
                                 <div class="relative z-0 w-full mb-6 group">
                                     <label for="lastname" class="block mb-2 text-sm font-medium text-gray-900">
                                         Lastname<span class="text-red-500">*</span>
                                     </label>
-                                    <input type="text" name="lastname" id="lastname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                    <input type="text" name="lastname" id="lastname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" minlength="2" maxlength="24" required>
                                 </div>
                             </div>
                         </div>
