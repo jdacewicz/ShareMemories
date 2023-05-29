@@ -6,15 +6,13 @@ import com.sharememories.sharememories.exception.NotUniqueException;
 import com.sharememories.sharememories.service.EmailServiceImpl;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
-import com.sharememories.sharememories.validation.annotations.ValidFile;
 import jakarta.validation.constraints.Size;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +26,7 @@ import static com.sharememories.sharememories.util.UserUtils.getLoggedUser;
 import static jdk.jshell.spi.ExecutionControl.NotImplementedException;
 
 @Controller
-@Validated
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AppController {
 
     @Value("${contact.mail.receiver}")
@@ -37,13 +35,6 @@ public class AppController {
     private final SecurityUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final EmailServiceImpl emailService;
-
-    @Autowired
-    public AppController(SecurityUserDetailsService userDetailsService, PasswordEncoder passwordEncoder, EmailServiceImpl emailService) {
-        this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
-        this.emailService = emailService;
-    }
 
     @GetMapping("/")
     public String showMainPage(Model model) {
@@ -82,7 +73,7 @@ public class AppController {
                              @RequestPart @Size(min = 8, max = 24) String repeatPassword,
                              @RequestPart String firstname,
                              @RequestPart String lastname,
-                             @ValidFile @RequestPart(value = "image", required = false) MultipartFile file,
+                             @RequestPart(value = "image", required = false) MultipartFile file,
                              Model model) throws IOException {
         if (!userDetailsService.isUsernameUnique(username)) {
             throw new NotUniqueException("This email is already taken. Please choose another one.");
