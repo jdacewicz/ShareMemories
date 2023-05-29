@@ -1,13 +1,15 @@
 package com.sharememories.sharememories.controller;
 
 import com.sharememories.sharememories.domain.User;
+import com.sharememories.sharememories.exception.NotMatchException;
+import com.sharememories.sharememories.exception.NotUniqueException;
 import com.sharememories.sharememories.service.EmailServiceImpl;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
 import jakarta.validation.constraints.Size;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,9 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 
+import static com.sharememories.sharememories.util.UserUtils.getLoggedUser;
 import static jdk.jshell.spi.ExecutionControl.NotImplementedException;
 
 @Controller
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AppController {
 
     @Value("${contact.mail.receiver}")
@@ -32,29 +36,17 @@ public class AppController {
     private final PasswordEncoder passwordEncoder;
     private final EmailServiceImpl emailService;
 
-    @Autowired
-    public AppController(SecurityUserDetailsService userDetailsService, PasswordEncoder passwordEncoder, EmailServiceImpl emailService) {
-        this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
-        this.emailService = emailService;
-    }
-
     @GetMapping("/")
-    public String showMainPage(Model model) throws NotImplementedException {
-        Optional<User> user = getLoggedUser();
-        if (user.isEmpty()) {
-            throw new NotImplementedException("User not logged");
-        }
+    public String showMainPage(Model model) {
+        User user = getLoggedUser(userDetailsService);
         model.addAttribute("loggedUser", user);
+
         return "main";
     }
 
     @GetMapping("/profile/{id}")
     private String showProfilePage(@PathVariable long id, Model model) throws NotImplementedException {
-        Optional<User> loggedUser = getLoggedUser();
-        if (loggedUser.isEmpty()) {
-            throw new NotImplementedException("User not logged");
-        }
+        User loggedUser = getLoggedUser(userDetailsService);
 
         Optional<User> user = userDetailsService.getUserById(id);
         if (user.isPresent()) {
@@ -78,9 +70,18 @@ public class AppController {
     @PostMapping("/register")
     public String createUser(@RequestPart String username,
                              @RequestPart @Size(min = 8, max = 24) String password,
+                             @RequestPart @Size(min = 8, max = 24) String repeatPassword,
                              @RequestPart String firstname,
                              @RequestPart String lastname,
-                             @RequestPart(value = "image", required = false) MultipartFile file) throws NotImplementedException {
+                             @RequestPart(value = "image", required = false) MultipartFile file,
+                             Model model) throws IOException {
+        if (!userDetailsService.isUsernameUnique(username)) {
+            throw new NotUniqueException("This email is already taken. Please choose another one.");
+        }
+        if (!password.equals(repeatPassword)) {
+            throw new NotMatchException("Passwords don't match. Try again.");
+        }
+
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
@@ -88,16 +89,14 @@ public class AppController {
         user.setLastname(lastname);
 
         if (!file.isEmpty() && file.getOriginalFilename() != null) {
-            try {
-                String fileName = FileUtils.generateUniqueName(file.getOriginalFilename());
-                FileUtils.saveFile(User.IMAGES_DIRECTORY_PATH, fileName, file);
-                user.setProfileImage(fileName);
-            } catch (IOException e) {
-                throw new NotImplementedException("User not logged");
-            }
+            String fileName = FileUtils.generateUniqueName(file.getOriginalFilename());
+            FileUtils.saveFile(User.IMAGES_DIRECTORY_PATH, fileName, file);
+            user.setProfileImage(fileName);
         }
-        userDetailsService.creatUser(user);
-        return "redirect:/login";
+        userDetailsService.createUser(user);
+        model.addAttribute("successMessage",
+                "You have successfully created account! You can now log in.");
+        return "login";
     }
 
     @PostMapping("/contact")
@@ -106,22 +105,13 @@ public class AppController {
                            @RequestPart String email,
                            @RequestPart(required = false) String phone,
                            @RequestPart String topic,
-                           @RequestPart String message) throws NotImplementedException {
+                           @RequestPart String message) {
                           // @RequestPart(required = false) MultipartFile file) {
-        Optional<User> user = getLoggedUser();
-        if (user.isEmpty()) {
-            throw new NotImplementedException("User not logged");
-        }
+        User user = getLoggedUser(userDetailsService);
 
-        String content = "Username: " + user.get().getUsername() + " | Name: " + firstname + " " + lastname + " | Phone: " + phone + " | Message: " + message;
+        String content = "Username: " + user.getUsername() + " | Name: " + firstname + " " + lastname + " | Phone: " + phone + " | Message: " + message;
         emailService.sendMessage(email, mailReceiver, topic, content);
 
         return "redirect:/";
-    }
-
-    private Optional<User> getLoggedUser() {
-        return  userDetailsService.getUserByUsername(SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName());
     }
 }

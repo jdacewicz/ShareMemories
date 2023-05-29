@@ -19,10 +19,14 @@
     </div>
     <div class="flex flex-col h-screen justify-between">
         <main class="max-w-2xl m-auto z-10">
-            <div class="flex justify-center mb-4 py-4 px-8">
+            <div class="flex justify-center mb-8">
                 <a href="/">
                     <img src="/images/logo.png" class="h-10" alt="ShareMemories Logo">
                 </a>
+            </div>
+            <div th:if="${errorMessage != null}" class="flex justify-center items-center mb-4 p-2 text-sm rounded-xl bg-gradient-to-r bg-gradient-to-r from-red-400 to-red-600">
+                <span class="bg-gray-100 rounded-xl font-medium text-red-400 text-center py-1 px-2 mr-2">Error</span>
+                <span class="text-white text-center" th:text="${errorMessage}"></span>
             </div>
             <form th:action="@{/register}" enctype="multipart/form-data" method="POST" class="grid grid-cols-2 gap-4">
                 <div class="float-left rounded-xl bg-white shadow mb-6">
@@ -30,42 +34,42 @@
                         <div class="px-4 py-2 bg-white rounded-xl">
                             <!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">-->
                             <div class="my-6 text-center text-gray-900">
-                                <span class="block text-lg font-bold">Register your account!</span>
-                                <span class="block text-md">Fill out this form.</span>
+                                <span class="block text-md font-bold">Register your account!</span>
+                                <span class="block text-sm">Fill out this form.</span>
                             </div>
-                            <div class="block text-center text-md mb-6 text-gray-900">
+                            <div class="block text-center text-sm mb-6 text-gray-900">
                                 <span>Note: Fields marked with a red asterisk (</span><span class="text-red-500">*</span><span>) are required.</span>
                             </div>
                             <div class="mb-6">
                                 <label for="username" class="block mb-2 text-sm font-medium text-gray-900">
                                     Email address<span class="text-red-500">*</span>
                                 </label>
-                                <input type="email" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@email.com" required>
+                                <input type="email" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" minlength="8" maxlength="34" placeholder="name@email.com" required>
                             </div>
                             <div class="mb-6">
                                 <label for="password" class="block mb-2 text-sm font-medium text-gray-900">
                                     Password<span class="text-red-500">*</span>
                                 </label>
-                                <input type="password" name="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                <input type="password" name="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" minlength="8" maxlength="24" required>
                             </div>
                             <div class="mb-6">
                                 <label for="repeat-password" class="block mb-2 text-sm font-medium text-gray-900">
                                     Repeat password<span class="text-red-500">*</span>
                                 </label>
-                                <input type="password" name="repeat-password" id="repeat-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                <input type="password" name="repeatPassword" id="repeat-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" minlength="8" maxlength="24" required>
                             </div>
                             <div class="grid md:grid-cols-2 md:gap-6 mb-6">
                                 <div class="relative z-0 w-full mb-6 group">
                                     <label for="firstname" class="block mb-2 text-sm font-medium text-gray-900">
                                         Firstname<span class="text-red-500">*</span>
                                     </label>
-                                    <input type="text" name="firstname" id="firstname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                    <input type="text" name="firstname" id="firstname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" minlength="2" maxlength="16" required>
                                 </div>
                                 <div class="relative z-0 w-full mb-6 group">
                                     <label for="lastname" class="block mb-2 text-sm font-medium text-gray-900">
                                         Lastname<span class="text-red-500">*</span>
                                     </label>
-                                    <input type="text" name="lastname" id="lastname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                    <input type="text" name="lastname" id="lastname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" minlength="2" maxlength="24" required>
                                 </div>
                             </div>
                         </div>

@@ -35,7 +35,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
         return userRepository.findById(id);
     }
 
-    public void creatUser(UserDetails user) {
+    public void createUser(UserDetails user) {
         userRepository.save((User) user);
     }
 
@@ -59,5 +59,10 @@ public class SecurityUserDetailsService implements UserDetailsService {
             return Optional.of(userRepository.save(loggedinUser));
         }
         return Optional.empty();
+    }
+
+    public boolean isUsernameUnique(String username) {
+        return userRepository.findFirstByUsername(username)
+                .isEmpty();
     }
 }
