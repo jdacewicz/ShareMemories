@@ -194,6 +194,10 @@ $(document).ready(function () {
     $("#close-unknown-contacts-box").click(function () {
        $("#unknown-contacts").hide();
     });
+
+    $("#notifications").on("click", ".notification-close", function () {
+       $(this).parent().remove();
+    });
 })
 
 function sendMessage(userId, data) {

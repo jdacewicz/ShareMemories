@@ -142,121 +142,124 @@
         </div>
     </div>
     <div class="flex justify-center w-full">
-        <div id="main-content" class="w-1/4 z-10">
-            <div class="w-full bg-white rounded-xl shadow mb-4">
-                <form id="create-post-form" action="/api/posts" method="POST" enctype="multipart/form-data">
-                    <div class="flex justify-start p-2">
-                        <div class="mt-1 mx-2">
-                            <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl border" alt="user profile picture" src="">
-                        </div>
-                        <div class="w-full text-sm bg-gray-100 border rounded-xl py-1 px-2 resize-y">
-                            <textarea name="content" class="w-full bg-gray-100" rows="3" placeholder="Write something..."></textarea>
-                            <img src="#" alt="created post uploaded image preview" class="image-preview w-full hidden">
-                        </div>
-                    </div>
-                    <div class="flex justify-end border-t p-2">
-                        <div class="flex items-center">
-                            <input name="image" type="file" hidden>
-                            <button type="button" class="upload-image-button mx-1">
-                                <img src="/images/icons/image-icon.svg" class="w-8" alt="image icon">
-                            </button>
-                        </div>
-                        <div class="flex items-center ml-1">
-                            <button type="submit" class="px-2">
-                                <img src="/images/icons/arrow-right-icon.svg" class="w-8" alt="send icon">
-                            </button>
-                        </div>
-                    </div>
-                </form>
+        <div class="w-1/4 z-10">
+            <div id="notifications">
             </div>
-            <div id="posts" class="hidden">
-            </div>
-        </div>
-        <div id="panels" class="w-1/4 z-10 hidden">
-            <div id="contact-panel" class="w-full rounded-xl bg-white shadow hidden">
-                <form action="/contact" method="POST" enctype="multipart/form-data" id="contact-form" class="w-full rounded-lg bg-gray-50">
-                    <div class="px-4 py-2 bg-white rounded-xl">
-                        <div class="my-6 text-center text-gray-900">
-                            <span class="block text-lg font-bold">Contact with support.</span>
-                            <span class="block text-md">Fill out this form.</span>
-                        </div>
-                        <div class="block text-center text-md mb-6 text-gray-900">
-                            <span>Note: Fields marked with a red asterisk (</span><span class="text-red-500">*</span><span>) are required.</span>
-                        </div>
-                        <div class="grid md:grid-cols-2 md:gap-6 mb-6">
-                            <div class="relative z-0 w-full group">
-                                <label for="firstname" class="block mb-2 text-sm font-medium text-gray-900">
-                                    Firstname<span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" name="firstname" id="firstname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+            <div id="main-content">
+                <div class="w-full bg-white rounded-xl shadow mb-4">
+                    <form id="create-post-form" action="/api/posts" method="POST" enctype="multipart/form-data">
+                        <div class="flex justify-start p-2">
+                            <div class="mt-1 mx-2">
+                                <img th:src="${loggedUser.getImagePath()}" class="w-8 rounded-xl border" alt="user profile picture" src="">
                             </div>
-                            <div class="relative z-0 w-full group">
-                                <label for="lastname" class="block mb-2 text-sm font-medium text-gray-900">
-                                    Lastname<span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" name="lastname" id="lastname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                            <div class="w-full text-sm bg-gray-100 border rounded-xl py-1 px-2 resize-y">
+                                <textarea name="content" class="w-full bg-gray-100" minlength="1" maxlength="255" rows="3" placeholder="Write something..." required></textarea>
+                                <img src="#" alt="created post uploaded image preview" class="image-preview w-full hidden">
                             </div>
                         </div>
-                        <div class="mb-6">
-                            <label for="contact-email" class="block mb-2 text-sm font-medium text-gray-900">
-                                Email address<span class="text-red-500">*</span>
-                            </label>
-                            <input type="email" name="email" id="contact-email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@email.com" required>
-                        </div>
-                        <div class="mb-6">
-                            <label for="contact-phone" class="block mb-2 text-sm font-medium text-gray-900">
-                                Phone
-                            </label>
-                            <input type="text" name="phone" id="contact-phone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                        </div>
-                        <div class="mb-6">
-                            <label for="contact-topic" class="block mb-2 text-sm font-medium text-gray-900">
-                                Topic<span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="topic" id="contact-topic" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                        </div>
-                        <div class="mb-6">
-                            <label for="contact-message" class="block mb-2 text-sm font-medium text-gray-900">
-                                Message<span class="text-red-500">*</span>
-                            </label>
-                            <textarea id="contact-message" name="message" rows="5" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required placeholder="Write something..."></textarea>
-                        </div>
-                        <div class="mb-6">
-                            <label for="contact-attachments" class="block mb-2 text-sm font-medium text-gray-900">
-                                Attachments
-                            </label>
-                            <input type="file" id="contact-attachments" name="files" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                        </div>
-                    </div>
-                    <div class="flex items-end justify-between h-1/6">
-                        <div class="w-full">
-                            <button type="submit" class="text-white bg-gradient-to-r bg-gradient-to-r from-pink-400 to-pink-600 hover:from-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300
-                                font-medium text-sm w-full px-5 py-3 text-center rounded-b-xl">
-                                Send Message
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div id="admin-panel" class="w-full hidden">
-                <div id="admin-users-panel" class="w-full hidden">
-                    <form action="/api/users/" method="GET" id="admin-user-search" class="rounded-xl bg-white p-2 shadow">
-                        <div class="flex items-center bg-gray-50 border border-gray-300 text-sm rounded-lg p-2">
-                            <label for="contact-phone" class="mr-2">
-                                <img src="/images/icons/search-icon.svg" class="w-8" alt="search icon">
-                            </label>
-                            <input type="number" name="id" id="search-user" class="w-full text-gray-900 bg-gray-50 text-sm mr-2" placeholder="Insert user id..." required>
-                            <button type="submit">
-                                <img src="/images/icons/arrow-right-icon.svg" class="w-8" alt="send icon">
-                            </button>
+                        <div class="flex justify-end border-t p-2">
+                            <div class="flex items-center">
+                                <input name="image" type="file" hidden>
+                                <button type="button" class="upload-image-button mx-1">
+                                    <img src="/images/icons/image-icon.svg" class="w-8" alt="image icon">
+                                </button>
+                            </div>
+                            <div class="flex items-center ml-1">
+                                <button type="submit" class="px-2">
+                                    <img src="/images/icons/arrow-right-icon.svg" class="w-8" alt="send icon">
+                                </button>
+                            </div>
                         </div>
                     </form>
-                    <div id="admin-user-search-results" class="mt-4 rounded-xl bg-white shadow p-2 hidden">
-                        <div class="block p-4 text-md font-medium text-center">
-                            <span>Search results</span>
+                </div>
+                <div id="posts" class="hidden">
+                </div>
+            </div>
+            <div id="panels" class="hidden">
+                <div id="contact-panel" class="w-full rounded-xl bg-white shadow hidden">
+                    <form action="/contact" method="POST" enctype="multipart/form-data" id="contact-form" class="w-full rounded-lg bg-gray-50">
+                        <div class="px-4 py-2 bg-white rounded-xl">
+                            <div class="my-6 text-center text-gray-900">
+                                <span class="block text-lg font-bold">Contact with support.</span>
+                                <span class="block text-md">Fill out this form.</span>
+                            </div>
+                            <div class="block text-center text-md mb-6 text-gray-900">
+                                <span>Note: Fields marked with a red asterisk (</span><span class="text-red-500">*</span><span>) are required.</span>
+                            </div>
+                            <div class="grid md:grid-cols-2 md:gap-6 mb-6">
+                                <div class="relative z-0 w-full group">
+                                    <label for="firstname" class="block mb-2 text-sm font-medium text-gray-900">
+                                        Firstname<span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="firstname" id="firstname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                </div>
+                                <div class="relative z-0 w-full group">
+                                    <label for="lastname" class="block mb-2 text-sm font-medium text-gray-900">
+                                        Lastname<span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="lastname" id="lastname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <label for="contact-email" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Email address<span class="text-red-500">*</span>
+                                </label>
+                                <input type="email" name="email" id="contact-email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@email.com" required>
+                            </div>
+                            <div class="mb-6">
+                                <label for="contact-phone" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Phone
+                                </label>
+                                <input type="text" name="phone" id="contact-phone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                            </div>
+                            <div class="mb-6">
+                                <label for="contact-topic" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Topic<span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="topic" id="contact-topic" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                            </div>
+                            <div class="mb-6">
+                                <label for="contact-message" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Message<span class="text-red-500">*</span>
+                                </label>
+                                <textarea id="contact-message" name="message" rows="5" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required placeholder="Write something..."></textarea>
+                            </div>
+                            <div class="mb-6">
+                                <label for="contact-attachments" class="block mb-2 text-sm font-medium text-gray-900">
+                                    Attachments
+                                </label>
+                                <input type="file" id="contact-attachments" name="files" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                            </div>
                         </div>
-                        <table class="text-sm w-full mb-4">
-                            <thead class="bg-gray-50">
+                        <div class="flex items-end justify-between h-1/6">
+                            <div class="w-full">
+                                <button type="submit" class="text-white bg-gradient-to-r bg-gradient-to-r from-pink-400 to-pink-600 hover:from-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300
+                                font-medium text-sm w-full px-5 py-3 text-center rounded-b-xl">
+                                    Send Message
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="admin-panel" class="w-full hidden">
+                    <div id="admin-users-panel" class="w-full hidden">
+                        <form action="/api/users/" method="GET" id="admin-user-search" class="rounded-xl bg-white p-2 shadow">
+                            <div class="flex items-center bg-gray-50 border border-gray-300 text-sm rounded-lg p-2">
+                                <label for="contact-phone" class="mr-2">
+                                    <img src="/images/icons/search-icon.svg" class="w-8" alt="search icon">
+                                </label>
+                                <input type="number" name="id" id="search-user" class="w-full text-gray-900 bg-gray-50 text-sm mr-2" placeholder="Insert user id..." required>
+                                <button type="submit">
+                                    <img src="/images/icons/arrow-right-icon.svg" class="w-8" alt="send icon">
+                                </button>
+                            </div>
+                        </form>
+                        <div id="admin-user-search-results" class="mt-4 rounded-xl bg-white shadow p-2 hidden">
+                            <div class="block p-4 text-md font-medium text-center">
+                                <span>Search results</span>
+                            </div>
+                            <table class="text-sm w-full mb-4">
+                                <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col" class="px-4 py-3">
                                         User
@@ -265,67 +268,68 @@
                                         Actions
                                     </th>
                                 </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                        <div class="flex justify-center items-center p-2">
-                            <button id="admin-search-results-clear" type="button" class="text-sm hover:underline">
-                                <span>Clear.</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div id="admin-reactions-panel" class="w-full hidden">
-                    <div class="rounded-xl bg-white shadow py-2 px-4 mb-4">
-                        <div class="block p-4 text-md font-medium text-center">
-                            <span>Reactions</span>
-                        </div>
-                        <table id="admin-reactions-list" class="text-sm w-full mb-4">
-                            <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-4 py-2">
-                                    Image
-                                </th>
-                                <th scope="col" class="px-4 py-2">
-                                    Name
-                                </th>
-                                <th scope="col" class="px-4 py-2">
-                                    Actions
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                    <form id="edit-reaction-form" action="/api/reactions/" class="rounded-xl bg-white shadow hidden">
-                        <input type="hidden" id="edit-reaction-id" name="id">
-                        <div class="flex items-center justify-center py-2 px-4">
-                            <img src="#" class="w-32" id="edit-reaction-image-preview" alt="edited reaction image">
-                        </div>
-                        <div class="grid md:grid-cols-2 md:gap-6 py-2 px-4">
-                            <div class="relative z-0 w-full group">
-                                <label for="edit-reaction-file" class="block mb-2 text-sm font-medium text-gray-900">
-                                    New Image
-                                </label>
-                                <input type="file" id="edit-reaction-file" name="image" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                            </div>
-                            <div class="relative z-0 w-full mb-6 group">
-                                <label for="edit-reaction-name" class="block mb-2 text-sm font-medium text-gray-900">
-                                    Name
-                                </label>
-                                <input type="text" name="name" id="edit-reaction-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                            </div>
-                        </div>
-                        <div class="flex items-end justify-between h-1/6">
-                            <div class="w-full">
-                                <button type="submit" class="text-white bg-gradient-to-r bg-gradient-to-r from-pink-400 to-pink-600 hover:from-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium text-sm w-full px-5 py-3 text-center rounded-b-xl">
-                                    Update
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <div class="flex justify-center items-center p-2">
+                                <button id="admin-search-results-clear" type="button" class="text-sm hover:underline">
+                                    <span>Clear.</span>
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    </div>
+                    <div id="admin-reactions-panel" class="w-full hidden">
+                        <div class="rounded-xl bg-white shadow py-2 px-4 mb-4">
+                            <div class="block p-4 text-md font-medium text-center">
+                                <span>Reactions</span>
+                            </div>
+                            <table id="admin-reactions-list" class="text-sm w-full mb-4">
+                                <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-4 py-2">
+                                        Image
+                                    </th>
+                                    <th scope="col" class="px-4 py-2">
+                                        Name
+                                    </th>
+                                    <th scope="col" class="px-4 py-2">
+                                        Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <form id="edit-reaction-form" action="/api/reactions/" class="rounded-xl bg-white shadow hidden">
+                            <input type="hidden" id="edit-reaction-id" name="id">
+                            <div class="flex items-center justify-center py-2 px-4">
+                                <img src="#" class="w-32" id="edit-reaction-image-preview" alt="edited reaction image">
+                            </div>
+                            <div class="grid md:grid-cols-2 md:gap-6 py-2 px-4">
+                                <div class="relative z-0 w-full group">
+                                    <label for="edit-reaction-file" class="block mb-2 text-sm font-medium text-gray-900">
+                                        New Image
+                                    </label>
+                                    <input type="file" id="edit-reaction-file" name="image" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                </div>
+                                <div class="relative z-0 w-full mb-6 group">
+                                    <label for="edit-reaction-name" class="block mb-2 text-sm font-medium text-gray-900">
+                                        Name
+                                    </label>
+                                    <input type="text" name="name" id="edit-reaction-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                </div>
+                            </div>
+                            <div class="flex items-end justify-between h-1/6">
+                                <div class="w-full">
+                                    <button type="submit" class="text-white bg-gradient-to-r bg-gradient-to-r from-pink-400 to-pink-600 hover:from-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium text-sm w-full px-5 py-3 text-center rounded-b-xl">
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

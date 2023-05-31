@@ -5,6 +5,7 @@ import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.CommentService;
 import com.sharememories.sharememories.service.SecurityUserDetailsService;
 import com.sharememories.sharememories.util.FileUtils;
+import com.sharememories.sharememories.validation.annotations.ValidFile;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -28,6 +30,7 @@ import static com.sharememories.sharememories.util.UserUtils.getLoggedUser;
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping(value = "/api/comments", produces = MediaType.APPLICATION_JSON_VALUE)
+@Validated
 @Tag(name = "Comment Controller")
 public class CommentController {
 
@@ -67,7 +70,7 @@ public class CommentController {
     @PutMapping("/post/{postId}")
     public ResponseEntity<?> createComment(@PathVariable long postId,
                                            @RequestPart(value = "content") String commentContent,
-                                           @RequestPart(value = "image", required = false) MultipartFile file) throws IOException {
+                                           @ValidFile @RequestPart(value = "image", required = false) MultipartFile file) throws IOException {
         User loggedUser = getLoggedUser(userDetailsService);
         Comment comment = new Comment(commentContent, loggedUser);
         if (!file.isEmpty() && file.getOriginalFilename() != null) {

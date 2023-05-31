@@ -105,6 +105,16 @@ function savePost(frm, data) {
         success : function(post) {
             appendPost(post);
             $("div[id='post[" + post.id + "]']").insertBefore("#posts div:eq(0)");
+        },
+        error: function (response) {
+            let data = response.responseJSON;
+            if (data.messages === "undefined") {
+                appendNotification(data.message);
+            } else {
+                $.each(data.messages, function (i, message) {
+                    appendNotification(message);
+                });
+            }
         }
     });
 }
@@ -120,6 +130,16 @@ function saveComment(frm, data, postId) {
         contentType : false,
         success : function(comment) {
             appendComment(postId, comment);
+        },
+        error: function (response) {
+            let data = response.responseJSON;
+            if (data.messages === "undefined") {
+                appendNotification(data.message);
+            } else {
+                $.each(data.messages, function (i, message) {
+                    appendNotification(message);
+                });
+            }
         }
     });
 }
@@ -179,8 +199,18 @@ function loadPosts() {
                     }
 
                     $("#posts").fadeIn("fast");
+                },
+                error: function (response) {
+                    let data = response.responseJSON;
+
+                    appendNotification(data.message);
                 }
             });
+        },
+        error: function (response) {
+            let data = response.responseJSON;
+
+            appendNotification(data.message);
         }
     });
 }
@@ -283,7 +313,7 @@ function appendPost(post) {
                                 '<img src="' + createCommentProfilePicture + '" class="w-10 rounded-xl border" alt="user profile picture">' +
                             '</div>' +
                             '<div class="flex items-center justify-start text-sm w-full border bg-gray-100 rounded-xl py-1 px-2">' +
-                                '<textarea name="content" class="w-full bg-gray-100 resize-y" rows="1" placeholder="Write something..."></textarea>' +
+                                '<textarea name="content" class="w-full bg-gray-100 resize-y" rows="1" minlength="1" maxlength="255" placeholder="Write something..." required></textarea>' +
                                 '<img src="#" alt="comment uploaded image preview" class="image-preview w-16 ml-2 hidden">' +
                             '</div>' +
                             '<div class="flex items-center ml-1">' +
@@ -341,5 +371,17 @@ function appendReaction(reaction) {
             '<span class="hidden"></span>' +
             '<img src="' + reaction.imagePath + '" alt="' + reaction.name + ' reaction">' +
         '</button>'
+    );
+}
+
+function appendNotification(message) {
+    $("#notifications").append(
+        '<div class="flex justify-between items-center mb-4 p-2 text-sm rounded-xl bg-gradient-to-r bg-gradient-to-r from-red-400 to-red-600">' +
+            '<span class="bg-gray-100 rounded-xl font-medium text-red-400 text-center py-1 px-2 mr-2">Error</span>' +
+            '<span class="text-white text-center mr-2">' + message + '</span>' +
+            '<button class="notification-close">' +
+                '<span class="text-white font-bold py-1 px-2">X</span>' +
+            '</button>' +
+        '</div>'
     );
 }
