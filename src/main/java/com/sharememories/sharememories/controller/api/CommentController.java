@@ -1,10 +1,7 @@
 package com.sharememories.sharememories.controller.api;
 
 import com.sharememories.sharememories.domain.Comment;
-import com.sharememories.sharememories.domain.User;
 import com.sharememories.sharememories.service.CommentService;
-import com.sharememories.sharememories.service.SecurityUserDetailsService;
-import com.sharememories.sharememories.util.FileUtils;
 import com.sharememories.sharememories.validation.annotations.ValidFile;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,16 +13,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.webjars.NotFoundException;
 
 import java.io.IOException;
-import java.util.Optional;
-
-import static com.sharememories.sharememories.util.UserUtils.getLoggedUser;
 
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -35,8 +27,6 @@ import static com.sharememories.sharememories.util.UserUtils.getLoggedUser;
 public class CommentController {
 
     private final CommentService commentService;
-    private final SecurityUserDetailsService userDetailsService;
-
 
     @Operation(summary = "Get a comment by it's id")
     @ApiResponses(value = {
@@ -47,12 +37,9 @@ public class CommentController {
             @ApiResponse(responseCode = "404", description = "Comment not found",
                     content = @Content)})
     @GetMapping("/{id}")
-    public ResponseEntity<?> getComment(@PathVariable Long id) {
-        Optional<Comment> comment = commentService.getComment(id);
-        if (comment.isEmpty()) {
-            throw new NotFoundException("Comment not found.");
-        }
-        return ResponseEntity.ok(comment.get());
+    @ResponseStatus(HttpStatus.OK)
+    public Comment getComment(@PathVariable Long id) {
+        return commentService.getComment(id);
     }
 
     @Operation(summary = "Create a comment on the post")
@@ -68,23 +55,11 @@ public class CommentController {
             @ApiResponse(responseCode = "500", description = "An error occurred while saving image",
                     content = @Content)})
     @PutMapping("/post/{postId}")
-    public ResponseEntity<?> createComment(@PathVariable long postId,
+    @ResponseStatus(HttpStatus.CREATED)
+    public Comment createComment(@PathVariable long postId,
                                            @RequestPart(value = "content") String commentContent,
-                                           @ValidFile @RequestPart(value = "image", required = false) MultipartFile file) throws IOException {
-        User loggedUser = getLoggedUser(userDetailsService);
-        Comment comment = new Comment(commentContent, loggedUser);
-        if (!file.isEmpty() && file.getOriginalFilename() != null) {
-            String image = FileUtils.generateUniqueName(file.getOriginalFilename());
-            comment.setImage(image);
-
-            FileUtils.saveFile(Comment.IMAGES_DIRECTORY_PATH, image, file);
-        }
-
-        Optional<Comment> savedComment = commentService.commentPost(postId, comment);
-        if (savedComment.isEmpty()) {
-            throw new NotFoundException("Post not found.");
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedComment.get());
+                                           @ValidFile @RequestPart(value = "image") MultipartFile file) throws IOException {
+        return commentService.commentPost(postId, commentContent, file);
     }
 
     @Operation(summary = "Delete comment by comment's and post's ids.")
@@ -97,21 +72,10 @@ public class CommentController {
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "An error occurred while deleting image",
                     content = @Content)})
-    @DeleteMapping("/{commentId}/post/{postId}")
-    public ResponseEntity<?> deleteComment(@PathVariable long postId,
-                                           @PathVariable long commentId) throws IOException {
-        Optional<Comment> comment = commentService.getComment(commentId);
-        if (comment.isEmpty()) {
-            throw new NotFoundException("Comment not found.");
-        }
-
-        String image = comment.get().getImage();
-        if (image != null) {
-            FileUtils.deleteFile(Comment.IMAGES_DIRECTORY_PATH, image);
-        }
-
-        commentService.deletePostComment(postId, comment.get());
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{commentId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteComment(@PathVariable long commentId) throws IOException {
+        commentService.deleteComment(commentId);
     }
 
     @Operation(summary = "Add reaction to comment by comment's and reaction's ids.")
@@ -123,12 +87,9 @@ public class CommentController {
             @ApiResponse(responseCode = "404", description = "Comment or reaction not found",
                     content = @Content)})
     @PutMapping("/{commentId}/react/{reactionId}")
-    public ResponseEntity<?> reactToComment(@PathVariable int reactionId,
+    @ResponseStatus(HttpStatus.OK)
+    public Comment reactToComment(@PathVariable int reactionId,
                                          @PathVariable long commentId) {
-        Optional<Comment> comment = commentService.reactToComment(reactionId, commentId);
-        if (comment.isEmpty()) {
-            throw new NotFoundException("Could not find comment or reaction.");
-        }
-        return ResponseEntity.ok(comment);
+        return commentService.reactToComment(reactionId, commentId);
     }
 }
