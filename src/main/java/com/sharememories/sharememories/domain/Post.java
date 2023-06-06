@@ -55,9 +55,6 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    private PostGroup group;
 
     public Post(List<Reaction> reactions) {
         this.reactions = reactions;

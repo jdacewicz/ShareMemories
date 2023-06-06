@@ -37,10 +37,6 @@ public class Message {
     private String image;
     private boolean messageSeen = false;
 
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    private MessageGroup group;
-
     public Message(User sender, User receiver, String content) {
         this.sender = sender;
         this.receiver = receiver;

@@ -73,14 +73,6 @@ public class User implements UserDetails {
     @JsonIgnore
     private Set<User> contacts = new HashSet<>();
 
-    @ManyToMany(mappedBy = "members")
-    @JsonIgnore
-    private Set<Group> groupsMember;
-
-    @ManyToMany(mappedBy = "admins")
-    @JsonIgnore
-    private Set<Group> groupsAdmin;
-
     public User(String username) {
         this.username = username;
     }
